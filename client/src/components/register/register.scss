@@ -1,0 +1,29 @@
+.register {
+  position: relative;
+  overflow: auto;
+  width: 50%;
+  background-color: white;
+  border-radius: 25px;
+}
+
+.password-username {
+  height: 75%;
+  top: 10%;
+}
+
+.personal-details {
+  height: 65%;
+  top: 15%;
+}
+
+.success {
+  top: 40%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  .h1,
+  h2,
+  h3 {
+    padding: 3%;
+  }
+}

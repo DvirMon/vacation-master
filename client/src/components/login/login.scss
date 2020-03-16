@@ -1,0 +1,41 @@
+.login {
+  height: 90%;
+  display: grid;
+  grid-template-rows: 10%, 90;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 0;
+  margin: 0;
+  position: relative;
+  top: 10%;
+
+  aside {
+    grid-column: 6 span;
+  }
+
+  form {
+    background-color: white;
+    width: 60%;
+    height:80%;
+    box-sizing: border-box;
+    position: relative;
+    left: 5%;
+  }
+
+  .row-header {
+    position: relative;
+    top: 10px;
+    margin-bottom: 5%;
+  }
+
+  .btn {
+    position: relative;
+    top: 20px;
+  }
+
+  .row {
+    padding-top: 1%;
+    .form-control {
+      font-size: 25px;
+    }
+  }
+}

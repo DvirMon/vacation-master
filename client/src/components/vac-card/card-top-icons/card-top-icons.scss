@@ -1,0 +1,21 @@
+.top-icons {
+  height: 100%;
+
+  .showIcon-semi {
+    opacity: 0.6;
+  }
+
+  .rose {
+    animation: fadeInColor 0.5s;
+  }
+
+  .rose-fix {
+    opacity: 1;
+    color: #e91e63;
+  }
+
+  .icon:hover {
+    opacity: 1;
+    color: #e91e63;
+  }
+}

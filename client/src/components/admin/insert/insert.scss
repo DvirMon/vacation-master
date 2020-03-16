@@ -1,0 +1,14 @@
+.insert {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  .row {
+    height: 100%;
+    .col-sm-4 {
+      .vac-card {
+        position: relative;
+        top: 10%;
+      }
+    }
+  }
+}

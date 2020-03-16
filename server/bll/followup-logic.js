@@ -1,0 +1,54 @@
+const dal = require("../dal/dal");
+
+const addFollowUp = async followup => {
+  console.log(followup)
+  const sql = `INSERT INTO followers(vacationID, userID)
+                VALUES (${followup.vacationID}, ${followup.userID})`;
+  const info = await dal.executeAsync(sql);
+  followup.id = info.insertId;
+  return followup;
+};
+
+const deleteFollowUp = async id => {
+  const sql = `DELETE FROM followers WHERE id = ${id}`;
+  await dal.executeAsync(sql);
+  return;
+};
+
+//
+const getAllFollowUpByUser = async userID => {
+  const sql = `SELECT f.id as followUpID, v.id as vacationID, description, destination, continentID, image,
+   DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
+   DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price
+FROM vacations as v JOIN followers as f 
+ON f.vacationID = v.id
+AND f.userID = ${userID}`;
+  const followups = await dal.executeAsync(sql);
+  return followups;
+};
+
+// get all followup vacations for chart
+const getAllFollowUp = async () => {
+  sql = `SELECT COUNT(userID) as users, destination as vacation
+  FROM followers as f JOIN vacations as v
+  ON f.vacationID = v.id 
+  GROUP BY destination`;
+  const followups = await dal.executeAsync(sql);
+  return followups;
+};
+const getFollowUpByVacation = async (vacationID) => {
+  sql = `SELECT COUNT(userID) as followers
+  FROM followers
+  WHERE vacationID = ${vacationID}
+  GROUP BY vacationID`;
+  const followups = await dal.executeAsync(sql);
+  return followups[0];
+};
+
+module.exports = {
+  getAllFollowUpByUser,
+  getFollowUpByVacation,
+  getAllFollowUp,
+  addFollowUp,
+  deleteFollowUp
+};
