@@ -6,16 +6,18 @@ import Container from "react-bootstrap/Container";
 import "./register.scss";
 
 interface RegisterState {
-  step: number;
   user: UserModel;
+  step: number;
+  timeOut: number;
 }
 
 export class Register extends Component<any, RegisterState> {
   constructor(props: any) {
     super(props);
     this.state = {
+      user: new UserModel(),
       step: 1,
-      user: new UserModel()
+      timeOut: 3000
     };
   }
 
@@ -43,18 +45,18 @@ export class Register extends Component<any, RegisterState> {
   };
 
   render() {
-    const { step } = this.state;
-    const { user } = this.state;
+    const { user, step, timeOut } = this.state;
+
     switch (step) {
       case 1:
         return (
-          <div className="register container personal-details">
+          <Container className="register personal-details">
             <PersonalDetails
               handleChange={this.handleChange}
               nextStep={this.nextStep}
               user={user}
             />
-          </div>
+          </Container>
         );
       case 2:
         return (
@@ -68,16 +70,16 @@ export class Register extends Component<any, RegisterState> {
           </Container>
         );
       case 3:
-        return ( 
+        return (
           <Container className="register success">
-              <h1 className="text">{`Hi ${user.firstName} !`}</h1>
-              <h2>
-                Thank you for joining <b>Travel On</b>
-              </h2>
-              <h3>you will immediately be transfer to your account</h3>
+            <h1 className="text">{`Hi ${user.firstName} !`}</h1>
+            <h2>
+              Thank you for joining <b>Travel On</b>
+            </h2>
+            <h3>you will immediately be transfer to your account</h3>
             {setTimeout(() => {
-              this.props.history.push(`/login`);
-            }, 3000)}
+              this.props.history.push(`/`);
+            }, timeOut)}
           </Container>
         );
     }

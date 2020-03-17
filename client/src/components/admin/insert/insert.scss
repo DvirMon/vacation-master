@@ -1,14 +1,25 @@
 .insert {
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  .row {
-    height: 100%;
-    .col-sm-4 {
-      .vac-card {
-        position: relative;
-        top: 10%;
-      }
-    }
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: repeat(12 , 1fr);
+
+  main {
+    grid-column: 8 span;
+    position: relative;
+    left: 1%;
+  }
+  
+  aside {
+    grid-column: 3 span;
+    position: relative;
+    top: 50%;
+    transform: translateY(-40%);
+    left: 10%;
+    // padding: %;
+  }
+
+  .text-area {
+    font-size: 30px;
   }
 }

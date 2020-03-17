@@ -4,14 +4,19 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 import { VacationModel } from "../../../models/vacations-model";
 import "./card-top-icons.scss";
+import { NavLink } from "react-router-dom";
 
 interface CardTopIconsProps {
   vacation: VacationModel;
-  handleIconClick(vacationID: number): void;
   color: boolean;
-  user: boolean;
+  followIcon: boolean;
+  admin?: boolean;
+  handleIconClick?(vacationID: number): void;
+  handleDelete?(vacationID?: number): void;
+  handleEdit?(vacationID?: number): void;
 }
 
 export class CardTopIcons extends Component<CardTopIconsProps, any> {
@@ -20,10 +25,10 @@ export class CardTopIcons extends Component<CardTopIconsProps, any> {
   }
 
   render() {
-    const { vacation, color, user } = this.props;
+    const { color, followIcon, admin } = this.props;
     return (
       <div className="top-icons">
-        {user ? (
+        {followIcon ? (
           <IconButton
             onClick={this.handleIconClick}
             className={clsx({
@@ -35,19 +40,42 @@ export class CardTopIcons extends Component<CardTopIconsProps, any> {
             <FavoriteIcon fontSize="large" />
           </IconButton>
         ) : (
-          <IconButton onClick={this.handleIconClick}>
-            <DeleteIcon fontSize="large" />
-          </IconButton>
+          admin && (
+            <React.Fragment>
+              <IconButton onClick={this.handleDelete}>
+                <DeleteIcon fontSize="large" />
+              </IconButton>
+              <IconButton onClick={this.handleEdit}> 
+                  <EditIcon fontSize="large" />
+              </IconButton>
+            </React.Fragment>
+          )
         )}
       </div>
     );
   }
- 
+
   public handleIconClick = () => {
     const vacation = this.props.vacation;
-    this.props.handleIconClick(
-      vacation.followUpID ? vacation.followUpID : vacation.vacationID
-    );
+    if (this.props.handleIconClick) {
+      this.props.handleIconClick(
+        vacation.followUpID ? vacation.followUpID : vacation.vacationID
+      );
+    }
+  };
+
+  public handleDelete = () => {
+    const vacation = this.props.vacation;
+    if (this.props.handleDelete) {
+      this.props.handleDelete();
+    }
+  };
+
+  public handleEdit = () => {
+    const vacation = this.props.vacation;
+    if (this.props.handleEdit) {
+      this.props.handleEdit();
+    }
   };
 }
 

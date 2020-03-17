@@ -1,19 +1,15 @@
 .register {
   position: relative;
   overflow: auto;
-  width: 50%;
-  background-color: white;
   border-radius: 25px;
+  background-color: #fafafa;
 }
 
+.personal-details,
 .password-username {
-  height: 75%;
+  height: 80%;
+  width: 35%;
   top: 10%;
-}
-
-.personal-details {
-  height: 65%;
-  top: 15%;
 }
 
 .success {

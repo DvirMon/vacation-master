@@ -1,3 +1,6 @@
+import Joi from 'joi'
+
+
 export class VacationModel {
 
   constructor(
@@ -13,6 +16,25 @@ export class VacationModel {
   ) {
 
   }
+
+  static validation = (vacation : VacationModel) => {
+    
+    const schema = Joi.object().keys({
+      description: Joi.string().max(1000),
+      destination: Joi.string().max(50),
+      image: Joi.string(),
+      startDate: Joi.date().iso(),
+      endDate: Joi.date().iso().greater(Joi.ref("startDate")),
+      price: Joi.number()
+    })
+
+    const error = Joi.validate(vacation, schema, { abortEarly: false }).error;
+
+    if (error) {
+      return error.details.map(err => err.message);
+    }
+    return null;
+  };
 
 
 }

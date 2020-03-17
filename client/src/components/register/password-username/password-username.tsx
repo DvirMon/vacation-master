@@ -9,6 +9,7 @@ import { postRequest } from "../../../services/server";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { IconButton } from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
+import { loginLegal } from "../../../services/login";
 import generator from "generate-password";
 
 interface PasswordUsernameProps {
@@ -40,7 +41,7 @@ export class PasswordUsername extends Component<
         password: ""
       },
       password: "",
-      serverError:  ""
+      serverError: ""
     };
   }
 
@@ -66,83 +67,84 @@ export class PasswordUsername extends Component<
     const { password, serverError } = this.state;
 
     return (
-      <Form>
+      <React.Fragment>
         <Row className="card-header">
           <h2>Username And Password</h2>
         </Row>
-        <MyInput
-          type={"text"}
-          value={user.userName || ""}
-          label="Username"
-          handleChange={this.handleChange}
-          prop={"userName"}
-          handleErrors={this.handleErrors}
-          serverError={serverError}
-        ></MyInput>
+        <Form style={{ position: "relative", top: "5vh" }}>
+          <MyInput
+            width={12}
+            value={user.password || password}
+            prop={"password"}
+            label="Password (8-24 characters)"
+            passwordIcon={
+              <Tooltip title="Generate strong password" placement="left">
+                <IconButton onClick={this.getPassword}>
+                  <LockOutlinedIcon />
+                </IconButton>
+              </Tooltip>
+            }
+            handleChange={this.handleChange}
+            handleErrors={this.handleErrors}
+            validInput={UserModel.validRegistration}
+          ></MyInput>
 
-        <MyInput
-          value={user.password || password}
-          label="Password (8-24 characters)"
-          icon={
-            <Tooltip title="Generate strong password" placement="right">
-              <IconButton onClick={this.getPassword}>
-                <LockOutlinedIcon />
-              </IconButton>
-            </Tooltip>
-          }
-          handleChange={this.handleChange}
-          prop={"password"}
-          handleErrors={this.handleErrors}
-        ></MyInput>
-        <Row>
-          <Col>
-            <Button color="secondary" variant="contained" onClick={prevStep}>
-              Back
-            </Button>
-          </Col>
-          <Col style={{ textAlign: "right" }}>
-            <Button color="primary" variant="contained" onClick={this.nextStep}>
-              Continue
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+          <MyInput
+            width={12}
+            type={"text"}
+            value={user.userName || ""}
+            prop={"userName"}
+            label="Username"
+            handleChange={this.handleChange}
+            handleErrors={this.handleErrors}
+            validInput={UserModel.validRegistration}
+            serverError={serverError}
+          ></MyInput>
+
+          <Row>
+            <Col>
+              <Button color="secondary" variant="contained" onClick={prevStep}>
+                Back
+              </Button>
+            </Col>
+            <Col style={{ textAlign: "right" }}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={this.nextStep}
+              >
+                Continue
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </React.Fragment>
     );
   }
 
   public handleChange = (prop: string, input: string) => {
-    this.setState({ serverError : "" });
+    this.setState({ serverError: "" });
     this.props.handleChange(prop, input);
   };
 
   public nextStep = async () => {
-    if (this.formLegal()) {
+    const user = { ...this.props.user };
+    const errors = { ...this.state.errors };
+
+    if (loginLegal(user, errors)) {
       return;
     }
 
     // sent request
     const response = await this.addUser();
-
-    if (this.handleResponse(response)) {
+    console.log(response);
+    if (this.handleServerResponse(response)) {
       return;
     }
 
     if (this.props.nextStep) {
       this.props.nextStep();
     }
-  };
-
-  public formLegal = () => {
-    const errors = { ...this.state.errors };
-    if (
-      errors.userName.length > 0 ||
-      errors.password.length > 0 ||
-      this.props.user.userName === undefined ||
-      this.props.user.password === undefined
-    ) {
-      return true;
-    }
-    return false;
   };
 
   public getPassword = () => {
@@ -154,10 +156,10 @@ export class PasswordUsername extends Component<
     this.handleChange("password", password);
   };
 
-  public handleResponse = response => {
+  public handleServerResponse = response => {
     switch (typeof response) {
       case "string":
-        this.setState({ serverError : response });
+        this.setState({ serverError: response });
         return true;
       case "object":
         // save user to localStorage

@@ -5,24 +5,29 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import FormLabel from "react-bootstrap/FormLabel";
 import { UserModel } from "../../models/user-model";
-import { isRequired } from "../../services/validation";
+import { isRequired, setObjectForSchema } from "../../services/validation";
 import { Typography } from "@material-ui/core";
 import clsx from "clsx";
 import "./my-input.scss";
 
 export interface MyInputProps {
-  value?: string;
-  prop?: string;
-  icon?: any;
-  label: string;
+  width: number;
+  value: string | number;
   type?: string;
+  prop?: string;
+  label?: string;
+  placeholder?: string;
+  icon?: any;
+  passwordIcon?: any;
   serverError?: string;
+
   handleChange(prop: string, input: string): void;
   handleErrors?(prop: string, error?: string): void;
+  validInput?(object: {}): string;
 }
 
 export interface MyInputState {
-  user: UserModel;
+  // user: UserModel;
   error: string;
   on: boolean;
   success: boolean;
@@ -34,7 +39,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     super(props);
 
     this.state = {
-      user: new UserModel(),
+      // user: new UserModel(),
       error: "",
       on: false,
       success: false,
@@ -43,53 +48,68 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   }
 
   render() {
-    const { value, prop, icon, label, type, serverError } = this.props;
+    const {
+      width,
+      value,
+      prop,
+      label,
+      type,
+      icon,
+      passwordIcon,
+      placeholder,
+      serverError
+    } = this.props;
     const { error, success, danger } = this.state;
 
     return (
-      <Row className="my-input">
-        <Col
-          sm={11}
-          className={clsx({
-            "form-group": true,
-            "has-default": true,
-            "has-success": success,
-            "has-danger": danger
-          })}
+      <Col
+        sm={width}
+        md={width}
+        className={clsx({
+          "my-input": true,
+          "form-group": true,
+          "has-default": true,
+          "has-success": success,
+          "has-danger": danger
+        })}
+      >
+        <FormLabel className="label">{label}</FormLabel>
+        <Typography
+          style={{
+            textAlign: "right",
+            position: "relative",
+            top: "2vh",
+            zIndex: 1
+          }}
         >
-          <FormLabel className="label">{label}</FormLabel>
-          <InputGroup.Prepend style={{ textAlign: "right" }}>
+          {passwordIcon}
+        </Typography>
+        <InputGroup size="lg" className="mb-3">
+          <InputGroup.Prepend>
             <InputGroup.Text>{icon}</InputGroup.Text>
           </InputGroup.Prepend>
-          <InputGroup size="lg" className="mb-3">
-            <FormControl
-              value={value}
-              type={type}
-              aria-label={label}
-              onChange={this.handleChange(prop)}
-              onBlur={this.handleBlur(prop)}
-              onFocus={this.handleFocus(prop)}
-              autoComplete="off"
-            />
-          </InputGroup>
-          <Typography>{serverError || error}</Typography>
-        </Col>
-      </Row>
+          <FormControl
+            value={value}
+            type={type}
+            aria-label={label}
+            placeholder={placeholder}
+            onChange={this.handleChange(prop)}
+            onBlur={this.handleBlur(prop)}
+            onFocus={this.handleFocus(prop)}
+            autoComplete="off"
+          />
+        </InputGroup>
+        <Typography>{serverError || error}</Typography>
+      </Col>
     );
   }
-
-  public setUser = (prop: string, input: string) => {
-    const user = {};
-    user[prop] = input;
-    return user;
-  };
 
   public handleBlur = (prop: string) => (
     event: React.FocusEvent<HTMLInputElement>
   ): void => {
     const input = event.target.value;
-    const user = this.setUser(prop, input);
-    this.validInput(prop, user);
+    const objectScheme = setObjectForSchema(prop, input);
+    this.validInput(prop, objectScheme);
     this.setState({ on: true });
   };
 
@@ -99,35 +119,38 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     const on = this.state.on;
     if (on === true) {
       const input = event.target.value;
-      const user = this.setUser(prop, input);
-      this.validInput(prop, user);
+      const objectScheme = setObjectForSchema(prop, input);
+      this.validInput(prop, objectScheme);
     }
   };
 
-  public handleChange = (prop: string) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  public handleChange = (prop: string) => event => {
+
     const on = this.state.on;
     const input = event.target.value;
 
     if (on === true) {
+      
       const error = isRequired(input);
       this.setState({ error });
+      
       if (error) {
         this.props.handleErrors(prop, error);
+
       } else {
-        const user = this.setUser(prop, input);
-        this.validInput(prop, user);
+        const objectScheme = setObjectForSchema(prop, input);
+        this.validInput(prop, objectScheme);
       }
     }
-    // update user values in parent
+    // update objectScheme values in parent
     this.props.handleChange(prop, input);
   };
 
-  public validInput = (prop: string, user: UserModel) => {
+  public validInput = (prop: string, objectScheme: {}) => {
+    
+    const error = this.props.validInput(objectScheme);
+    const serverError = this.props.serverError;
 
-    const serverError = this.props.serverError
-    const error = UserModel.validRegistration(user);
 
     if (error) {
       this.setState({ error, success: false, danger: true });
@@ -136,7 +159,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     }
 
     if (serverError) {
-      this.setState({success: false, danger: true });
+      this.setState({ success: false, danger: true });
       return;
     }
 

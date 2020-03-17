@@ -2,7 +2,7 @@ const dal = require("../dal/dal");
 const helpers = require("../helpers/helpers");
 const followUpLogic = require("../bll/followup-logic");
 
-const vacationFormat = `id as vacationID, description, destination, continentID, image,
+const vacationFormat = `id as vacationID, description, destination, image,
 DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
 DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price`;
 
@@ -22,8 +22,7 @@ const getUnFollowedVacations = async userId => {
   WHERE v.id NOT IN (
        SELECT f.vacationID
        FROM  followers as f 
-       WHERE f.userID = ${userId})  
-  ORDER BY v.continentID ASC`;
+       WHERE f.userID = ${userId})`;
 
   const unFollowed = await dal.executeAsync(sql);
   return unFollowed;
@@ -38,9 +37,9 @@ const deleteVacation = async id => {
 
 // add new vacation (admin only)
 const addVacation = async vacation => {
-  const sql = `INSERT INTO vacations(description, destination, continentID, image, startDate, endDate, price)
-  VALUES('${vacation.description}', '${vacation.destination}', ${vacation.continentID}, 
-  '${vacation.image}', '${vacation.startDate}', '${vacation.endDate}', ${vacation.price} )`;
+  const sql = `INSERT INTO vacations(description, destination, image, startDate, endDate, price)
+  VALUES('${vacation.description}', '${vacation.destination}', '${vacation.image}', 
+  '${vacation.startDate}', '${vacation.endDate}', ${vacation.price} )`;
   const info = await dal.executeAsync(sql);
   vacation.id = info.insertId;
   return vacation;
@@ -60,7 +59,6 @@ const updateVacation = async vacation => {
   const sql = `UPDATE vacations SET 
   description = '${vacation.description}', 
   destination = '${vacation.destination}', 
-  continentID = ${vacation.continentID},
   image = '${vacation.image}', 
   startDate = '${vacation.startDate}', 
   endDate = '${vacation.endDate}',

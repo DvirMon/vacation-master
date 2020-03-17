@@ -19,15 +19,17 @@ import {
   addFollowUp,
   getFollowersByVacation
 } from "./vac-card-service";
-import DeleteIcon from "@material-ui/icons/Delete";
 import CardTopIcons from "./card-top-icons/card-top-icons";
 
 interface VacCardProps {
   vacation: VacationModel;
   accessToken: string;
   follow?: boolean;
-  update?(): void;
-  user: boolean;
+  followIcon: boolean;
+  admin?: boolean; 
+  update?(): void; 
+  handleDelete?(vacationID?: number): void;
+  handleEdit?(vacationID?: number): void;
 }
 
 interface VacCardState {
@@ -93,7 +95,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
   render() {
     const { expanded, color, followers } = this.state;
-    const { vacation, user } = this.props;
+    const { vacation, followIcon , admin } = this.props;
 
     return (
       <div className="vac-card">
@@ -105,8 +107,11 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
                 vacation={vacation}
                 handleIconClick={this.handleIconClick}
                 color={color}
-                user={user}
-              />
+                followIcon={followIcon}
+                admin={admin}
+                handleDelete={this.handleDelete}
+                handleEdit={this.handleEdit}
+              /> 
             }
             title={vacation.destination}
             subheader={this.formatDate(vacation.startDate, vacation.endDate)}
@@ -147,7 +152,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   }
 
   public handleIconClick = async (vacationID: number) => {
-    console.log("aaaa");
     const clickEvent = this.state.clickEvent;
     this.setState({ clickEvent: !clickEvent });
     await this.handleFollowUp(vacationID);
@@ -169,6 +173,17 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
         </div>
       </React.Fragment>
     );
+  };
+
+  public handleDelete = () => {
+    this.props.handleDelete();
+    if (this.props.handleDelete) {
+    }
+  };
+  public handleEdit = () => {
+    if (this.props.handleEdit) {
+      this.props.handleEdit();
+    }
   };
 }
 

@@ -1,5 +1,7 @@
 import Joi from 'joi'
 
+import { handleMassage } from '../services/validation';
+
 export class UserModel {
 
   public constructor(public userID?: string, public firstName?: string, public lastName?: string,
@@ -10,21 +12,32 @@ export class UserModel {
   static validLogin = (user: UserModel) => {
 
     const schema = Joi.object().keys({
-      userName: Joi.string().min(3).max(10).required(),
-      password: Joi.string().min(6).max(10).required()
-    }).unknown()
+      userName: Joi.string().min(3).max(10).error(errors => {
+        errors.forEach(err => {
+          console.log(err)
+          handleMassage(err)
+        })
+        return errors;
+      }),
+      password: Joi.string().min(6).max(24).error(errors => {
+        errors.forEach(err => {
+          handleMassage(err)
+        })
+        return errors;
+      }),
+    })
 
-    const error = Joi.validate(user, schema, { abortEarly: false }).error;
+    const error = Joi.validate(user, schema).error;
 
     if (error) {
-      return error.details.map(err => err.message);
+      return error.details[0].message
     }
     return null;
   };
 
 
 
-  static validRegistration = user => {
+  static validRegistration = (user: UserModel) => {
 
     const name = /^[a-zA-Z]{3,25}$/;
     var password = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
@@ -43,7 +56,7 @@ export class UserModel {
           })
           return errors;
         }),
-        userName: Joi.string().trim().min(4).max(10),
+        userName: Joi.string().trim().min(3).max(10),
         password: Joi.string().trim().min(8).max(24).regex(password).error(errors => {
           errors.forEach(err => {
             handleMassage(err)
@@ -51,19 +64,6 @@ export class UserModel {
           return errors;
         }),
       })
-
-    const handleMassage = (err) => {
-      switch (err.type) {
-        case "string.regex.base":
-          if ((err.path[0]) === "password") {
-            err.message = "password must contain at least a lowercase, an uppercase and numeric character";
-            break
-          }
-          err.message = "field should only include a-z/A-Z letters";
-          break
-      }
-
-    }
 
     const error = Joi.validate(user, schema).error
     if (error) {

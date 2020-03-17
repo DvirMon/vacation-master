@@ -29,7 +29,7 @@ export const getTokens = async user => {
   }
 };
 
-export const refreshTokens = async (dbToken) => {
+export const refreshToken = async (dbToken) => {
   const response = await getAccessToken(dbToken.refreshToken);
   return response
 }

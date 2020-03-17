@@ -6,7 +6,7 @@ const errorHandler = (err, req, response, next) => {
   }
 
   // default to 500 server error
-  return response.status(500).json(err.message);
+  return response.status(500).json(err);
 }
 
 module.exports = errorHandler

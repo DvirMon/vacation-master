@@ -18,7 +18,7 @@ class UserModel {
       .keys({
         firstName: Joi.string().trim().regex(pattern).min(3).required(),
         lastName: Joi.string().trim().regex(pattern).min(3).required(),
-        userName: Joi.string().trim().min(4).max(10).required(),
+        userName: Joi.string().trim().min(3).max(10).required(),
         password: Joi.string().trim().min(8).max(24).required()
       })
 

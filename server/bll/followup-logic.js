@@ -17,7 +17,7 @@ const deleteFollowUp = async id => {
 
 //
 const getAllFollowUpByUser = async userID => {
-  const sql = `SELECT f.id as followUpID, v.id as vacationID, description, destination, continentID, image,
+  const sql = `SELECT f.id as followUpID, v.id as vacationID, description, destination, image,
    DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
    DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price
 FROM vacations as v JOIN followers as f 

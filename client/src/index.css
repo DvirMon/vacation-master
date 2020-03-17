@@ -8845,13 +8845,12 @@ button:focus {
 
 .btn {
   position: relative;
-  padding: 12px 30px;
+  padding: 12px 20px;
   margin: 0.3125rem 1px;
-  font-size: .75rem;
+  font-size: .90rem;
   font-weight: 400;
   line-height: 1.428571;
   text-decoration: none;
-  text-transform: uppercase;
   letter-spacing: 0;
   cursor: pointer;
   background-color: transparent;

@@ -5,13 +5,12 @@ import { UserModel } from "../../models/user-model";
 import { deleteRequest } from "../../services/server";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Insert from "./insert/insert";
-import { login } from "../../services/login";
+import { login, getStorage } from "../../services/login";
 import { VacationModel } from "../../models/vacations-model";
+import Vacations from "../vacations/vacations";
 
 interface AdminState {
   admin: UserModel;
-  vacations: VacationModel[];
-  accessToken: string;
   dbToken: {
     id: number;
     refreshToken: string;
@@ -24,27 +23,22 @@ export class Admin extends Component<any, AdminState> {
 
     this.state = {
       admin: null,
-      vacations: [],
-      accessToken: "",
       dbToken: null
     };
   }
 
   public componentDidMount = async () => {
-    const storage = localStorage.getItem("user");
-    const user = JSON.parse(storage);
+    const user = getStorage();
 
     if (!user || user.isAdmin === 0) {
       this.props.history.push("/login");
       console.log("Not Admin");
     }
-    const response = await login();
+    const response = await login(user);
 
     this.setState({
-      admin: response.user,
-      vacations: response.vacations.unFollowWp,
-      accessToken : response.accessToken,
-      dbToken : response.dbToken
+      admin: user,
+      dbToken: response.dbToken
     });
   };
 
@@ -54,10 +48,15 @@ export class Admin extends Component<any, AdminState> {
       <div className="admin">
         <BrowserRouter>
           <nav>
-            <AppTop userInfo={admin} admin={true} handleLogOut={this.handleLogOut}></AppTop>
+            <AppTop
+              userInfo={admin}
+              admin={true}
+              handleLogOut={this.handleLogOut}
+            ></AppTop>
           </nav>
           <Switch>
             <main>
+              <Route path="/admin" component={Insert} exact></Route>
               <Route
                 path="/admin/new-vacation"
                 component={Insert}

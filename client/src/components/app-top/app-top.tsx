@@ -74,8 +74,9 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
               )}
               {admin && <AppAdmin />}
               <MenuItem>
+              
                 <Button className="btn btn-danger" onClick={this.handleLogOut}>
-                  Logout
+                  {`Logout`} 
                 </Button>
               </MenuItem>
             </ul>

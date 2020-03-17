@@ -1,26 +1,29 @@
 .my-input {
   margin: 2%;
+  z-index: 10;
+  box-sizing: border-box;
 
   .form-control {
     font-size: 25px;
+    height: 8vh;
   }
   .form-label {
     margin-left: 2%;
   }
 
-  .valid {
-    border-color: #28a745;
-  }
-  .valid:focus {
-    border-color: #28a745;
-    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-  }
-  
-  .invalid {
-    border-color: #dc3545;
-  }
-  .invalid:focus {
-    border-color: #dc3545;
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-  }
+  // .valid {
+  //   border-color: #28a745;
+  // }
+  // .valid:focus {
+  //   border-color: #28a745;
+  //   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  // }
+
+  // .invalid {
+  //   border-color: #dc3545;
+  // }
+  // .invalid:focus {
+  //   border-color: #dc3545;
+  //   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  // }
 }

@@ -9,13 +9,23 @@ import Image from "react-bootstrap/Image";
 import Button from "react-bootstrap/Button";
 import { NavLink } from "react-router-dom";
 import { UserModel } from "../../models/user-model";
-import { postRequest } from "../../services/server";
-import { handleLoginResponse } from "./login-service";
+import MyInput from "../my-input/my-input";
+import PersonIcon from "@material-ui/icons/Person";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 import "./login.scss";
+import {
+  handleServerResponse,
+  loginLegal,
+  logInRequest
+} from "../../services/login";
 
 interface LoginState {
   user: UserModel;
-  errors: string[];
+  errors: {
+    userName: string;
+    password: string;
+  };
+  serverError: string;
 }
 
 export class Login extends Component<any, LoginState> {
@@ -24,191 +34,161 @@ export class Login extends Component<any, LoginState> {
 
     this.state = {
       user: new UserModel(),
-      errors: []
+      errors: {
+        userName: "",
+        password: ""
+      },
+      serverError: ""
     };
   }
 
   public componentDidMount = async () => {
     try {
-      //  check if user is still login 
+      //  check if user is still login
       const storage = localStorage.getItem("user");
       const response = JSON.parse(storage);
       if (!response) {
         this.props.history.push("/login");
-        console.log("Please Login")
+        console.log("Please Login");
         return;
       }
-      const dbUser = response;
-      const route = handleLoginResponse(response);
-      console.log(route);
-      if (route === 0) {
-        this.props.history.push(`/user/${dbUser.userID}`);
-        return;
-      }
-      this.props.history.push(`/admin`);
+
+      //   if so route according to role
+      const user = response;
+      this.handleRouting(user);
     } catch (err) {
       console.log(err);
     }
-  };
-
-  public legalLogin = user => {
-    const errors = [...this.state.errors];
-    if (
-      user.password === undefined ||
-      user.userName === undefined ||
-      errors.length > 0
-    ) {
-      console.log(errors);
-      return true;
-    }
-    return false;
   };
 
   public handleLogIn = async () => {
     const user = { ...this.state.user };
+    const errors = { ...this.state.errors };
 
-    // valid user login
-    if (this.legalLogin(user)) {
+    // disabled request if form is not legal
+    if (loginLegal(user, errors)) {
       return;
     }
 
     try {
-      const response = await this.logInRequest(user);
-      const dbUser = response;
-      const route = handleLoginResponse(response);
-      if (route === 0) {
-        this.props.history.push(`/user/${dbUser.userID}`);
+      const serverResponse = await logInRequest(user);
+      const response = handleServerResponse(serverResponse);
+
+      // if false response is error
+      if (!response) {
+        this.setState({ serverError: serverResponse });
         return;
       }
+
+      this.handleRouting(serverResponse);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  public handleRouting = user => {
+    //admin route
+    if (user.isAdmin === 1) {
       this.props.history.push(`/admin`);
-    } catch (err) {
-      console.log(err);
+      return 1;
     }
+    this.props.history.push(`/user/${user.userID}`);
   };
-
-  public logInRequest = async user => {
-    try {
-      const url = `http://localhost:3000/api/user/login`;
-      const response = await postRequest(url, user);
-      return response;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
 
   render() {
-    
-    const { user } = this.state;
+    const { user, serverError } = this.state;
 
     return (
       <div className="login">
         <aside>
-          <Form>
-            <Container>
-              <Row className="row-header">
-                <Col sm={4} className="text-center">
-                  <Image
-                    src="assets/img/logo.png"
-                    width="150px"
-                    alt="Logo"
-                    roundedCircle
-                  />
-                </Col>
-                <Col sm={8} className="text-center form-inline">
-                  <h1 className="card-title">Travel-On</h1>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={11} className="form-group has-default">
-                  <InputGroup className="mb-3">
-                    <InputGroup.Prepend>
-                      <InputGroup.Text>
-                        <i className="material-icons">person</i>
-                      </InputGroup.Text>
-                    </InputGroup.Prepend>
-                    <FormControl
-                      value={user.userName || ""}
-                      placeholder="Username"
-                      aria-label="username"
-                      onChange={this.handleChange("userName")}
-                      onBlur={this.validInput("userName")}
+          <div className="my-form">
+            <Form>
+              <Container>
+                <Row className="row-header">
+                  <Col sm={4} className="text-center">
+                    <Image
+                      src="assets/img/logo.png"
+                      width="150px"
+                      alt="Logo"
+                      roundedCircle
                     />
-                  </InputGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={12}></Col>
-              </Row>
-              <Row>
-                <Col sm={11} className="form-group has-default">
-                  <InputGroup className="mb-3">
-                    <InputGroup.Prepend>
-                      <InputGroup.Text>
-                        <i className="material-icons">lock_outline</i>
-                      </InputGroup.Text>
-                    </InputGroup.Prepend>
-                    <FormControl
-                      type="password"
-                      value={user.password || ""}
-                      placeholder="Password"
-                      aria-label="password"
-                      onChange={this.handleChange("password")}
-                      onBlur={this.validInput("password")}
-                    />
-                  </InputGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={12} className="text-center">
-                  <NavLink
-                    to="/register"
-                    exact
-                    className="description text-center"
-                  >
-                    Don't have an account?
-                  </NavLink>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={12} className="text-center">
-                  <Button
-                    className="btn-lg "
-                    variant="info"
-                    type="button"
-                    onClick={this.handleLogIn}
-                  >
-                    Login
-                  </Button>
-                </Col>
-              </Row>
-            </Container>
-          </Form>
+                  </Col>
+                  <Col sm={8} className="text-center form-inline">
+                    <h1 className="card-title">Travel-On</h1>
+                  </Col>
+                </Row>
+                <MyInput
+                  width={12}
+                  icon={<PersonIcon />}
+                  type="text"
+                  prop={"userName"}
+                  placeholder={"Username"}
+                  value={user.userName || ""}
+                  handleChange={this.handleChange}
+                  handleErrors={this.handleErrors}
+                  validInput={UserModel.validLogin}
+                />
+                <MyInput
+                  width={12}
+                  icon={<LockOpenIcon />}
+                  value={user.password || ""}
+                  type="password"
+                  prop={"password"}
+                  placeholder={"Password"}
+                  handleChange={this.handleChange}
+                  handleErrors={this.handleErrors}
+                  validInput={UserModel.validLogin}
+                />
+                <Row>
+                  <Col sm={12} className="text-center">
+                    {serverError}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col sm={12} className="text-center">
+                    <NavLink
+                      to="/register"
+                      exact
+                      className="description text-center"
+                    >
+                      Don't have an account?
+                    </NavLink>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col sm={12} className="text-center">
+                    <Button
+                      className="btn-lg "
+                      variant="info"
+                      type="button"
+                      onClick={this.handleLogIn}
+                    >
+                      Login
+                    </Button>
+                  </Col>
+                </Row>
+              </Container>
+            </Form>
+          </div>
         </aside>
       </div>
     );
   }
 
-  public validInput = (prop: string) => (
-    event: React.FocusEvent<HTMLInputElement>
-  ): void => {
+  public handleChange = (prop: string, value: string): void => {
     const user = { ...this.state.user };
-    const errors = UserModel.validLogin(user);
-    if (errors) {
+    user[prop] = value;
+    this.setState({ user, serverError: "" });
+  };
+
+  public handleErrors = (prop: string, error: string) => {
+    const errors = { ...this.state.errors };
+    errors[prop] = error;
+    if (error.length > 0) {
       this.setState({ errors });
       return;
     }
-    this.setState({ errors: [] });
-    return;
-  };
-
-  public handleChange = (prop: string) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const value = event.target.value;
-    const user = { ...this.state.user };
-    user[prop] = value;
-    this.setState({ user });
+    this.setState({ errors });
   };
 }
 

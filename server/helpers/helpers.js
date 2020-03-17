@@ -44,7 +44,6 @@ const authorize = role => (request, response, next) => {
   if (!token) {
     return response.status(403).json("Please Login To Continue");
   }
-
   
   try {
     const verified = jwt.verify(token, process.env.TOKEN_SECRET);

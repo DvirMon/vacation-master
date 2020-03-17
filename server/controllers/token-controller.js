@@ -20,10 +20,13 @@ router.post("/", async (request, response, next) => {
     // create refreshToken for user
     const refreshToken = await helpers.refreshToken(user);
 
+    const token = {
+      refreshToken : refreshToken
+    }
     // save refreshToken in db
-    const dbToken = await tokenLogic.addToken(refreshToken);
+    const dbToken = await tokenLogic.addToken(token);
 
-    response.status(201).json({ accessToken, dbToken });
+    response.status(201).json({accessToken, dbToken});
   } catch (err) {
     next(err);
   }
@@ -58,7 +61,7 @@ router.post("/new", async (request, response, next) => {
       isAdmin: verify.role
     });
 
-    response.json({ accessToken });
+    response.json(accessToken);
   } catch (err) {
     next(err);
   }

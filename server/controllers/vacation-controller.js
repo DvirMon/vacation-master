@@ -29,6 +29,7 @@ router.get("/user", helpers.authorize(), async (request, response, next) => {
       next("user is not exist in db");
       return;
     }
+    console.log(user.id)
     
     const vacations = await vacationsLogic.getUserVacations(user.id);
 

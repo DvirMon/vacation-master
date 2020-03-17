@@ -39,32 +39,42 @@ export class PersonalDetails extends Component<
   render() {
     const { user } = this.props;
     return (
-      <Form>
+      <React.Fragment>
         <Row className="card-header">
-          <h2>Personal Details</h2>
+          <Col sm={12}>
+            <h2>Personal Details</h2>
+          </Col>
         </Row>
-        <MyInput
-          value={user.firstName || ""}
-          label="First Name"
-          handleChange={this.handleChange}
-          prop="firstName"
-          handleErrors={this.handleErrors}
-        ></MyInput>
-        <MyInput
-          value={user.lastName || ""}
-          label="Last Name"
-          handleChange={this.handleChange}
-          handleErrors={this.handleErrors}
-          prop="lastName"
-        ></MyInput>
+        <Form style={{ position: "relative", top: "5vh" }}>
+          <MyInput
+            width={12}
+            value={user.firstName || ""}
+            type={"text"}
+            prop="firstName"
+            label="First Name"
+            handleChange={this.handleChange}
+            handleErrors={this.handleErrors}
+            validInput={UserModel.validRegistration}
+          ></MyInput>
+          <MyInput
+            width={12}
+            value={user.lastName || ""}
+            type={"text"}
+            prop="lastName"
+            label="Last Name"
+            handleChange={this.handleChange}
+            handleErrors={this.handleErrors}
+            validInput={UserModel.validRegistration}
+          ></MyInput>
+        </Form>
         <Row>
-          <Col style={{ textAlign: "right" }}>
+          <Col style={{ textAlign: "right", marginTop: "10vh" }}>
             <Button color="primary" variant="contained" onClick={this.nextStep}>
               Continue
             </Button>
           </Col>
         </Row>
-      </Form>
+      </React.Fragment>
     );
   }
 
