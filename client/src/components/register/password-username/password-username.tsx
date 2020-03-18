@@ -11,6 +11,7 @@ import { IconButton } from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
 import { loginLegal } from "../../../services/login";
 import generator from "generate-password";
+import { LoginErrors } from "../../../models/error-model";
 
 interface PasswordUsernameProps {
   user: UserModel;
@@ -20,10 +21,7 @@ interface PasswordUsernameProps {
 }
 
 interface PasswordUsernamesState {
-  errors: {
-    userName: string;
-    password: string;
-  };
+  errors: LoginErrors;
   password: string;
   serverError: string;
 }
@@ -36,10 +34,7 @@ export class PasswordUsername extends Component<
     super(props);
 
     this.state = {
-      errors: {
-        userName: "",
-        password: ""
-      },
+      errors: null,
       password: "",
       serverError: ""
     };
@@ -74,6 +69,7 @@ export class PasswordUsername extends Component<
         <Form style={{ position: "relative", top: "5vh" }}>
           <MyInput
             width={12}
+            schema={user}
             value={user.password || password}
             prop={"password"}
             label="Password (8-24 characters)"
@@ -91,8 +87,9 @@ export class PasswordUsername extends Component<
 
           <MyInput
             width={12}
-            type={"text"}
+            schema={user}
             value={user.userName || ""}
+            type={"text"}
             prop={"userName"}
             label="Username"
             handleChange={this.handleChange}

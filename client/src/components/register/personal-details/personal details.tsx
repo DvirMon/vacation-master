@@ -6,6 +6,7 @@ import MyInput from "../../my-input/my-input";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import "./personal-details.scss";
+import { RegistrationErrors } from "../../../models/error-model";
 
 interface PersonalDetailsProps {
   user: UserModel;
@@ -15,10 +16,7 @@ interface PersonalDetailsProps {
 }
 
 interface PersonalDetailsState {
-  errors: {
-    firstName: string;
-    lastName: string;
-  };
+  errors: RegistrationErrors
 }
 
 export class PersonalDetails extends Component<
@@ -29,10 +27,7 @@ export class PersonalDetails extends Component<
     super(props);
 
     this.state = {
-      errors: {
-        firstName: "",
-        lastName: ""
-      }
+      errors: {}
     };
   }
 
@@ -49,6 +44,7 @@ export class PersonalDetails extends Component<
           <MyInput
             width={12}
             value={user.firstName || ""}
+            schema={user}
             type={"text"}
             prop="firstName"
             label="First Name"
@@ -59,6 +55,7 @@ export class PersonalDetails extends Component<
           <MyInput
             width={12}
             value={user.lastName || ""}
+            schema={user}
             type={"text"}
             prop="lastName"
             label="Last Name"

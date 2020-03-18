@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
+import TextField from "@material-ui/core/TextField";
 import FormControl from "react-bootstrap/FormControl";
 import FormLabel from "react-bootstrap/FormLabel";
 import { UserModel } from "../../models/user-model";
@@ -13,6 +14,7 @@ import "./my-input.scss";
 export interface MyInputProps {
   width: number;
   value: string | number;
+  schema?: {};
   type?: string;
   prop?: string;
   label?: string;
@@ -22,12 +24,11 @@ export interface MyInputProps {
   serverError?: string;
 
   handleChange(prop: string, input: string): void;
-  handleErrors?(prop: string, error?: string): void;
+  handleErrors(prop: string, error?: string): void;
   validInput?(object: {}): string;
 }
 
 export interface MyInputState {
-  // user: UserModel;
   error: string;
   on: boolean;
   success: boolean;
@@ -39,7 +40,6 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     super(props);
 
     this.state = {
-      // user: new UserModel(),
       error: "",
       on: false,
       success: false,
@@ -51,6 +51,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     const {
       width,
       value,
+      schema,
       prop,
       label,
       type,
@@ -108,8 +109,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     event: React.FocusEvent<HTMLInputElement>
   ): void => {
     const input = event.target.value;
-    const objectScheme = setObjectForSchema(prop, input);
-    this.validInput(prop, objectScheme);
+    this.validInput(input, prop);
     this.setState({ on: true });
   };
 
@@ -119,45 +119,47 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     const on = this.state.on;
     if (on === true) {
       const input = event.target.value;
-      const objectScheme = setObjectForSchema(prop, input);
-      this.validInput(prop, objectScheme);
+      this.validInput(input, prop);
     }
   };
 
   public handleChange = (prop: string) => event => {
-
     const on = this.state.on;
     const input = event.target.value;
 
     if (on === true) {
-      
       const error = isRequired(input);
       this.setState({ error });
-      
+
       if (error) {
         this.props.handleErrors(prop, error);
-
       } else {
-        const objectScheme = setObjectForSchema(prop, input);
-        this.validInput(prop, objectScheme);
+        this.validInput(input, prop);
       }
     }
+
     // update objectScheme values in parent
     this.props.handleChange(prop, input);
   };
 
-  public validInput = (prop: string, objectScheme: {}) => {
-    
-    const error = this.props.validInput(objectScheme);
-    const serverError = this.props.serverError;
+  public validInput = (input: string, prop: string) => {
+    const schema = setObjectForSchema(this.props.schema, prop, input);
 
+    const error = this.props.validInput(schema);
+
+    this.handleErrors(error, prop)
+
+  };
+
+  public handleErrors = (error : string, prop: string) => {
+    const serverError = this.props.serverError;
 
     if (error) {
       this.setState({ error, success: false, danger: true });
       this.props.handleErrors(prop, error);
       return;
     }
-
+ 
     if (serverError) {
       this.setState({ success: false, danger: true });
       return;

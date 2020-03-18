@@ -21,14 +21,29 @@ export const handleMassage = (err) => {
     case "any.empty":
       err.message = "field must be filled";
       break
+    case "date.ref":
+      err.message = "Please choose the start date before";
+      break
+    case "date.greater":
+      err.message = `This date must be greater then ${err.context.limit.toISOString().slice(0, 10).replace("T", " ")}`;
+      break
   }
-
 }
 
-export const setObjectForSchema = (prop: string, input: string) => {
-  const user = {};
-  user[prop] = input;
-  return user;
+//   message: ""endDate" must be greater than "Mon Mar 09 2020 23:46:00 GMT+0200 (שעון ישראל (חורף))""
+// path: ["endDate"]
+// type: "date.greater"
+// context:
+// limit: Mon Mar 09 2020 23:46:00 GMT+0200 (שעון ישראל (חורף)) {}
+// value: Sun Mar 01 2020 23:46:00 GMT+0200 (שעון ישראל (חורף)) {}
+// key: "endDate"
+// label: "endDate"
+
+
+
+export const setObjectForSchema = (schema: {}, prop: string, input: string) => {
+  schema[prop] = input;
+  return schema;
 };
 
 

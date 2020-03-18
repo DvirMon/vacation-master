@@ -9,7 +9,6 @@ const followUpLogic = require("../bll/followup-logic");
 // import helpers
 const UserModel = require("../models/user-model");
 const bcrypt = require("bcryptjs");
-const uuid = require("uuid/v4");
 const jwt = require("jsonwebtoken");
 const helpers = require("../helpers/helpers");
 

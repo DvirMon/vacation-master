@@ -5,7 +5,6 @@ const VacationModel = require("../models/vacation-model");
 const router = express.Router();
 const helpers = require("../helpers/helpers");
 
-
 // get all vacations
 router.get("/", async (request, response, next) => {
   try {
@@ -19,18 +18,15 @@ router.get("/", async (request, response, next) => {
 //get users vacation
 router.get("/user", helpers.authorize(), async (request, response, next) => {
   try {
-    
     const userID = request.user.sub;
-    
-    
+
     // get user id from db
     const user = await usersLogic.isUserIdExist(userID);
     if (user.length > 0) {
       next("user is not exist in db");
       return;
     }
-    console.log(user.id)
-    
+
     const vacations = await vacationsLogic.getUserVacations(user.id);
 
     response.json(vacations);
@@ -60,8 +56,11 @@ router.post("/", helpers.authorize(1), async (request, response, next) => {
 // update vacation (admin only)
 router.put("/:id", helpers.authorize(1), async (request, response) => {
   // vacation id
+
   const id = request.params.id;
+
   const vacation = request.body;
+
   vacation.id = id;
 
   const error = VacationModel.validation(vacation);
@@ -96,23 +95,25 @@ router.delete("/:id", helpers.authorize(1), async (request, response) => {
   }
 });
 
-router.put(
-  "/upload-image",
-  helpers.authorize(1),
-  async (request, response, next) => {
+router.post("/upload-image", async (request, response, next) => {
+  try {
+    
     if (!request.files) {
-      response.status(400).send("No Files Sent!");
+      console.log("No Files Sent");
+      response.status(400).json("No Files Sent!");
       return;
     }
-    const vacation = request.body;
-    const image = request.files.usersSelectedImage;
+    const image = request.files.image; 
 
-    vacation.image = helpers.uploadImage(image);
+    const fileName = helpers.saveImageLocally(image);
+    // console.log(vacation.image);
 
-    const updated = await vacationsLogic.uploadImage(vacation);
+    // const updated = await vacationsLogic.uploadImage(vacation);
 
-    response.send("Done");
+    response.json(fileName);
+  } catch (err) {
+    next(err);
   }
-);
+});
 
 module.exports = router;

@@ -15,7 +15,7 @@ const vacationsController = require("./controllers/vacation-controller");
 const tokensController = require("./controllers/token-controller");
 
 // middleware functions
-server.use(express.json()); 
+server.use(express.json());
 server.use(cors());
 server.use(
   expressSession({
@@ -38,3 +38,5 @@ server.use("/api/followup", followupController);
 server.use(errorHandler);
 
 server.listen(3000, () => console.log("Listening To http://localhost:3000"));
+
+

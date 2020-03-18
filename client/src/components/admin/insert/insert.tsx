@@ -1,11 +1,9 @@
 import React, { Component } from "react";
-import "./insert.scss";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import VacCard from "../../vac-card/vac-card";
-import { VacationModel } from "../../../models/vacations-model";
 import MyForm from "../my-form/my-form";
-import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
+import { VacationModel } from "../../../models/vacations-model";
+import "./insert.scss";
 
 interface InsertState {
   vacation: VacationModel;
@@ -20,20 +18,27 @@ export class Insert extends Component<any, InsertState> {
     };
   }
 
+  public addVacation = (): void => {
+  }; 
+
   render() {
     const { vacation } = this.state;
     return (
       <div className="insert">
-        <main>
-          <MyForm vacation={vacation} handleChange={this.handleChange} />
-        </main>
-        <aside>
+        <main> 
+          <MyForm 
+            vacation={vacation} 
+            handleChange={this.handleChange}
+          />
+        </main> 
+        <aside>  
           <VacCard
             vacation={vacation}
             followIcon={false}
             admin={false}
             accessToken={""}
           />
+          <Button onClick={this.addVacation}>Confirm Form</Button>
         </aside>
       </div>
     );
@@ -42,8 +47,11 @@ export class Insert extends Component<any, InsertState> {
   public handleChange = (prop: string, value: string): void => {
     const vacation = { ...this.state.vacation };
     vacation[prop] = value;
+    console.log(vacation)
     this.setState({ vacation });
   };
+
+  
 }
 
 export default Insert;

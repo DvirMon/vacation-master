@@ -14,7 +14,6 @@ export class UserModel {
     const schema = Joi.object().keys({
       userName: Joi.string().min(3).max(10).error(errors => {
         errors.forEach(err => {
-          console.log(err)
           handleMassage(err)
         })
         return errors;
@@ -25,7 +24,7 @@ export class UserModel {
         })
         return errors;
       }),
-    })
+    }).unknown()
 
     const error = Joi.validate(user, schema).error;
 
@@ -63,7 +62,7 @@ export class UserModel {
           })
           return errors;
         }),
-      })
+      }).unknown()
 
     const error = Joi.validate(user, schema).error
     if (error) {

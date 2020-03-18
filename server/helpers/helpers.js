@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const uuid = require("uuid/v4");
 
 const hushPassword = async password => {
   const hushPassword = await bcrypt.hash(password, 10);
@@ -39,17 +40,17 @@ const refreshToken = user => {
 
 const authorize = role => (request, response, next) => {
   // verify if token exist
-  
+
   const token = request.headers["authorization"];
   if (!token) {
     return response.status(403).json("Please Login To Continue");
   }
-  
+
   try {
     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-    
+
     request.user = verified;
-    
+
     if (role === 1 && request.user.role === 0) {
       return response.status(401).json("Unauthorized");
     }
@@ -62,8 +63,16 @@ const authorize = role => (request, response, next) => {
 
 const saveImageLocally = image => {
   const extension = image.name.substr(image.name.lastIndexOf("."));
-  const fileName = uuid() + extension;
-  image.mv("./upload/" + fileName);
+  const path = "../../client/public/assets/img/cards";
+  try {
+    const fileName = uuid();
+    const file = fileName + extension;
+
+    image.mv("../client/public/assets/img/cards/" + file);
+    return fileName;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 module.exports = {

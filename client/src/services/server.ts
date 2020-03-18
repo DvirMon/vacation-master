@@ -27,7 +27,7 @@ export const getRequest = async (url, accessToken?) => {
 
 }
 
-export const postRequest = async (url, body, accessToken?) => {
+export const postRequest = async (url, body?, accessToken?) => {
   const options = {
     method: "POST",
     headers: {
@@ -36,6 +36,23 @@ export const postRequest = async (url, body, accessToken?) => {
 
     },
     body: JSON.stringify(body)
+  };
+
+  try {
+    const response = await getData(url, options);
+    return response
+  } catch (err) {
+    return err
+  }
+
+}
+export const uploadImage = async (url, image?, accessToken?) => {
+  const options = {
+    method: "POST",
+    headers :{
+      "Authorization": accessToken
+    },
+    body: image
   };
 
   try {

@@ -18,13 +18,11 @@ import {
   loginLegal,
   logInRequest
 } from "../../services/login";
+import { LoginErrors } from "../../models/error-model";
 
 interface LoginState {
   user: UserModel;
-  errors: {
-    userName: string;
-    password: string;
-  };
+  errors: LoginErrors
   serverError: string;
 }
 
@@ -34,10 +32,7 @@ export class Login extends Component<any, LoginState> {
 
     this.state = {
       user: new UserModel(),
-      errors: {
-        userName: "",
-        password: ""
-      },
+      errors: {},
       serverError: ""
     };
   }
@@ -119,6 +114,7 @@ export class Login extends Component<any, LoginState> {
                 </Row>
                 <MyInput
                   width={12}
+                  schema={user}
                   icon={<PersonIcon />}
                   type="text"
                   prop={"userName"}
@@ -130,7 +126,7 @@ export class Login extends Component<any, LoginState> {
                 />
                 <MyInput
                   width={12}
-                  icon={<LockOpenIcon />}
+                  schema={user}
                   value={user.password || ""}
                   type="password"
                   prop={"password"}
@@ -138,6 +134,7 @@ export class Login extends Component<any, LoginState> {
                   handleChange={this.handleChange}
                   handleErrors={this.handleErrors}
                   validInput={UserModel.validLogin}
+                  icon={<LockOpenIcon />}
                 />
                 <Row>
                   <Col sm={12} className="text-center">
