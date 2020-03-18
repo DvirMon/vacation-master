@@ -7,7 +7,6 @@
   main {
     grid-column: 8 span;
     position: relative;
-    left: 1%;
   }
   
   aside {
@@ -16,10 +15,6 @@
     top: 50%;
     transform: translateY(-40%);
     left: 10%;
-    // padding: %;
   }
 
-  .text-area {
-    font-size: 30px;
-  }
 }

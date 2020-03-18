@@ -2,17 +2,16 @@ import Joi from 'joi'
 import { handleMassage } from '../services/validation';
 
 
+
 export class VacationModel {
 
   constructor(
-    public followUpID?: number,
-    public vacationID?: number,
-    public description?: string,
     public destination?: string,
+    public price?: number, 
     public image?: string,
     public startDate?: string,
     public endDate?: string,
-    public price?: number
+    public description?: string
   ) {
 
   }
@@ -34,26 +33,31 @@ export class VacationModel {
       }),
       price: Joi.number()
     }).unknown()
- 
-    const error = Joi.validate(vacation, schema, { abortEarly: false }).error;
+
+    const error = Joi.validate(vacation, schema).error;
     if (error) {
-      console.log(error.details)
       return error.details[0].message
     }
     return null;
   };
-
-
 }
 
-export class UserVacationsModel {
+export class UserVacationModel extends VacationModel{
 
   constructor(
-    public unFollowed?: VacationModel[],
-    public followUp?: VacationModel[],
-  ) { }
+    public followUpID?: number,
+    public vacationID?: number,
+    destination?: string,
+    price?: number,
+    image?: string,
+    startDate?: string,
+    endDate?: string, 
+    description?: string
+  ) {
+    super(destination, price, image, startDate, endDate, description)
+  }
 
-}
+} 
 
 export class FollowUpModel {
 

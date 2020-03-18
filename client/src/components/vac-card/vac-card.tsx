@@ -12,17 +12,17 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import "./vac-card.scss";
-import { VacationModel } from "../../models/vacations-model";
+import { UserVacationModel } from "../../models/vacations-model";
 import Moment from "react-moment";
 import {
   deleteFollowUp,
   addFollowUp,
-  getFollowersByVacation
+  getFollowersByVacation 
 } from "./vac-card-service";
 import CardTopIcons from "./card-top-icons/card-top-icons";
 
 interface VacCardProps {
-  vacation: VacationModel;
+  vacation: UserVacationModel;
   accessToken: string;
   follow?: boolean;
   followIcon: boolean;

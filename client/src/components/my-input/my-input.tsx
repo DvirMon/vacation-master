@@ -143,15 +143,21 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   };
 
   public validInput = (input: string, prop: string) => {
-    const schema = setObjectForSchema(this.props.schema, prop, input);
+    
+    let schema = {};
+    
+    if (this.props.schema) {
+      schema = { ...this.props.schema };
+    }
 
-    const error = this.props.validInput(schema);
+    const validSchema = setObjectForSchema(schema, prop, input);
 
-    this.handleErrors(error, prop)
+    const error = this.props.validInput(validSchema);
 
+    this.handleErrors(error, prop);
   };
 
-  public handleErrors = (error : string, prop: string) => {
+  public handleErrors = (error: string, prop: string) => {
     const serverError = this.props.serverError;
 
     if (error) {
@@ -159,7 +165,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       this.props.handleErrors(prop, error);
       return;
     }
- 
+
     if (serverError) {
       this.setState({ success: false, danger: true });
       return;

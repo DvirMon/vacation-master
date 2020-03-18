@@ -114,7 +114,6 @@ export class Login extends Component<any, LoginState> {
                 </Row>
                 <MyInput
                   width={12}
-                  schema={user}
                   icon={<PersonIcon />}
                   type="text"
                   prop={"userName"}
@@ -126,7 +125,6 @@ export class Login extends Component<any, LoginState> {
                 />
                 <MyInput
                   width={12}
-                  schema={user}
                   value={user.password || ""}
                   type="password"
                   prop={"password"}

@@ -13,12 +13,14 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import AppUser from "./app-user/app-user";
 import AppAdmin from "./app-admin";
 import clsx from "clsx";
+import { TokensModel } from "../../models/tokens.model";
 
 interface AppTopProps {
   userInfo?: UserModel;
   followUpCounter?: number;
   handleLogOut?(): void;
   admin: boolean;
+  tokens: TokensModel
 }
 
 interface AppTopState {
@@ -40,8 +42,10 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
       this.setState({ user: false });
     }
   };
+
   render() {
-    const { userInfo, followUpCounter, admin } = this.props;
+
+    const { userInfo, followUpCounter, admin, tokens } = this.props;
     const { user } = this.state;
     return ( 
       <nav 
@@ -72,7 +76,9 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
                   followUpCounter={followUpCounter}
                 />
               )}
-              {admin && <AppAdmin />}
+              {admin && <AppAdmin 
+              tokens={tokens}
+              />}
               <MenuItem>
               
                 <Button className="btn btn-danger" onClick={this.handleLogOut}>

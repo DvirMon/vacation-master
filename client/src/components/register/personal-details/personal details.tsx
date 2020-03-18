@@ -44,7 +44,6 @@ export class PersonalDetails extends Component<
           <MyInput
             width={12}
             value={user.firstName || ""}
-            schema={user}
             type={"text"}
             prop="firstName"
             label="First Name"
@@ -55,7 +54,6 @@ export class PersonalDetails extends Component<
           <MyInput
             width={12}
             value={user.lastName || ""}
-            schema={user}
             type={"text"}
             prop="lastName"
             label="Last Name"

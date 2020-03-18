@@ -5,12 +5,11 @@ import Typography from "@material-ui/core/Typography";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import { VacationModel } from "../../../models/vacations-model";
+import { UserVacationModel } from "../../../models/vacations-model";
 import "./card-top-icons.scss";
-import { NavLink } from "react-router-dom";
-
+ 
 interface CardTopIconsProps {
-  vacation: VacationModel;
+  vacation: UserVacationModel;
   color: boolean;
   followIcon: boolean;
   admin?: boolean;
@@ -66,6 +65,7 @@ export class CardTopIcons extends Component<CardTopIconsProps, any> {
 
   public handleDelete = () => {
     const vacation = this.props.vacation;
+    console.log(vacation)
     if (this.props.handleDelete) {
       this.props.handleDelete();
     }

@@ -69,7 +69,6 @@ export class PasswordUsername extends Component<
         <Form style={{ position: "relative", top: "5vh" }}>
           <MyInput
             width={12}
-            schema={user}
             value={user.password || password}
             prop={"password"}
             label="Password (8-24 characters)"
@@ -87,7 +86,6 @@ export class PasswordUsername extends Component<
 
           <MyInput
             width={12}
-            schema={user}
             value={user.userName || ""}
             type={"text"}
             prop={"userName"}
@@ -134,7 +132,6 @@ export class PasswordUsername extends Component<
 
     // sent request
     const response = await this.addUser();
-    console.log(response);
     if (this.handleServerResponse(response)) {
       return;
     }

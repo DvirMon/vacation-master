@@ -37,17 +37,19 @@ router.get("/user", helpers.authorize(), async (request, response, next) => {
 
 // only admin
 router.post("/", helpers.authorize(1), async (request, response, next) => {
+ 
   const vacation = request.body;
   const error = VacationModel.validation(vacation);
 
   if (error) {
-    response.status(400).send(error);
+    response.status(400).json(error);
     return;
   }
 
   try {
     const addedVacation = await vacationsLogic.addVacation(vacation);
     response.status(201).json(addedVacation);
+
   } catch (err) {
     next();
   }
@@ -106,9 +108,6 @@ router.post("/upload-image", async (request, response, next) => {
     const image = request.files.image; 
 
     const fileName = helpers.saveImageLocally(image);
-    // console.log(vacation.image);
-
-    // const updated = await vacationsLogic.uploadImage(vacation);
 
     response.json(fileName);
   } catch (err) {

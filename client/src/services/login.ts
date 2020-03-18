@@ -1,5 +1,5 @@
 import { getTokens } from "./tokens";
-import { getRequest, postRequest } from "./server";
+import { getRequest, postRequest, deleteRequest } from "./server";
 
 
 export const getStorage = () => {
@@ -26,13 +26,11 @@ export const login = async (user) => {
   try {
     // send request fo tokens
     const tokens = await getTokens(user);
-    const accessToken = tokens.accessToken
-    const dbToken = tokens.dbToken
 
     // get vacations fo tokens
-    const vacations = await getVacations(accessToken)
+    const vacations = await getVacations(tokens.accessToken)
 
-    return ({ user, accessToken, dbToken, vacations })
+    return ({ user, tokens, vacations })
   } catch (err) {
     console.log(err);
   }
@@ -60,8 +58,6 @@ export const handleServerResponse = response => {
   }
 };
 
-
-
 export const getVacations = async (accessToken) => {
   const url = `http://localhost:3000/api/vacations/user`;
   try {
@@ -69,6 +65,25 @@ export const getVacations = async (accessToken) => {
     return response
   } catch (err) {
     console.log(err);
+  }
+};
+
+export const logOutService = async (tokens, history) => {
+
+  try {
+    
+    // clear refreshToken from db
+    const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;
+    await deleteRequest(url);
+
+    // clear localStorage
+    localStorage.clear();
+
+    // redirect to login page
+    history.push("/login");
+  }
+  catch (err) {
+    console.log(err)
   }
 };
 

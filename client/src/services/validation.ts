@@ -30,20 +30,32 @@ export const handleMassage = (err) => {
   }
 }
 
-//   message: ""endDate" must be greater than "Mon Mar 09 2020 23:46:00 GMT+0200 (שעון ישראל (חורף))""
-// path: ["endDate"]
-// type: "date.greater"
-// context:
-// limit: Mon Mar 09 2020 23:46:00 GMT+0200 (שעון ישראל (חורף)) {}
-// value: Sun Mar 01 2020 23:46:00 GMT+0200 (שעון ישראל (חורף)) {}
-// key: "endDate"
-// label: "endDate"
-
-
 
 export const setObjectForSchema = (schema: {}, prop: string, input: string) => {
   schema[prop] = input;
   return schema;
 };
+
+
+export const formLegalErrors = (errors) => {
+
+  for (const error in errors) {
+    if (errors[error].length > 0) {
+      return errors[error]
+    } else {
+      continue
+    }
+  }
+  return null
+}
+
+export const formLegalValues = (obj) => {
+  for (const value in obj) {
+    if (obj[value] === undefined)
+      return value
+  }
+  return null
+};
+
 
 

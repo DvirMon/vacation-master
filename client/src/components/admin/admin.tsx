@@ -1,20 +1,16 @@
 import React, { Component } from "react";
 import "./admin.scss";
 import AppTop from "../app-top/app-top";
-import { UserModel } from "../../models/user-model";
-import { deleteRequest } from "../../services/server";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Insert from "./insert/insert";
-import { login, getStorage } from "../../services/login";
-import { VacationModel } from "../../models/vacations-model";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Vacations from "../vacations/vacations";
+import Insert from "./insert/insert";
+import { UserModel } from "../../models/user-model";
+import { TokensModel } from "../../models/tokens.model";
+import { logOutService, login, getStorage } from "../../services/login";
 
 interface AdminState {
   admin: UserModel;
-  dbToken: {
-    id: number;
-    refreshToken: string;
-  };
+  tokens: TokensModel;
 }
 
 export class Admin extends Component<any, AdminState> {
@@ -23,11 +19,12 @@ export class Admin extends Component<any, AdminState> {
 
     this.state = {
       admin: null,
-      dbToken: null
+      tokens: null
     };
   }
 
   public componentDidMount = async () => {
+    
     const user = getStorage();
 
     if (!user || user.isAdmin === 0) {
@@ -35,15 +32,16 @@ export class Admin extends Component<any, AdminState> {
       console.log("Not Admin");
     }
     const response = await login(user);
+    const tokens = response.tokens;
 
     this.setState({
       admin: user,
-      dbToken: response.dbToken
+      tokens: tokens
     });
   };
 
   render() {
-    const { admin } = this.state;
+    const { admin, tokens } = this.state;
     return (
       <div className="admin">
         <BrowserRouter>
@@ -51,17 +49,19 @@ export class Admin extends Component<any, AdminState> {
             <AppTop
               userInfo={admin}
               admin={true}
+              tokens={tokens}
               handleLogOut={this.handleLogOut}
             ></AppTop>
-          </nav>
+          </nav> 
           <Switch>
             <main>
-              <Route path="/admin" component={Insert} exact></Route>
+              <Route path="/admin" component={Vacations} exact></Route>
               <Route
                 path="/admin/new-vacation"
                 component={Insert}
                 exact
               ></Route>
+              <Redirect from="/" to="/admin" ></Redirect>
             </main>
           </Switch>
           <footer></footer>
@@ -71,14 +71,9 @@ export class Admin extends Component<any, AdminState> {
   }
 
   public handleLogOut = async () => {
-    const dbToken = { ...this.state.dbToken };
-
-    const url = `http://localhost:3000/api/tokens/${dbToken.id}`;
-    await deleteRequest(url);
-
-    localStorage.clear();
-
-    this.props.history.push("/login");
+    const tokens = { ...this.state.tokens };
+    const history = this.props.history;
+    await logOutService(tokens, history);
   };
 }
 

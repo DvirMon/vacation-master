@@ -31,8 +31,8 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
     super(props);
 
     this.state = {
-      selectedDate: null,
-      setSelectedDate: null,
+      selectedDate: new Date(),
+      setSelectedDate: new Date(),
       error: "",
       on: false,
       success: false,
@@ -41,9 +41,8 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
   }
 
   public componentDidMount = () => {
-    this.setState({
-      selectedDate: new Date()
-    });
+    const date = new Date();
+    this.handleDateChange(date, false);
   };
 
   render() {
@@ -70,7 +69,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
     );
   }
 
-  public handleDateChange = (date: Date | null) => {
+  public handleDateChange = (date: Date | null, value) => {
     this.setState({ selectedDate: date });
 
     const input = date
@@ -78,7 +77,9 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
       .slice(0, 19)
       .replace("T", " ");
 
-    this.validInput(input, this.props.prop);
+    if (value) {
+      this.validInput(input, this.props.prop);
+    }
 
     if (this.props.handleChange) {
       this.props.handleChange(this.props.prop, input);
@@ -86,21 +87,19 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
   };
 
   public validInput = (input: string, prop: string) => {
-    
     const schema = setObjectForSchema(this.props.schema, prop, input);
 
     const error = this.props.validInput(schema);
 
-    this.handleErrors(error, prop); 
+    this.handleErrors(error, prop);
   };
 
   public handleErrors = (error: string, prop: string): boolean => {
-    
     if (error) {
       this.setState({ error, success: false, danger: true });
       this.props.handleErrors(prop, error);
       return;
-    } 
+    }
 
     this.setState({ error: "", success: true, danger: false });
     this.props.handleErrors(prop, "");
