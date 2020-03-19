@@ -44,20 +44,20 @@ export class VacationModel {
 
 export class UserVacationModel extends VacationModel{
 
-  constructor(
+  constructor( 
     public followUpID?: number,
-    public vacationID?: number,
+    public vacationID?: number, 
     destination?: string,
     price?: number,
-    image?: string,
+    image?: string, 
     startDate?: string,
-    endDate?: string, 
+    endDate?: string,  
     description?: string
   ) {
     super(destination, price, image, startDate, endDate, description)
   }
-
-} 
+ 
+}  
 
 export class FollowUpModel {
 

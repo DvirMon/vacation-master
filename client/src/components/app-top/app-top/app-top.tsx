@@ -1,25 +1,19 @@
 import React, { Component } from "react";
 import "./app-top.scss";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import { UserModel } from "../../models/user-model";
+import { UserModel } from "../../../models/user-model";
 import Button from "react-bootstrap/Button";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import AppUser from "./app-user/app-user";
-import AppAdmin from "./app-admin";
+import AppUser from "../app-user/app-user";
+import AppAdmin from "../app-admin/app-admin";
+import { TokensModel } from "../../../models/tokens.model";
 import clsx from "clsx";
-import { TokensModel } from "../../models/tokens.model";
 
 interface AppTopProps {
   userInfo?: UserModel;
   followUpCounter?: number;
   handleLogOut?(): void;
-  admin: boolean;
+  admin: boolean; 
   tokens: TokensModel
 }
 

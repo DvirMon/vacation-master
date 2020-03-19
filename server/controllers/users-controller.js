@@ -13,21 +13,22 @@ const jwt = require("jsonwebtoken");
 const helpers = require("../helpers/helpers");
 
 // get user followup vacations
-router.get(
-  "/followup",
-  helpers.authorize(),
+router.get("/followup", helpers.authorize(),
   async (request, response, next) => {
-    try {
-      const userID = request.user.id;
+    try { 
+      const userName = request.user.sub
+      // const userID = request.user.id;
 
       // validate id against db in case id is not exist
-      const id = await usersLogic.isUserIdExist(userID);
+      const id = await usersLogic.isUserIdExist(userName);
       if (id.length > 0) {
         next("user is not exist in db");
         return;
       }
+      console.log(id.id)
 
-      const followups = await followUpLogic.getAllFollowUpByUser(userID);
+      const followups = await followUpLogic.getAllFollowUpByUser(id.id);
+
       response.json(followups);
     } catch (err) {
       next(err);
@@ -113,7 +114,7 @@ router.post("/login", async (request, response, next) => {
     }
  
     // validate password from db
-    const password = await usersLogic.getUserPassword(dbUser.userID)
+    const password = await usersLogic.getUserPassword(dbUser.userName)
     const validPassword = await bcrypt.compare(user.password, password.password);
     if (!validPassword) {
       response.status(409).json("Username or password are incorrect");

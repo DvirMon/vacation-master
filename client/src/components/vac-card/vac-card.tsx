@@ -17,7 +17,7 @@ import Moment from "react-moment";
 import {
   deleteFollowUp,
   addFollowUp,
-  getFollowersByVacation 
+  getFollowersByVacation
 } from "./vac-card-service";
 import CardTopIcons from "./card-top-icons/card-top-icons";
 
@@ -26,8 +26,8 @@ interface VacCardProps {
   accessToken: string;
   follow?: boolean;
   followIcon: boolean;
-  admin?: boolean; 
-  update?(): void; 
+  admin?: boolean;
+  update?(): void;
   handleDelete?(vacationID?: number): void;
   handleEdit?(vacationID?: number): void;
 }
@@ -95,7 +95,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
   render() {
     const { expanded, color, followers } = this.state;
-    const { vacation, followIcon , admin } = this.props;
+    const { vacation, followIcon, admin } = this.props;
 
     return (
       <div className="vac-card">
@@ -111,7 +111,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
                 admin={admin}
                 handleDelete={this.handleDelete}
                 handleEdit={this.handleEdit}
-              /> 
+              />
             }
             title={vacation.destination}
             subheader={this.formatDate(vacation.startDate, vacation.endDate)}
@@ -155,7 +155,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     const clickEvent = this.state.clickEvent;
     this.setState({ clickEvent: !clickEvent });
     await this.handleFollowUp(vacationID);
-  };
+  }; 
 
   public handleExpandClick = event => {
     const expanded = this.state.expanded;
@@ -166,23 +166,25 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     return (
       <React.Fragment>
         <div>
-          From:<Moment format="DD MMMM YYYY">{start}</Moment>
+          Departing:<Moment format="DD MMMM YYYY">{start}</Moment>
         </div>
         <div>
-          To: <Moment format="DD MMMM YYYY">{end}</Moment>
+          Returning: <Moment format="DD MMMM YYYY">{end}</Moment>
         </div>
       </React.Fragment>
     );
   };
 
-  public handleDelete = () => {
-    this.props.handleDelete();
+  public handleDelete = (vacationID: number) => {
+  
     if (this.props.handleDelete) {
+      this.props.handleDelete(vacationID);
     }
   };
-  public handleEdit = () => {
+  
+  public handleEdit = (vacationID: number) => {
     if (this.props.handleEdit) {
-      this.props.handleEdit();
+      this.props.handleEdit(vacationID);
     }
   };
 }

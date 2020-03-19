@@ -2,27 +2,34 @@ const dal = require("../dal/dal");
 const helpers = require("../helpers/helpers");
 const followUpLogic = require("../bll/followup-logic");
 
-const vacationFormat = `id as vacationID, description, destination, image,
+const vacationFormat = `v.vacationID, description, destination, image,
 DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
 DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price`;
 
 // get all vacations
 const getAllVacations = async () => {
-  const sql = `SELECT ${vacationFormat} FROM vacations
-   ORDER BY continentID ASC`;
-
+ 
+  const sql = `SELECT ${vacationFormat} FROM vacations ORDER BY continentID ASC`;
   const vacations = await dal.executeAsync(sql);
 
   return vacations;
+}
+;
+const getVacation = async (vacationID) => {
+
+  const sql = `SELECT ${vacationFormat} FROM vacations as v WHERE vacationID = ${vacationID}`;
+  const vacation = await dal.executeAsync(sql);
+
+  return vacation[0];
 };
 
-const getUnFollowedVacations = async userId => {
+const getUnFollowedVacations = async userID => {
   const sql = `SELECT ${vacationFormat}
   FROM vacations as v 
-  WHERE v.id NOT IN (
+  WHERE v.vacationID NOT IN (
        SELECT f.vacationID
        FROM  followers as f 
-       WHERE f.userID = ${userId})`;
+       WHERE f.userID = ${userID})`;
 
   const unFollowed = await dal.executeAsync(sql);
   return unFollowed;
@@ -30,7 +37,7 @@ const getUnFollowedVacations = async userId => {
 
 // delete vacation (admin only)
 const deleteVacation = async id => {
-  const sql = `DELETE FROM vacations WHERE id = ${id}`;
+  const sql = `DELETE FROM vacations WHERE vacationID = ${id}`;
   await dal.executeAsync(sql);
   return;
 };
@@ -45,14 +52,6 @@ const addVacation = async vacation => {
   return vacation;
 };
 
-const uploadImage = async vacation => {
-  const sql = `UPDATE vacations SET 
-  image = '${vacation.image}', 
-  WHERE id = ${vacation.id}`;
-  const info = await dal.executeAsync(sql);
-
-  return info.affectedRows === 0 ? null : vacation;
-};
 
 // update new vacation (admin only)
 const updateVacation = async vacation => {
@@ -63,9 +62,9 @@ const updateVacation = async vacation => {
   startDate = '${vacation.startDate}', 
   endDate = '${vacation.endDate}',
   price = ${vacation.price}
-  WHERE id = ${vacation.id}`;
+  WHERE vacationID = ${vacation.vacationID}`;
   const info = await dal.executeAsync(sql);
-
+  console.log(info)
   return info.affectedRows === 0 ? null : vacation;
 };
 
@@ -85,9 +84,9 @@ const getUserVacations = async userID => {
 
 module.exports = {
   getUserVacations,
+  getVacation,
   getAllVacations,
   addVacation,
   deleteVacation,
   updateVacation,
-  uploadImage
 };

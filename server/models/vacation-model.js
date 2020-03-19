@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 class VacationModel {
   constructor(
-    id,
+    vacationID,
     description,
     destination,
     continentID,
@@ -11,7 +11,7 @@ class VacationModel {
     endDate,
     price
   ) {
-    this.id = id;
+    this.vacationID = vacationID;
     this.description = description;
     this.destination = destination;
     this.continentID = continentID;
@@ -23,13 +23,14 @@ class VacationModel {
 
   static validation = vacation => {
     const schema = Joi.object().keys({
+      vacationID : Joi.number(),
       description: Joi.string().max(1000).required(),
       destination: Joi.string().max(50).required(),
       image: Joi.string().required(),
       startDate: Joi.date().iso().required(),
       endDate: Joi.date().iso().greater(Joi.ref("startDate")).required(),
       price: Joi.number().required()
-    })
+    }).unknown()
 
     const error = Joi.validate(vacation, schema, { abortEarly: false }).error;
 

@@ -130,7 +130,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     if (on === true) {
       const error = isRequired(input);
       this.setState({ error });
-
+ 
       if (error) {
         this.props.handleErrors(prop, error);
       } else {

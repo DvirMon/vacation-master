@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { VacationModel, UserVacationModel } from "../../models/vacations-model";
 import { UserModel } from "../../models/user-model";
-import { AppTop } from "../app-top/app-top";
+import { AppTop } from "../app-top/app-top/app-top";
 import VacCard from "../vac-card/vac-card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -10,17 +10,22 @@ import { refreshToken } from "../../services/tokens";
 import { login, getStorage, logOutService } from "../../services/login";
 import "./vacations.scss";
 import { TokensModel } from "../../models/tokens.model";
+import { store } from "../../redux/store/store";
+import { Action } from "../../redux/action/action";
+import { ActionType } from "../../redux/action-type/action-type";
+import { Unsubscribe } from "redux";
 
 interface VacationsState {
   followUp?: UserVacationModel[];
   unFollowUp?: UserVacationModel[];
   user: UserModel;
-  interval: number;
   followIcon: boolean;
   tokens: TokensModel;
 }
 
 export class Vacations extends Component<any, VacationsState> {
+  private unsubscribeStore: Unsubscribe;
+
   constructor(props: any) {
     super(props);
 
@@ -28,13 +33,12 @@ export class Vacations extends Component<any, VacationsState> {
       followUp: [],
       unFollowUp: [],
       user: null,
-      tokens: {
-        accessToken: "",
-        dbToken: null
-      },
-      interval: 600000,
-      followIcon: false,
+      tokens: store.getState().tokens,
+      followIcon: false
     };
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({ tokens: store.getState().tokens });
+    });
   }
 
   public componentDidMount = async () => {
@@ -45,25 +49,27 @@ export class Vacations extends Component<any, VacationsState> {
         this.props.history.push("/");
       }
       const response = await login(user);
+
       this.handleResponse(response);
 
-      this.setState({ tokens: response.tokens, user });
+      // add to store
+      const action: Action = {
+        type: ActionType.addToken,
+        payloud: response.tokens
+      };
+      store.dispatch(action);
 
-      // get new accessToken every 10  min
-      setInterval(
-        async () => {
-          const tokens = { ...this.state.tokens };
-          const response = await refreshToken(tokens.dbToken);
-          tokens.accessToken = response.accessToken;
-          this.setState({ tokens });
-        },
-
-        this.state.interval
-      );
+      this.setState({ user });
     } catch (err) {
       console.log(err);
     }
   };
+
+  public componentWillUnmount(): void {
+    const controller = new AbortController();
+    controller.abort();
+    this.unsubscribeStore();
+  }
 
   public handleResponse = response => {
     switch (typeof response) {
@@ -88,14 +94,20 @@ export class Vacations extends Component<any, VacationsState> {
     return true;
   };
 
+  public handleTokens = setInterval(async () => {
+    const tokens = { ...this.state.tokens };
+    const accessToken = await refreshToken(tokens.dbToken);
+    tokens.accessToken = accessToken;
+    // add to store
+    const action: Action = {
+      type: ActionType.addToken,
+      payloud: tokens
+    };
+    store.dispatch(action);
+  }, 600000);
+
   render() {
-    const {
-      followUp,
-      unFollowUp,
-      user,
-      followIcon,
-      tokens
-    } = this.state;
+    const { followUp, unFollowUp, user, followIcon, tokens } = this.state;
 
     return (
       <div className="vacations">
@@ -139,11 +151,11 @@ export class Vacations extends Component<any, VacationsState> {
                   vacation={vacation}
                   accessToken={tokens.accessToken}
                   follow={false}
-                  update={this.componentDidMount}
                   followIcon={followIcon}
                   admin={true}
                   handleDelete={this.handleDelete}
                   handleEdit={this.handleEdit}
+                  update={this.componentDidMount}
                 ></VacCard>
               </Col>
             ))}
@@ -156,17 +168,25 @@ export class Vacations extends Component<any, VacationsState> {
   public handleLogOut = async () => {
     const tokens = { ...this.state.tokens };
     const history = this.props.history;
-    await logOutService (tokens, history);
-    
+    await logOutService(tokens, history);
   };
 
-  public handleDelete = () => {
-    console.log("delete");
+  public handleDelete = async (vacationID: number) => {
+
+    const tokens = {...this.state.tokens}
+    const answer = window.confirm("Are You Sure yoe?")
+
+    if(!answer) {
+      return
+    }
+ 
+    const url = `http://localhost:3000/api/vacations/${vacationID}`
+    await deleteRequest(url, tokens.accessToken)
+    this.componentDidMount()
   };
 
-  public handleEdit = () => {
-    this.props.history.push("/admin/new-vacation");
-    console.log("edit");
+  public handleEdit = (vacationID: number) => {
+    this.props.history.push(`/admin/vacation/${vacationID}`);
   };
 }
 

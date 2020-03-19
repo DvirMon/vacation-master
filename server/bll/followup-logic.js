@@ -17,11 +17,11 @@ const deleteFollowUp = async id => {
 
 //
 const getAllFollowUpByUser = async userID => {
-  const sql = `SELECT f.id as followUpID, v.id as vacationID, description, destination, image,
+  const sql = `SELECT f.id as followUpID, v.vacationID, description, destination, image,
    DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
    DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price
 FROM vacations as v JOIN followers as f 
-ON f.vacationID = v.id
+ON f.vacationID = v.vacationID
 AND f.userID = ${userID}`;
   const followups = await dal.executeAsync(sql);
   return followups;
@@ -29,9 +29,9 @@ AND f.userID = ${userID}`;
 
 // get all followup vacations for chart
 const getAllFollowUp = async () => {
-  sql = `SELECT COUNT(userID) as users, destination as vacation
+  sql = `SELECT  destination as label, COUNT(userID) as y
   FROM followers as f JOIN vacations as v
-  ON f.vacationID = v.id 
+  ON f.vacationID = v.vacationID
   GROUP BY destination`;
   const followups = await dal.executeAsync(sql);
   return followups;

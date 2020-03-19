@@ -1,21 +1,21 @@
 import React, { Component } from "react";
+import MyInput from "../my-input/my-input";
+import { VacationModel } from "../../models/vacations-model";
+import { VacationErrors } from "../../models/error-model";
+import { uploadImage } from "../../services/server";
+import DatePicker from "../date-picker/date-picker";
 import Form from "react-bootstrap/Form";
-import "./my-form.scss";
-import MyInput from "../../my-input/my-input";
 import Row from "react-bootstrap/Row";
-import { VacationModel } from "../../../models/vacations-model";
 import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
+import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { VacationErrors } from "../../../models/error-model";
-import { postRequest, uploadImage } from "../../../services/server";
-import DatePicker from "../../date-picker/date-picker";
+import "./my-form.scss";
 
 interface MyFormProps {
   vacation: VacationModel;
   handleChange(prop: string, input: string): void;
   handleErrors(prop: string, error?: string): void;
-  addVacation(): any;
+  handleVacation(): any;
 }
 
 interface MyFormState {
@@ -40,13 +40,28 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
   }
 
   public getImage = async event => {
+
     const selectedFile = event.target.files[0];
     const fd = new FormData();
+    
     fd.append("image", selectedFile);
 
     const url = `http://localhost:3000/api/vacations/upload-image`;
     const response = await uploadImage(url, fd);
     this.props.handleChange("image", response);
+  };
+
+  public componentDidMount = () => {
+    
+    setTimeout(() => {
+      if (this.props.vacation.startDate || this.props.vacation.endDate) {
+        const date = { ...this.state.date };
+        date.startDate = this.props.vacation.startDate;
+        date.endDate = this.props.vacation.endDate;
+        this.setState({ date });
+        return;
+      }
+    }, 300); 
   };
 
   render() {
@@ -85,50 +100,72 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
             />
           </Row>
           <Row>
-            <Col sm={3}>
-              <DatePicker
-                prop="startDate"
-                label="From"
-                schema={date}
-                handleChange={this.handleChange}
-                handleErrors={this.handleErrors}
-                validInput={VacationModel.validVacation}
-              />
-            </Col>
             <Col sm={4}>
               <DatePicker
-                prop="endDate"
-                label="To"
+                dateNow={vacation.startDate || ""}
+                prop="startDate"
+                label="Departing"
                 schema={date}
                 handleChange={this.handleChange}
                 handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
               />
             </Col>
-            <Col sm={3} className="d-flex align-self-end">
-              <input
+            <Col sm={4}  className="justify-content-center">
+              <DatePicker
+                dateNow={vacation.endDate || ""}
+                prop="endDate"
+                label="Returning"
+                schema={date}
+                handleChange={this.handleChange}
+                handleErrors={this.handleErrors}
+                validInput={VacationModel.validVacation}
+              />
+            </Col>
+            <Col sm={3} className="d-flex align-self-end justify-content-end">
+              <input 
+                className="input-file btn btn-primary"
                 type="file"
+                id="upload-file"
                 accept="image/*"
                 onChange={this.getImage}
-              ></input>
+              />
+              <label className="upload-button" htmlFor="upload-file">
+                <Button
+                  className="upload-button"
+                  component="span"
+                  variant="contained"
+                  color="primary"
+                  disableRipple={true}
+                  disableFocusRipple={true}
+                >
+                  Choose a file
+                </Button>
+              </label>
             </Col>
           </Row>
           <Row className="pos">
             <Col sm={8}>
               <textarea
                 className="form-control text-area"
+                value={vacation.description || ""}
                 cols={8}
                 rows={5}
                 placeholder="add description"
                 onChange={this.handleTextArea("description")}
-                // validInput={VacationModel.validVacation}
               ></textarea>
             </Col>
             <Col
               sm={4}
               className="d-flex align-self-end justify-content-center"
             >
-              <Button onClick={this.addVacation}>Confirm & Send</Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.addVacation}
+              >
+                Confirm & Send
+              </Button>
             </Col>
           </Row>
         </Form>
@@ -137,14 +174,12 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
   }
 
   public addVacation = () => {
-
-    if (this.props.addVacation) {
-      this.props.addVacation();
+    if (this.props.handleVacation) {
+      this.props.handleVacation();
     }
   };
 
   public handleChange = (prop: string, input: string) => {
-
     this.props.handleChange(prop, input);
   };
 

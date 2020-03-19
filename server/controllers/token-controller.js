@@ -57,7 +57,7 @@ router.post("/new", async (request, response, next) => {
 
     // generate new accessToken
     const accessToken = await helpers.setToken({
-      userID: verify.sub,
+      userName: verify.sub,
       isAdmin: verify.role
     });
 

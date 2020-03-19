@@ -1,5 +1,10 @@
 import { getTokens } from "./tokens";
 import { getRequest, postRequest, deleteRequest } from "./server";
+import Vacations from "../components/vacations/vacations";
+import { VacationModel } from "../models/vacations-model";
+import { store } from "../redux/store/store";
+import { Action } from "../redux/action/action";
+import { ActionType } from "../redux/action-type/action-type";
 
 
 export const getStorage = () => {
@@ -21,7 +26,6 @@ export const logInRequest = async user => {
 
 
 export const login = async (user) => {
-  // get data from LocalStorage
 
   try {
     // send request fo tokens
@@ -53,12 +57,20 @@ export const handleServerResponse = response => {
     case "string":
       return false
     case "object":
+
+      const action: Action = {
+        type: ActionType.addUser,
+        payloud: response
+      }
+
+      store.dispatch(action)
+
       localStorage.setItem("user", JSON.stringify(response));
       return true;
   }
 };
 
-export const getVacations = async (accessToken) => {
+export const getVacations = async (accessToken): Promise<VacationModel[]> => {
   const url = `http://localhost:3000/api/vacations/user`;
   try {
     const response = await getRequest(url, accessToken);
@@ -71,7 +83,7 @@ export const getVacations = async (accessToken) => {
 export const logOutService = async (tokens, history) => {
 
   try {
-    
+
     // clear refreshToken from db
     const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;
     await deleteRequest(url);

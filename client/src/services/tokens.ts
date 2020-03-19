@@ -33,3 +33,5 @@ export const refreshToken = async (dbToken) => {
   const response = await getAccessToken(dbToken.refreshToken);
   return response
 }
+
+// export const refresh = setInterval(refreshToken, 600000)

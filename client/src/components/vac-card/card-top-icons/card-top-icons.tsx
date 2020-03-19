@@ -64,17 +64,16 @@ export class CardTopIcons extends Component<CardTopIconsProps, any> {
   };
 
   public handleDelete = () => {
-    const vacation = this.props.vacation;
-    console.log(vacation)
+    const vacationID = this.props.vacation.vacationID
     if (this.props.handleDelete) {
-      this.props.handleDelete();
+      this.props.handleDelete(vacationID);
     }
   };
 
-  public handleEdit = () => {
-    const vacation = this.props.vacation;
-    if (this.props.handleEdit) {
-      this.props.handleEdit();
+  public handleEdit = () => { 
+    const vacationID = this.props.vacation.vacationID;
+    if (this.props.handleEdit) { 
+      this.props.handleEdit(vacationID)
     }
   };
 }

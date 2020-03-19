@@ -15,40 +15,57 @@ router.get("/", async (request, response, next) => {
   }
 });
 
+
 //get users vacation
 router.get("/user", helpers.authorize(), async (request, response, next) => {
   try {
-    const userID = request.user.sub;
 
+    const userName = request.user.sub;
     // get user id from db
-    const user = await usersLogic.isUserIdExist(userID);
+    const user = await usersLogic.isUserIdExist(userName);
     if (user.length > 0) {
       next("user is not exist in db");
       return;
     }
 
     const vacations = await vacationsLogic.getUserVacations(user.id);
-
     response.json(vacations);
   } catch (err) {
     next(err);
   }
 });
 
-// only admin
+// get  vacations
+router.get("/:id", async (request, response, next) => {
+  try {
+    
+    const vacationID = request.params.id
+    const vacation = await vacationsLogic.getVacation(vacationID);
+
+    if(!vacation) {
+      response.sendStatus(404)
+    }
+
+    response.json(vacation);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+// add vacation (admin)
 router.post("/", helpers.authorize(1), async (request, response, next) => {
  
   const vacation = request.body;
   const error = VacationModel.validation(vacation);
-
   if (error) {
-    response.status(400).json(error);
+    response.status(400).json({body : error, message :  "error"});
     return;
   }
 
   try {
     const addedVacation = await vacationsLogic.addVacation(vacation);
-    response.status(201).json(addedVacation);
+    response.status(201).json({body : addedVacation, message : "success"});
 
   } catch (err) {
     next();
@@ -58,31 +75,29 @@ router.post("/", helpers.authorize(1), async (request, response, next) => {
 // update vacation (admin only)
 router.put("/:id", helpers.authorize(1), async (request, response) => {
   // vacation id
-
-  const id = request.params.id;
-
+  const vacationID = request.params.id;
   const vacation = request.body;
-
-  vacation.id = id;
-
+  
+  //validate schema
   const error = VacationModel.validation(vacation);
-
   if (error) {
-    response.status(400).send(error);
+    response.status(400).send({body : error, message :  "error"});
     return;
   }
-
+  
+  vacation.vacationID = vacationID
+  
   try {
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
-
+    console.log(updatedVacation)
     if (updatedVacation === null) {
       response.sendStatus(404);
       return;
     }
 
-    response.json(updatedVacation);
+    response.json({body : updatedVacation, message : 'success'});
   } catch (err) {
-    response.status(500).json(err.message);
+    response.status(500).json({body : err, message : 'error'});
   }
 });
 

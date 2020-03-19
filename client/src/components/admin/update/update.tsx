@@ -1,25 +1,23 @@
 import React, { Component } from "react";
 import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
-import Button from "react-bootstrap/Button";
 import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
 import { formLegalValues, formLegalErrors } from "../../../services/validation";
 import { TokensModel } from "../../../models/tokens.model";
-import { postRequest } from "../../../services/server";
-
+import "./update.scss";
+import { putRequest, getRequest } from "../../../services/server";
 import { store } from "../../../redux/store/store";
 import { Unsubscribe } from "redux";
 
-import "./insert.scss";
-
-interface InsertState {
+interface UpdateState {
   vacation: VacationModel;
   errors: VacationErrors;
   tokens: TokensModel;
+  updated: boolean;
 }
 
-export class Insert extends Component<any, InsertState> {
+export class Update extends Component<any, UpdateState> {
   private unsubscribeStore: Unsubscribe;
 
   constructor(props: any) {
@@ -28,7 +26,8 @@ export class Insert extends Component<any, InsertState> {
     this.state = {
       vacation: new VacationModel(),
       errors: null,
-      tokens: store.getState().tokens
+      tokens: store.getState().tokens,
+      updated: true
     };
 
     this.unsubscribeStore = store.subscribe(() => {
@@ -36,22 +35,45 @@ export class Insert extends Component<any, InsertState> {
     });
   }
 
+  public componentDidMount = async () => {
+    const vacationID = this.props.match.params.id;
+    const url = `http://localhost:3000/api/vacations/${vacationID}`;
+    const vacation = await getRequest(url);
+    this.setState({ vacation });
+  };
+
   public componentWillUnmount(): void {
     this.unsubscribeStore();
   }
 
-  public addVacation = async () => {
+  public updateVacation = async () => {
+    if (this.state.updated) {
+      const answer = window.confirm(
+        "No change has been made do you want to continue?"
+      );
+      if (!answer) {
+        return;
+      }
+    }
+
+    // validate form
     if (this.vacationFormLegal()) {
       return;
     }
 
     try {
       const { vacation, tokens } = this.state;
+      const vacationID = this.props.match.params.id;
+      console.log(vacation);
+      console.log(tokens.accessToken);
 
-      const url = `http://localhost:3000/api/vacations`;
-      const response = await postRequest(url, vacation, tokens.accessToken);
+      const url = `http://localhost:3000/api/vacations/${vacationID}`;
+      const response = await putRequest(url, vacation, tokens.accessToken);
+      
+      if(response.message === 'success') {
+        this.props.history.push("/admin");
+      } 
 
-      this.props.history.push("/admin");
     } catch (err) {
       console.log(err);
     }
@@ -59,15 +81,18 @@ export class Insert extends Component<any, InsertState> {
 
   render() {
     const { vacation } = this.state;
+
     return (
-      <div className="insert">
+      <div className="update">
         <main>
-          <MyForm
-            vacation={vacation}
-            handleChange={this.handleChange}
-            handleErrors={this.handleErrors}
-            handleVacation={this.addVacation}
-          />
+          {vacation && (
+            <MyForm
+              vacation={vacation}
+              handleChange={this.handleChange}
+              handleErrors={this.handleErrors}
+              handleVacation={this.updateVacation}
+            />
+          )}
         </main>
         <aside>
           <VacCard
@@ -84,7 +109,7 @@ export class Insert extends Component<any, InsertState> {
   public handleChange = (prop: string, input: string): void => {
     const vacation = { ...this.state.vacation };
     vacation[prop] = input;
-    this.setState({ vacation });
+    this.setState({ vacation, updated: false });
   };
 
   public handleErrors = (prop: string, error: string) => {
@@ -117,4 +142,4 @@ export class Insert extends Component<any, InsertState> {
   };
 }
 
-export default Insert;
+export default Update;

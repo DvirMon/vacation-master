@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import "./admin.scss";
-import AppTop from "../app-top/app-top";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-import Vacations from "../vacations/vacations";
-import Insert from "./insert/insert";
-import { UserModel } from "../../models/user-model";
-import { TokensModel } from "../../models/tokens.model";
-import { logOutService, login, getStorage } from "../../services/login";
+import { logOutService, login, getStorage } from "../../../services/login";
+import AppTop from "../../app-top/app-top/app-top";
+import Insert from "../insert/insert";
+import Vacations from "../../vacations/vacations";
+import { UserModel } from "../../../models/user-model";
+import { TokensModel } from "../../../models/tokens.model";
+import Update from "../update/update";
+import Charts from "../charts/charts";
 
 interface AdminState {
   admin: UserModel;
@@ -24,7 +26,6 @@ export class Admin extends Component<any, AdminState> {
   }
 
   public componentDidMount = async () => {
-    
     const user = getStorage();
 
     if (!user || user.isAdmin === 0) {
@@ -52,18 +53,27 @@ export class Admin extends Component<any, AdminState> {
               tokens={tokens}
               handleLogOut={this.handleLogOut}
             ></AppTop>
-          </nav> 
-          <Switch>
-            <main>
+          </nav>
+          <main>
+            <Switch>
               <Route path="/admin" component={Vacations} exact></Route>
               <Route
-                path="/admin/new-vacation"
+                path="/admin/charts"
+                component={Charts}
+                exact
+              ></Route>
+              <Route
+                path="/admin/vacation-new"
                 component={Insert}
                 exact
               ></Route>
-              <Redirect from="/" to="/admin" ></Redirect>
-            </main>
-          </Switch>
+              <Route
+                path="/admin/vacation/:id"
+                component={Update}
+                exact
+              ></Route>
+            </Switch>
+          </main>
           <footer></footer>
         </BrowserRouter>
       </div>

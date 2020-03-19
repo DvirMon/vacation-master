@@ -15,9 +15,11 @@ interface DatePickerState {
   on: boolean;
   success: boolean;
   danger: boolean;
+  isLoading: boolean;
 }
 
 interface DatePickerProps {
+  dateNow?: string;
   schema: {};
   label: string;
   prop: string;
@@ -36,11 +38,20 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
       error: "",
       on: false,
       success: false,
-      danger: false
+      danger: false,
+      isLoading: true
     };
   }
 
   public componentDidMount = () => {
+    
+    setTimeout(() => {
+      if (this.props.dateNow) {
+        const date = new Date(this.props.dateNow);
+        this.setState({ selectedDate: date });
+      }
+    }, 300);
+    
     const date = new Date();
     this.handleDateChange(date, false);
   };
@@ -87,6 +98,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
   };
 
   public validInput = (input: string, prop: string) => {
+
     const schema = setObjectForSchema(this.props.schema, prop, input);
 
     const error = this.props.validInput(schema);

@@ -10,9 +10,9 @@ const hushPassword = async password => {
 const setToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
-      { sub: user.userID, role: user.isAdmin },
+      { sub: user.userName, role: user.isAdmin },
       process.env.TOKEN_SECRET,
-      { expiresIn: "20m" },
+      { expiresIn: "15m" },
       (err, result) => {
         if (err) {
           reject(err);
@@ -26,7 +26,7 @@ const setToken = user => {
 const refreshToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
-      { sub: user.userID, role: user.isAdmin },
+      { sub: user.userName, role: user.isAdmin },
       process.env.REFRESH_TOKEN_SECRET,
       (err, result) => {
         if (err) {
@@ -63,12 +63,13 @@ const authorize = role => (request, response, next) => {
 
 const saveImageLocally = image => {
   const extension = image.name.substr(image.name.lastIndexOf("."));
-  const path = "../../client/public/assets/img/cards";
+  const path = "../client/public/assets/img/cards/";
   try {
+    
     const fileName = uuid();
     const file = fileName + extension;
 
-    image.mv("../client/public/assets/img/cards/" + file);
+    image.mv(path + file);
     return fileName;
   } catch (err) {
     console.log(err);
