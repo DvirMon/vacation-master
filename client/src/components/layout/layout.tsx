@@ -6,7 +6,7 @@ import Vacations from "../vacations/vacations";
 import Register from "../register/register";
 import Admin from "../admin/admin/admin";
 import Input from "../input/input";
-
+ 
 export class Layout extends Component {
   render() {
     return (

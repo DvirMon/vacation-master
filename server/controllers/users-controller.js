@@ -98,6 +98,7 @@ router.post("/login", async (request, response, next) => {
   try {
     const user = request.body;
 
+    console.log(user)
     // valid user schema
     const error = UserModel.validateLogin(user);
     if (error) {

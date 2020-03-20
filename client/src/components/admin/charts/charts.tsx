@@ -4,6 +4,9 @@ import "./charts.scss";
 import { ChartModel } from "../../../models/charts-model";
 import { TokensModel } from "../../../models/tokens.model";
 import { getRequest } from "../../../services/server";
+import { store } from "../../../redux/store/store";
+
+import { Unsubscribe } from "redux";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -13,31 +16,34 @@ interface ChartsState {
 }
 
 export class Charts extends Component<any, ChartsState> {
+  private unsubscribeStore: Unsubscribe;
   constructor(props: any) {
     super(props);
 
     this.state = {
-      tokens: {
-        accessToken: "",
-        dbToken: null
-      },
+      tokens: store.getState().tokens,
       dataPoints: []
     };
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({tokens: store.getState().tokens});
+    });
   }
- 
-  public componentDidMount = async () => {
-    // get accessToken
 
-    
-    const tokens = this.props.location.state.detail;
+  public componentDidMount = async () => {
+    const tokens = this.state.tokens
     const accessToken = tokens.accessToken;
 
     // get chart data
     const dataPoints = await this.getChartsData(accessToken);
 
     this.setState({ tokens, dataPoints });
-
   };
+
+  public componentWillUnmount(): void {
+    const controller = new AbortController();
+    controller.abort();
+    this.unsubscribeStore();
+  }
 
   public getChartsData = async accessToken => {
     const url = `http://localhost:3000/api/followup`;
@@ -54,6 +60,12 @@ export class Charts extends Component<any, ChartsState> {
     const options = {
       title: {
         text: "Followed Vacations"
+      },
+      axisY: {
+        title: "Users"
+      },
+      axisX: {
+        title: "VacationID"
       },
       data: [
         {

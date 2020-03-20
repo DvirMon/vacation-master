@@ -1,9 +1,12 @@
 import { postRequest, getData } from "./server";
+import { Action } from "../redux/action/action";
+import { ActionType } from "../redux/action-type/action-type";
+import { store } from "../redux/store/store";
 
 export const getAccessToken = async refreshToken => {
 
   const options = {
-    method: "POST",
+    method: "POST", 
     headers: {
       "Content-Type": "application/json"
     },
@@ -22,8 +25,16 @@ export const getAccessToken = async refreshToken => {
 export const getTokens = async user => {
   const url = `http://localhost:3000/api/tokens`;
   try {
-    const response = await postRequest(url, user);
-    return response
+    const tokens = await postRequest(url, user);
+ 
+     // add to store
+     const action: Action = {
+      type: ActionType.addToken,
+      payloud : tokens
+    };
+    store.dispatch(action);
+
+    return tokens
   } catch (err) {
     console.log(err);
   }

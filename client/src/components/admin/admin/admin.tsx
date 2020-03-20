@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./admin.scss";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-import { logOutService, login, getStorage } from "../../../services/login";
+import { logOutService, getStorage } from "../../../services/login";
 import AppTop from "../../app-top/app-top/app-top";
 import Insert from "../insert/insert";
 import Vacations from "../../vacations/vacations";
@@ -10,19 +10,33 @@ import { TokensModel } from "../../../models/tokens.model";
 import Update from "../update/update";
 import Charts from "../charts/charts";
 
+import { Unsubscribe } from "redux";
+import { store } from "../../../redux/store/store";
+
+
 interface AdminState {
   admin: UserModel;
   tokens: TokensModel;
 }
 
 export class Admin extends Component<any, AdminState> {
+
+  private unsubscribeStore: Unsubscribe;
+
   constructor(props: any) {
     super(props);
 
     this.state = {
-      admin: null,
-      tokens: null
+      admin: store.getState().user,
+      tokens: store.getState().tokens
     };
+
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({
+        admin: store.getState().user,
+        tokens: store.getState().tokens
+      });
+    });
   }
 
   public componentDidMount = async () => {
@@ -32,25 +46,23 @@ export class Admin extends Component<any, AdminState> {
       this.props.history.push("/login");
       console.log("Not Admin");
     }
-    const response = await login(user);
-    const tokens = response.tokens;
-
-    this.setState({
-      admin: user,
-      tokens: tokens
-    });
   };
+
+  public componentWillUnmount(): void {
+    const controller = new AbortController();
+    controller.abort();
+    this.unsubscribeStore();
+  }
 
   render() {
     const { admin, tokens } = this.state;
     return (
       <div className="admin">
         <BrowserRouter>
-          <nav>
+          <nav> 
             <AppTop
               userInfo={admin}
               admin={true}
-              tokens={tokens}
               handleLogOut={this.handleLogOut}
             ></AppTop>
           </nav>

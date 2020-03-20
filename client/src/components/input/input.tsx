@@ -11,40 +11,41 @@ import { Typography } from "@material-ui/core";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Grid from "@material-ui/core/Grid";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
 import { store } from "../../redux/store/store";
 import { Action } from "../../redux/action/action";
 import { ActionType } from "../../redux/action-type/action-type";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import "./input.scss";
 
 export interface InputProps {
-  width: number;
-  autoFocus?: number;
-  value: string | number;
+  width?: number;
+  value?: string | number;
   schema?: {};
   type?: string;
   prop?: string;
   label?: string;
   placeholder?: string;
+  autoFocus?: boolean;
+  fullWidth?: boolean;
   startIcon?: any;
   passwordIcon?: any;
   serverError?: string;
 
-  handleChange(prop: string, input: string): void;
-  handleErrors(prop: string, error?: string): void;
+  handleChange?(): void;
+  handleErrors?(prop: string, error?: string): void;
   validInput?(object: {}): string;
 }
 
 export interface InputState {
-  error: string;
+  errorMessage: string;
   on: boolean;
   success: boolean;
   danger: boolean;
-  showPassword: boolean;
+  error: boolean;
 }
 
 class Input extends Component<InputProps, InputState> {
@@ -52,11 +53,11 @@ class Input extends Component<InputProps, InputState> {
     super(props);
 
     this.state = {
-      error: "",
-      on: false,
+      errorMessage: "",
+      on: false, 
       success: false,
       danger: false,
-      showPassword: false
+      error: false
     };
   }
 
@@ -64,85 +65,64 @@ class Input extends Component<InputProps, InputState> {
     const {
       width,
       value,
-      schema,
-      prop,
-      label,
       type,
+      prop,
+      schema,
+      label,
+      autoFocus,
+      fullWidth,
       startIcon,
       passwordIcon,
       placeholder,
       serverError
     } = this.props;
-    const { error, success, danger, showPassword } = this.state;
+    const { error, errorMessage, success, danger } = this.state;
 
     return (
-        <Grid className="t" spacing={6}>
-          <Grid container   spacing={3} alignItems="flex-end">
-            <Grid item>
-              {startIcon}
-              <AccountCircle />
-            </Grid>
-            <Grid className="has-success" item xs={6}>
-              <TextField
-                type={"text"}
-                label="Username"
-                onChange={this.handleChange(prop)} 
-                onBlur={this.handleBlur(prop)}
-                onFocus={this.handleFocus(prop)}
-                autoFocus={true}
-                fullWidth={true}
-                error={false} 
-                
-                />
-            </Grid>
-          </Grid>
-          <Grid container spacing={3} alignItems="flex-end">
-            <Grid item>
-              <AccountCircle />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                type={showPassword ? "text" : "password"}
-                label="Password"
-                onChange={this.handleChange("password")}
-                fullWidth={true}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {passwordIcon}
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={this.handleClickShowPassword}
-                        onMouseDown={this.handleMouseDownPassword}
-                      >
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />{" "}
-            </Grid>
-          </Grid>
+      <Grid container spacing={3} alignItems="flex-end">
+        <Grid item>{startIcon}</Grid>
+        <Grid className="has-success" item xs={10}>
+          <TextField
+            type={type}
+            autoFocus={autoFocus}
+            fullWidth={fullWidth} 
+            label={label}
+            error={error}
+            onChange={this.handleChange(prop)}
+            onBlur={this.handleBlur(prop)}
+            onFocus={this.handleFocus(prop)}
+            InputProps={{
+              endAdornment: passwordIcon
+            }}
+            helperText={errorMessage}
+          />
         </Grid>
+      </Grid>
     ); 
   }
 
-  public handleChange = (prop: string) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  public handleChange = (prop: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    
     const input = event.target.value;
+    
+    // save in store
     const action: Action = {
       type: ActionType.updateField,
       payloud: { prop, input }
     };
     store.dispatch(action);
+    
+    // 
+    if (this.props.handleChange) {
+      this.props.handleChange();
+    }
   };
 
   public handleBlur = (prop: string) => (
     event: React.FocusEvent<HTMLInputElement>
   ): void => {
     const input = event.target.value;
-    // this.validInput(input, prop);
+    this.validInput(input, prop);
     this.setState({ on: true });
   };
 
@@ -152,19 +132,8 @@ class Input extends Component<InputProps, InputState> {
     const on = this.state.on;
     if (on === true) {
       const input = event.target.value;
-      // this.validInput(input, prop);
+      this.validInput(input, prop);
     }
-  };
-
-  public handleClickShowPassword = () => {
-    const showPassword = this.state.showPassword;
-    this.setState({ showPassword: !showPassword });
-  };
-
-  public handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
   };
 
   public validInput = (input: string, prop: string) => {
@@ -176,26 +145,36 @@ class Input extends Component<InputProps, InputState> {
 
     const validSchema = setObjectForSchema(schema, prop, input);
 
-    const error = this.props.validInput(validSchema);
+    const errorMessage = this.props.validInput(validSchema);
 
-    this.handleErrors(error, prop);
+    this.handleErrors(errorMessage, prop);
   };
 
-  public handleErrors = (error: string, prop: string) => {
+  public handleErrors = (errorMessage: string, prop: string) => {
     const serverError = this.props.serverError;
 
-    if (error) {
-      this.setState({ error, success: false, danger: true });
-      this.props.handleErrors(prop, error);
+    if (errorMessage) {
+      this.setState({
+        errorMessage,
+        error: true,
+        success: false,
+        danger: true
+      });
+      this.props.handleErrors(prop, errorMessage);
       return;
     }
 
     if (serverError) {
-      this.setState({ success: false, danger: true });
+      this.setState({ error: true, success: false, danger: true });
       return;
     }
 
-    this.setState({ error: "", success: true, danger: false });
+    this.setState({
+      errorMessage: "",
+      error: false,
+      success: true,
+      danger: false
+    });
     this.props.handleErrors(prop, "");
   };
 }

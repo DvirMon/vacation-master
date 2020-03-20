@@ -3,8 +3,6 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import InputGroup from "react-bootstrap/InputGroup";
-import FormControl from "react-bootstrap/FormControl";
 import Image from "react-bootstrap/Image";
 import Button from "react-bootstrap/Button";
 import { NavLink } from "react-router-dom";
@@ -12,29 +10,47 @@ import { UserModel } from "../../models/user-model";
 import MyInput from "../my-input/my-input";
 import PersonIcon from "@material-ui/icons/Person";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import IconButton from "@material-ui/core/IconButton";
+import { Unsubscribe } from "redux";
+
 import "./login.scss";
+
 import {
   handleServerResponse,
   loginLegal,
   logInRequest
 } from "../../services/login";
 import { LoginErrors } from "../../models/error-model";
+import { Grid, Paper, Typography } from "@material-ui/core";
+import Input from "../input/input";
+import { store } from "../../redux/store/store";
 
 interface LoginState {
   user: UserModel;
-  errors: LoginErrors
+  errors: LoginErrors;
+  showPassword: boolean;
   serverError: string;
 }
 
 export class Login extends Component<any, LoginState> {
+  private unsubscribeStore: Unsubscribe;
+
   constructor(props: any) {
     super(props);
 
     this.state = {
-      user: new UserModel(),
+      user: store.getState().user,
       errors: {},
+      showPassword: false,
       serverError: ""
     };
+
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({ user: store.getState().user });
+    });
   }
 
   public componentDidMount = async () => {
@@ -55,6 +71,10 @@ export class Login extends Component<any, LoginState> {
       console.log(err);
     }
   };
+
+  public componentWillUnmount(): void {
+    this.unsubscribeStore();
+  }
 
   public handleLogIn = async () => {
     const user = { ...this.state.user };
@@ -91,89 +111,84 @@ export class Login extends Component<any, LoginState> {
   };
 
   render() {
-    const { user, serverError } = this.state;
+    const { user, serverError, showPassword } = this.state;
 
     return (
       <div className="login">
         <aside>
-          <div className="my-form">
-            <Form>
-              <Container>
-                <Row className="row-header">
-                  <Col sm={4} className="text-center">
-                    <Image
-                      src="assets/img/logo.png"
-                      width="150px"
-                      alt="Logo"
-                      roundedCircle
-                    />
-                  </Col>
-                  <Col sm={8} className="text-center form-inline">
-                    <h1 className="card-title">Travel-On</h1>
-                  </Col>
-                </Row>
-                <MyInput
-                  width={12}
-                  icon={<PersonIcon />}
-                  type="text"
-                  prop={"userName"}
-                  placeholder={"Username"}
-                  value={user.userName || ""}
-                  handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={UserModel.validLogin}
+          <Form className="my-form">
+            <Grid className="row-header" spacing={2} container>
+              <Grid item xs={4}> 
+                <Image
+                  src="assets/img/logo.png"
+                  width="150px"
+                  alt="Logo"
+                  roundedCircle
                 />
-                <MyInput
-                  width={12}
-                  value={user.password || ""}
-                  type="password"
-                  prop={"password"}
-                  placeholder={"Password"}
-                  handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={UserModel.validLogin}
-                  icon={<LockOpenIcon />}
-                />
-                <Row>
-                  <Col sm={12} className="text-center">
-                    {serverError}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col sm={12} className="text-center">
-                    <NavLink
-                      to="/register"
-                      exact
-                      className="description text-center"
+              </Grid>
+              <Grid item xs={8}>
+                <h1 className="card-title">Travel-On</h1>
+              </Grid>
+              <Input
+                type="text"
+                label="Username"
+                value={user.userName || ""}
+                prop={"userName"}
+                fullWidth={true}
+                startIcon={<PersonIcon />}
+                handleChange={this.handleChange}
+                handleErrors={this.handleErrors}
+                validInput={UserModel.validLogin}
+              />
+              <Input
+                type={showPassword ? "text" : "password"}
+                label="Password"
+                value={user.password || ""}
+                prop={"password"}
+                fullWidth={true}
+                startIcon={<LockOpenIcon />}
+                passwordIcon={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={this.handleClickShowPassword}
+                      onMouseDown={this.handleMouseDownPassword}
                     >
-                      Don't have an account?
-                    </NavLink>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col sm={12} className="text-center">
-                    <Button
-                      className="btn-lg "
-                      variant="info"
-                      type="button"
-                      onClick={this.handleLogIn}
-                    >
-                      Login
-                    </Button>
-                  </Col>
-                </Row>
-              </Container>
-            </Form>
-          </div>
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                handleChange={this.handleChange}
+                handleErrors={this.handleErrors}
+                validInput={UserModel.validLogin}
+              />
+              <Grid className="d-flex justify-content-center" item xs={12}>
+                  {serverError}
+              </Grid>
+              <Grid className="d-flex justify-content-center" item xs={12}>
+                <NavLink to="/register" exact className="text-center">
+                  Don't have an account?
+                </NavLink>
+              </Grid>
+              <Grid className="text-center" item xs={12}>
+                <Button
+                  className="btn-lg "
+                  variant="info"
+                  type="button"
+                  onClick={this.handleLogIn}
+                >
+                  Login
+                </Button>
+              </Grid>
+            </Grid>
+          </Form>
         </aside>
       </div>
     );
   }
 
-  public handleChange = (prop: string, value: string): void => {
-    const user = { ...this.state.user };
-    user[prop] = value;
-    this.setState({ user, serverError: "" });
+  public handleChange = (): void => {
+    this.setState({ serverError: "" });
   };
 
   public handleErrors = (prop: string, error: string) => {
@@ -184,6 +199,17 @@ export class Login extends Component<any, LoginState> {
       return;
     }
     this.setState({ errors });
+  };
+
+  public handleClickShowPassword = () => {
+    const showPassword = this.state.showPassword;
+    this.setState({ showPassword: !showPassword });
+  };
+
+  public handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
   };
 }
 

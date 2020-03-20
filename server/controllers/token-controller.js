@@ -13,6 +13,7 @@ const helpers = require("../helpers/helpers");
 router.post("/", async (request, response, next) => {
 
   const user = request.body;
+  
   try {
     // create accessToken for user
     const accessToken = await helpers.setToken(user);
@@ -23,6 +24,7 @@ router.post("/", async (request, response, next) => {
     const token = {
       refreshToken : refreshToken
     }
+
     // save refreshToken in db
     const dbToken = await tokenLogic.addToken(token);
 

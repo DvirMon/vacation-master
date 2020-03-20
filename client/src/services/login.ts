@@ -25,20 +25,22 @@ export const logInRequest = async user => {
 };
 
 
-export const login = async (user) => {
+// export const login = async (user) => {
 
-  try {
-    // send request fo tokens
-    const tokens = await getTokens(user);
+//   try {
+//     // send request fo tokens
+//     const tokens = await getTokens(user);
 
-    // get vacations fo tokens
-    const vacations = await getVacations(tokens.accessToken)
+//     // צריך לשנות ניתןב
 
-    return ({ user, tokens, vacations })
-  } catch (err) {
-    console.log(err);
-  }
-};
+//     // get vacations fo tokens
+//     const vacations = await getVacations(tokens.accessToken)
+
+//     return ({ user, tokens, vacations })
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 export const loginLegal = (user, errors) => {
   if (
@@ -57,14 +59,13 @@ export const handleServerResponse = response => {
     case "string":
       return false
     case "object":
-
-      const action: Action = {
+    
+    const action: Action = {
         type: ActionType.addUser,
         payloud: response
       }
-
       store.dispatch(action)
-
+    
       localStorage.setItem("user", JSON.stringify(response));
       return true;
   }

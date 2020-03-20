@@ -14,7 +14,6 @@ interface AppTopProps {
   followUpCounter?: number;
   handleLogOut?(): void;
   admin: boolean; 
-  tokens: TokensModel
 }
 
 interface AppTopState {
@@ -32,6 +31,7 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
 
   public componentDidMount = () => {  
     const admin = this.props.admin 
+    console.log(admin)
     if (admin) {
       this.setState({ user: false });
     }
@@ -39,7 +39,7 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
 
   render() {
 
-    const { userInfo, followUpCounter, admin, tokens } = this.props;
+    const { userInfo, followUpCounter, admin } = this.props;
     const { user } = this.state;
     return ( 
       <nav 
@@ -71,7 +71,6 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
                 />
               )}
               {admin && <AppAdmin 
-              tokens={tokens}
               />}
               <MenuItem>
               

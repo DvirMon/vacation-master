@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import clsx from "clsx";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
@@ -8,7 +9,8 @@ import FormLabel from "react-bootstrap/FormLabel";
 import { UserModel } from "../../models/user-model";
 import { isRequired, setObjectForSchema } from "../../services/validation";
 import { Typography } from "@material-ui/core";
-import clsx from "clsx";
+import InputAdornment from '@material-ui/core/InputAdornment';
+
 import "./my-input.scss";
 
 export interface MyInputProps {

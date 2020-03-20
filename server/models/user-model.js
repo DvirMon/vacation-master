@@ -35,8 +35,8 @@ class UserModel {
     const schema = Joi.object()
       .keys({
         userName: Joi.string().min(3).max(10).required(),
-        password: Joi.string().min(6).max(10).required()
-      })
+        password: Joi.string().min(6).max(24).required()
+      }).unknown()
 
     const error = schema.validate(user, { abortEarly: false }).error;
 

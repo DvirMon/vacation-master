@@ -29,10 +29,9 @@ AND f.userID = ${userID}`;
 
 // get all followup vacations for chart
 const getAllFollowUp = async () => {
-  sql = `SELECT  destination as label, COUNT(userID) as y
-  FROM followers as f JOIN vacations as v
-  ON f.vacationID = v.vacationID
-  GROUP BY destination`;
+  sql = `SELECT  vacationID as label, COUNT(userID) as y
+  FROM followers as f
+  GROUP BY vacationID`;
   const followups = await dal.executeAsync(sql);
   return followups;
 };
