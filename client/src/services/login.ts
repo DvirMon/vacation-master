@@ -5,13 +5,13 @@ import { VacationModel } from "../models/vacations-model";
 import { store } from "../redux/store/store";
 import { Action } from "../redux/action/action";
 import { ActionType } from "../redux/action-type/action-type";
+import { UserModel } from "../models/user-model";
 
 
 export const getStorage = () => {
   const storage = localStorage.getItem("user");
   const response = JSON.parse(storage);
   return response
-
 }
 
 export const logInRequest = async user => {
@@ -23,24 +23,6 @@ export const logInRequest = async user => {
     console.log(err);
   }
 };
-
-
-// export const login = async (user) => {
-
-//   try {
-//     // send request fo tokens
-//     const tokens = await getTokens(user);
-
-//     // צריך לשנות ניתןב
-
-//     // get vacations fo tokens
-//     const vacations = await getVacations(tokens.accessToken)
-
-//     return ({ user, tokens, vacations })
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
 
 export const loginLegal = (user, errors) => {
   if (
@@ -55,6 +37,7 @@ export const loginLegal = (user, errors) => {
 };
 
 export const handleServerResponse = response => {
+ 
   switch (typeof response) {
     case "string":
       return false
@@ -65,7 +48,6 @@ export const handleServerResponse = response => {
         payloud: response
       }
       store.dispatch(action)
-    
       localStorage.setItem("user", JSON.stringify(response));
       return true;
   }
@@ -84,6 +66,16 @@ export const getVacations = async (accessToken): Promise<VacationModel[]> => {
 export const logOutService = async (tokens, history) => {
 
   try {
+
+    const user = new UserModel()
+    console.log(user)
+
+    const action : Action = {
+      type : ActionType.deleteUser,
+      payloud : user
+    }
+
+    store.dispatch(action)
 
     // clear refreshToken from db
     const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;

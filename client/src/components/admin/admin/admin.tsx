@@ -55,7 +55,7 @@ export class Admin extends Component<any, AdminState> {
   }
 
   render() {
-    const { admin, tokens } = this.state;
+    const { admin } = this.state;
     return (
       <div className="admin">
         <BrowserRouter>

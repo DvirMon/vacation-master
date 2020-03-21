@@ -7,11 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { deleteRequest } from "../../services/server";
 import { refreshToken, getTokens } from "../../services/tokens";
-import {
-  getStorage,
-  logOutService,
-  getVacations
-} from "../../services/login";
+import { getStorage, logOutService, getVacations } from "../../services/login";
 import "./vacations.scss";
 import { TokensModel } from "../../models/tokens.model";
 import { store } from "../../redux/store/store";
@@ -50,24 +46,19 @@ export class Vacations extends Component<any, VacationsState> {
 
   public componentDidMount = async () => {
     try {
+      // first request for tokens
       const user = getStorage();
 
       const action: Action = {
         type: ActionType.addUser,
         payloud: user
-      }
-      store.dispatch(action)
-     
-      if (!user) {
-        this.props.history.push("/");
-      }
- 
-      // first request for tokens
+      };
+      store.dispatch(action);
+
       const tokens = await getTokens(user);
       const vacations = await getVacations(tokens.accessToken);
-
+      console.log(vacations);
       this.handleResponse(vacations);
-
     } catch (err) {
       console.log(err);
     }
@@ -86,18 +77,18 @@ export class Vacations extends Component<any, VacationsState> {
     //     this.props.history.push("/login");
     //     break;
     //   case "object":
-        const followIcon = this.handelRole();
-        this.setState({
-          followIcon,
-          followUp: vacations.followUp,
-          unFollowUp: vacations.unFollowUp
-        });
+    const followIcon = this.handelRole();
+    this.setState({
+      followIcon,
+      followUp: vacations.followUp,
+      unFollowUp: vacations.unFollowUp
+    });
     //     break;
     // }
   };
 
   public handelRole = () => {
-    const user = store.getState().user
+    const user = store.getState().user;
     if (user.isAdmin === 1) {
       return false;
     }
@@ -121,61 +112,48 @@ export class Vacations extends Component<any, VacationsState> {
 
     return (
       <div className="vacations">
-        {followIcon && (
-          <nav>
-            <AppTop
-              admin={false} 
-              userInfo={user}
-              handleLogOut={this.handleLogOut}
-              followUpCounter={followUp.length}
-            />
-          </nav>
-        )}
-        <main>
-          <Row>
-            {followUp.length > 0 && (
-              <h1 className="card-title">My Wish List</h1>
-            )}
-          </Row>
-          <Row>
-            {followUp.map(vacation => (
-              <Col key={vacation.vacationID} sm={4}>
-                <VacCard
-                  vacation={vacation}
-                  accessToken={tokens.accessToken}
-                  follow={true}
-                  update={this.componentDidMount}
-                  followIcon={followIcon}
-                ></VacCard>
-              </Col>
-            ))}
-          </Row>
-          <Row>
+        <Row>
+          {followUp.length > 0 && <h1 className="card-title">My Wish List</h1>}
+        </Row>
+        <Row>
+          {followUp.map(vacation => (
+            <Col key={vacation.vacationID} sm={4}>
+              <VacCard
+                vacation={vacation}
+                accessToken={tokens.accessToken}
+                follow={true}
+                update={this.componentDidMount}
+                followIcon={followIcon}
+              ></VacCard>
+            </Col>
+          ))}
+        </Row>
+        <Row>
+          {unFollowUp.length > 0 && (
             <h1 className="card-title">Our Vacations</h1>
-          </Row>
-          <Row>
-            {unFollowUp.map(vacation => (
-              <Col key={vacation.vacationID} sm={4}>
-                <VacCard
-                  vacation={vacation}
-                  accessToken={tokens.accessToken}
-                  follow={false}
-                  followIcon={followIcon}
-                  admin={true}
-                  handleDelete={this.handleDelete}
-                  handleEdit={this.handleEdit}
-                  update={this.componentDidMount}
-                ></VacCard>
-              </Col>
-            ))}
-          </Row>
-        </main>
+          )}
+        </Row>
+        <Row>
+          {unFollowUp.map(vacation => (
+            <Col key={vacation.vacationID} sm={4}>
+              <VacCard
+                vacation={vacation}
+                accessToken={tokens.accessToken}
+                follow={false}
+                followIcon={followIcon}
+                admin={true}
+                handleDelete={this.handleDelete}
+                handleEdit={this.handleEdit}
+                update={this.componentDidMount}
+              ></VacCard>
+            </Col>
+          ))}
+        </Row>
       </div>
     );
   }
 
   public handleLogOut = async () => {
-
     const tokens = { ...this.state.tokens };
     const history = this.props.history;
     await logOutService(tokens, history);

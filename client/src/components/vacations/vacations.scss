@@ -1,16 +1,8 @@
 .vacations {
   height: 100%;
   overflow: auto;
-  display: grid;
-  grid-template-rows: 15% 85%;
-  grid-template-columns: repeat(12, 1fr);
   padding: 0;
   margin: 0;
-
-  nav,
-  main {
-    grid-column: 12 span;
-  }
 
   .row {
     justify-content: space-around;

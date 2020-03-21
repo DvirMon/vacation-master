@@ -1,25 +1,11 @@
 import React, { Component } from "react";
-import clsx from "clsx";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import InputGroup from "react-bootstrap/InputGroup";
 import TextField from "@material-ui/core/TextField";
-import FormLabel from "react-bootstrap/FormLabel";
-import { UserModel } from "../../models/user-model";
-import { isRequired, setObjectForSchema } from "../../services/validation";
-import { Typography } from "@material-ui/core";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
 import Grid from "@material-ui/core/Grid";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import IconButton from "@material-ui/core/IconButton";
 import { store } from "../../redux/store/store";
 import { Action } from "../../redux/action/action";
 import { ActionType } from "../../redux/action-type/action-type";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import "./input.scss";
+import { setObjectForSchema } from "../../services/validation";
 
 export interface InputProps {
   width?: number;

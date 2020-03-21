@@ -27,6 +27,7 @@ import { LoginErrors } from "../../models/error-model";
 import { Grid, Paper, Typography } from "@material-ui/core";
 import Input from "../input/input";
 import { store } from "../../redux/store/store";
+import AppTop from "../app-top/app-top/app-top";
 
 interface LoginState {
   user: UserModel;
@@ -54,6 +55,9 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
+
+    console.log(store.getState().user)
+
     try {
       //  check if user is still login
       const storage = localStorage.getItem("user");
@@ -89,6 +93,8 @@ export class Login extends Component<any, LoginState> {
       const serverResponse = await logInRequest(user);
       const response = handleServerResponse(serverResponse);
 
+    
+
       // if false response is error
       if (!response) {
         this.setState({ serverError: serverResponse });
@@ -107,7 +113,7 @@ export class Login extends Component<any, LoginState> {
       this.props.history.push(`/admin`);
       return 1;
     }
-    this.props.history.push(`/user/${user.userID}`);
+    this.props.history.push(`/user/${user.userName}`);
   };
 
   render() {
@@ -115,6 +121,11 @@ export class Login extends Component<any, LoginState> {
 
     return (
       <div className="login">
+        <nav>
+          <AppTop 
+          admin={false}
+          /> 
+        </nav>
         <aside>
           <Form className="my-form">
             <Grid className="row-header" spacing={2} container>

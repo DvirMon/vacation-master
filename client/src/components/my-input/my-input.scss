@@ -1,14 +1,9 @@
 .my-input {
   margin: 2%;
-  z-index: 10;
   box-sizing: border-box;
 
-  .form-control {
-    font-size: 25px;
-    height: 8vh;
-  }
-  .form-label {
-    margin-left: 2%;
+  .MuiGrid-spacing-2 {
+    padding: 8%;
   }
 
   // .valid {

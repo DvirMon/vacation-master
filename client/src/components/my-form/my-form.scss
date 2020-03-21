@@ -8,19 +8,19 @@
   background-color: white;
 
   form {
+    height: 100%;
     margin: 0;
     margin-left: 3%;
     padding: 0;
     padding-top: 2%;
   }
 
-  .pos {
-    margin-top: 5%;
-    margin-left: 1%;
+  .MuiGrid-spacing-2 {
+    padding: 8%;
   }
 
-  .text-area {
-    font-size: 20px;
+  .pos {
+    padding: 2.5%;
   }
 
   .input-file {

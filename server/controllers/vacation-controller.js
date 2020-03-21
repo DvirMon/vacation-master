@@ -21,6 +21,7 @@ router.get("/user", helpers.authorize(), async (request, response, next) => {
   try {
 
     const userName = request.user.sub;
+    console.log(userName)
     
     // get user id from db
     const user = await usersLogic.isUserIdExist(userName);

@@ -64,8 +64,6 @@ export class Update extends Component<any, UpdateState> {
     try {
       const { vacation, tokens } = this.state;
       const vacationID = this.props.match.params.id;
-      console.log(vacation);
-      console.log(tokens.accessToken);
 
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
       const response = await putRequest(url, vacation, tokens.accessToken);

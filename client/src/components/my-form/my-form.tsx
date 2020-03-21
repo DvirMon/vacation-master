@@ -9,6 +9,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import { Grid } from "@material-ui/core";
 import "./my-form.scss";
 
 interface MyFormProps {
@@ -40,10 +41,9 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
   }
 
   public getImage = async event => {
-
     const selectedFile = event.target.files[0];
     const fd = new FormData();
-    
+
     fd.append("image", selectedFile);
 
     const url = `http://localhost:3000/api/vacations/upload-image`;
@@ -52,7 +52,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
   };
 
   public componentDidMount = () => {
-    
     setTimeout(() => {
       if (this.props.vacation.startDate || this.props.vacation.endDate) {
         const date = { ...this.state.date };
@@ -61,7 +60,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
         this.setState({ date });
         return;
       }
-    }, 300); 
+    }, 300);
   };
 
   render() {
@@ -76,11 +75,12 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
           method="post"
           encType="multipart/form-data"
           target="hidden-iframe"
-        >
-          <Row>
+        > 
+          <Grid container spacing={2} className="pos">
             <MyInput
               width={5}
               value={vacation.destination || ""}
+              fullWidth={true}
               type="text"
               prop="destination"
               label="Destination"
@@ -90,6 +90,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
             />
             <MyInput
               width={5}
+              fullWidth={true}
               value={vacation.price || ""}
               type="number"
               prop="price"
@@ -98,9 +99,9 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               handleErrors={this.handleErrors}
               validInput={VacationModel.validVacation}
             />
-          </Row>
-          <Row>
-            <Col sm={4}>
+          </Grid>
+          <Grid container spacing={2} className="pos">
+            <Grid item xs={3}>
               <DatePicker
                 dateNow={vacation.startDate || ""}
                 prop="startDate"
@@ -110,8 +111,8 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                 handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
               />
-            </Col>
-            <Col sm={4}  className="justify-content-center">
+            </Grid>
+            <Grid item xs={5} className="justify-content-center">
               <DatePicker
                 dateNow={vacation.endDate || ""}
                 prop="endDate"
@@ -120,16 +121,20 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                 handleChange={this.handleChange}
                 handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
-              />
-            </Col>
-            <Col sm={3} className="d-flex align-self-end justify-content-end">
-              <input 
+                />
+            </Grid>
+            <Grid
+              item
+              xs={3}
+              className="d-flex align-self-end justify-content-end"
+              >
+              <input
                 className="input-file btn btn-primary"
                 type="file"
                 id="upload-file"
                 accept="image/*"
                 onChange={this.getImage}
-              />
+                />
               <label className="upload-button" htmlFor="upload-file">
                 <Button
                   className="upload-button"
@@ -138,25 +143,26 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                   color="primary"
                   disableRipple={true}
                   disableFocusRipple={true}
-                >
+                  >
                   Choose a file
                 </Button>
               </label>
-            </Col>
-          </Row>
-          <Row className="pos">
-            <Col sm={8}>
-              <textarea
-                className="form-control text-area"
-                value={vacation.description || ""}
-                cols={8}
-                rows={5}
-                placeholder="add description"
-                onChange={this.handleTextArea("description")}
-              ></textarea>
-            </Col>
-            <Col
-              sm={4}
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} className="pos"> 
+            <MyInput
+              width={8}
+              value={vacation.description || ""}
+              label="Description"
+              prop={"description"}
+              placeholder="add description"
+              fullWidth={true}
+              rows={5}
+              handleChange={this.handleChange}
+              handleErrors={this.handleErrors}
+              validInput={VacationModel.validVacation}
+              ></MyInput>
+            <Grid item xs={4}
               className="d-flex align-self-end justify-content-center"
             >
               <Button
@@ -166,8 +172,8 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               >
                 Confirm & Send
               </Button>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
         </Form>
       </div>
     );

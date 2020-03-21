@@ -43,7 +43,7 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
     const { user } = this.state;
     return ( 
       <nav 
-        className={clsx('navbar', 'navbar-transparent', 'navbar-color-on-scroll',  false && 'fixed-top', 'navbar-expand-lg')}
+        className={clsx('navbar', 'navbar-transparent', 'navbar-color-on-scroll', 'fixed-top', 'navbar-expand-lg')}
         color-on-scroll="100"
       >
         <div className="container">

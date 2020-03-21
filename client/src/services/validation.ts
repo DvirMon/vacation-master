@@ -13,13 +13,13 @@ export const handleMassage = (err) => {
   switch (err.type) {
     case "string.regex.base":
       if ((err.path[0]) === "password") {
-        err.message = "password must contain at least a lowercase, an uppercase and numeric character";
+        err.message = "password must contain at least one lowercase, uppercase and numeric character";
         break
       }
-      err.message = "field should only include a-z/A-Z letters";
+      err.message = "This field should only include a-z/A-Z letters";
       break
     case "any.empty":
-      err.message = "field must be filled";
+      err.message = "This field is required";
       break
     case "date.ref":
       err.message = "Please choose the start date before";
