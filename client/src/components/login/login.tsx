@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
 import Button from "react-bootstrap/Button";
 import { NavLink } from "react-router-dom";
@@ -14,20 +11,11 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
-import { Unsubscribe } from "redux";
-
-import "./login.scss";
-
-import {
-  handleServerResponse,
-  loginLegal,
-  logInRequest
-} from "../../services/login";
+import { handleServerResponse, loginLegal,logInRequest } from "../../services/login";
 import { LoginErrors } from "../../models/error-model";
 import { Grid, Paper, Typography } from "@material-ui/core";
-import Input from "../input/input";
-import { store } from "../../redux/store/store";
 import AppTop from "../app-top/app-top/app-top";
+import "./login.scss";
 
 interface LoginState {
   user: UserModel;
@@ -37,27 +25,18 @@ interface LoginState {
 }
 
 export class Login extends Component<any, LoginState> {
-  private unsubscribeStore: Unsubscribe;
-
   constructor(props: any) {
     super(props);
 
     this.state = {
-      user: store.getState().user,
-      errors: {},
+      user: new UserModel(),
+      errors: new LoginErrors(),
       showPassword: false,
       serverError: ""
     };
-
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({ user: store.getState().user });
-    });
   }
 
   public componentDidMount = async () => {
-
-    console.log(store.getState().user)
-
     try {
       //  check if user is still login
       const storage = localStorage.getItem("user");
@@ -76,10 +55,6 @@ export class Login extends Component<any, LoginState> {
     }
   };
 
-  public componentWillUnmount(): void {
-    this.unsubscribeStore();
-  }
-
   public handleLogIn = async () => {
     const user = { ...this.state.user };
     const errors = { ...this.state.errors };
@@ -92,8 +67,6 @@ export class Login extends Component<any, LoginState> {
     try {
       const serverResponse = await logInRequest(user);
       const response = handleServerResponse(serverResponse);
-
-    
 
       // if false response is error
       if (!response) {
@@ -122,14 +95,12 @@ export class Login extends Component<any, LoginState> {
     return (
       <div className="login">
         <nav>
-          <AppTop 
-          admin={false}
-          /> 
+          <AppTop admin={false} />
         </nav>
         <aside>
           <Form className="my-form">
             <Grid className="row-header" spacing={2} container>
-              <Grid item xs={4}> 
+              <Grid item xs={4}>
                 <Image
                   src="assets/img/logo.png"
                   width="150px"
@@ -140,41 +111,62 @@ export class Login extends Component<any, LoginState> {
               <Grid item xs={8}>
                 <h1 className="card-title">Travel-On</h1>
               </Grid>
-              <Input
-                type="text"
-                label="Username"
-                value={user.userName || ""}
-                prop={"userName"}
-                fullWidth={true}
-                startIcon={<PersonIcon />}
-                handleChange={this.handleChange}
-                handleErrors={this.handleErrors}
-                validInput={UserModel.validLogin}
-              />
-              <Input
-                type={showPassword ? "text" : "password"}
-                label="Password"
-                value={user.password || ""}
-                prop={"password"}
-                fullWidth={true}
-                startIcon={<LockOpenIcon />}
-                passwordIcon={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={this.handleClickShowPassword}
-                      onMouseDown={this.handleMouseDownPassword}
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                handleChange={this.handleChange}
-                handleErrors={this.handleErrors}
-                validInput={UserModel.validLogin}
-              />
-              <Grid className="d-flex justify-content-center" item xs={12}>
-                  {serverError}
+              <Grid
+                container
+                spacing={3}
+                alignItems="flex-end"
+                className="d-flex justify-content-center p-3"
+              >
+                <Grid item>
+                  <PersonIcon />
+                </Grid>
+                <MyInput
+                  width={8}
+                  value={user.userName || ""}
+                  type="text"
+                  label="Username"
+                  prop={"userName"}
+                  serverError={serverError}
+                  fullWidth={true}
+                  handleChange={this.handleChange}
+                  handleErrors={this.handleErrors}
+                  validInput={UserModel.validLogin}
+                  helperText={"Please enter your username"}
+                />
+              </Grid>
+              <Grid
+                container
+                spacing={3}
+                alignItems="flex-end"
+                className="d-flex justify-content-center p-3"
+              >
+                <Grid item>
+                  <LockOpenIcon />
+                </Grid>
+                <MyInput
+                  width={8}
+                  value={user.password || ""}
+                  type={showPassword ? "text" : "password"}
+                  label="Password"
+                  prop={"password"}
+                  serverError={serverError}
+                  fullWidth={true}
+                  helperText={"Please enter your password"}
+                  passwordIcon={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={this.handleClickShowPassword}
+                        onMouseDown={this.handleMouseDownPassword}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  handleChange={this.handleChange}
+                  handleErrors={this.handleErrors}
+                  validInput={UserModel.validLogin}
+                />
               </Grid>
               <Grid className="d-flex justify-content-center" item xs={12}>
                 <NavLink to="/register" exact className="text-center">
@@ -198,8 +190,11 @@ export class Login extends Component<any, LoginState> {
     );
   }
 
-  public handleChange = (): void => {
-    this.setState({ serverError: "" });
+  public handleChange = (prop: string, input: string): void => {
+    const user = { ...this.state.user };
+    user[prop] = input; 
+    this.setState({ user, serverError: "" });
+    console.log(this.state.user);
   };
 
   public handleErrors = (prop: string, error: string) => {
@@ -214,6 +209,7 @@ export class Login extends Component<any, LoginState> {
 
   public handleClickShowPassword = () => {
     const showPassword = this.state.showPassword;
+    console.log(showPassword);
     this.setState({ showPassword: !showPassword });
   };
 

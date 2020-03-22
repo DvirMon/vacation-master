@@ -40,7 +40,7 @@ class Input extends Component<InputProps, InputState> {
 
     this.state = {
       errorMessage: "",
-      on: false, 
+      on: false,
       success: false,
       danger: false,
       error: false
@@ -53,7 +53,6 @@ class Input extends Component<InputProps, InputState> {
       value,
       type,
       prop,
-      schema,
       label,
       autoFocus,
       fullWidth,
@@ -71,7 +70,7 @@ class Input extends Component<InputProps, InputState> {
           <TextField
             type={type}
             autoFocus={autoFocus}
-            fullWidth={fullWidth} 
+            fullWidth={fullWidth}
             label={label}
             error={error}
             onChange={this.handleChange(prop)}
@@ -80,25 +79,26 @@ class Input extends Component<InputProps, InputState> {
             InputProps={{
               endAdornment: passwordIcon
             }}
-            helperText={errorMessage}
+            helperText={errorMessage || serverError}
           />
         </Grid>
       </Grid>
-    ); 
+    );
   }
 
-  public handleChange = (prop: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    
+  public handleChange = (prop: string) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const input = event.target.value;
-    
+
     // save in store
     const action: Action = {
       type: ActionType.updateField,
       payloud: { prop, input }
     };
     store.dispatch(action);
-    
-    // 
+
+    //
     if (this.props.handleChange) {
       this.props.handleChange();
     }
@@ -137,29 +137,21 @@ class Input extends Component<InputProps, InputState> {
   };
 
   public handleErrors = (errorMessage: string, prop: string) => {
-    const serverError = this.props.serverError;
 
     if (errorMessage) {
-      this.setState({
-        errorMessage,
-        error: true,
-        success: false,
-        danger: true
-      });
+      this.setState({ errorMessage, error: true });
       this.props.handleErrors(prop, errorMessage);
       return;
     }
 
-    if (serverError) {
-      this.setState({ error: true, success: false, danger: true });
+    if (this.props.serverError) {
+      this.setState({ error: true });
       return;
     }
 
     this.setState({
       errorMessage: "",
-      error: false,
-      success: true,
-      danger: false
+      error: false
     });
     this.props.handleErrors(prop, "");
   };

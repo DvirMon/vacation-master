@@ -27,13 +27,13 @@ export interface MyInputProps {
   placeholder?: string;
   autoFocus?: boolean;
   fullWidth?: boolean;
-  startIcon?: any;
   passwordIcon?: any;
   serverError?: string;
+  helperText? : string
   rows?: number;
 
-  handleChange(prop: string, input: string): void;
-  handleErrors(prop: string, error?: string): void;
+  handleChange?(prop: string, input: string): void;
+  handleErrors?(prop: string, error?: string): void;
   validInput?(object: {}): string;
 }
 
@@ -68,76 +68,35 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       label,
       autoFocus,
       fullWidth,
-      startIcon,
       passwordIcon,
       placeholder,
+      helperText,
       serverError,
       rows
     } = this.props;
-    const { error, errorMessage, success, danger } = this.state;
+    const { error, errorMessage } = this.state;
 
     return (
-      <Grid item xs={width}>
-        <Grid item>{startIcon}</Grid>
-        <Grid className="has-success">
+        <Grid item xs={width}>
           <TextField
             value={value}
             type={type}
             autoFocus={autoFocus}
             fullWidth={fullWidth}
             label={label}
+            placeholder={placeholder}
             error={error}
-            multiline
+            multiline 
             rows={rows}
             onChange={this.handleChange(prop)}
             onBlur={this.handleBlur(prop)}
             onFocus={this.handleFocus(prop)}
             InputProps={{
               endAdornment: passwordIcon
-            }}
-            helperText={errorMessage}
+            }} 
+            helperText={errorMessage || serverError ? errorMessage || serverError : helperText}
           />
-        </Grid>
       </Grid>
-      //   <Grid item xs={width}
-      //   //  item md={width}
-      //     className={clsx({
-      //        "my-input": true,
-      //       "form-group": true,
-      //       "has-default": true,
-      //       "has-success": success,
-      //       "has-danger": danger
-      //     })}
-      //       >
-      //     <FormLabel className="label">{label}</FormLabel>
-      //     <Typography
-      //       style={{
-      //         textAlign: "right",
-      //         position: "relative",
-      //         top: "2vh",
-      //         zIndex: 1
-      //       }}
-      //     >
-      //       {passwordIcon}
-      //     </Typography>
-      //     <InputGroup size="lg" className="mb-3">
-      //       <InputGroup.Prepend>
-      //         <InputGroup.Text>{icon}</InputGroup.Text>
-      //       </InputGroup.Prepend>
-      //       <FormControl
-      //         value={value}
-      //         type={type}
-      //         aria-label={label}
-      //         placeholder={placeholder}
-      //         onChange={this.handleChange(prop)}
-      //         onBlur={this.handleBlur(prop)}
-      //         onFocus={this.handleFocus(prop)}
-      //         autoComplete="off"
-      //       />
-      //     </InputGroup>
-      //     <Typography>{serverError || error}</Typography>
-      //   {/* </Col> */}
-      // </Grid>
     );
   }
 
@@ -159,23 +118,6 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     }
   };
 
-  public handle = (prop: string) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const input = event.target.value;
-
-    // save in store
-    const action: Action = {
-      type: ActionType.updateField,
-      payloud: { prop, input }
-    };
-    store.dispatch(action);
-
-    //
-    if (this.props.handleChange) {
-      // this.props.handleChange();
-    }
-  };
 
   public handleChange = (prop: string) => event => {
     const on = this.state.on;

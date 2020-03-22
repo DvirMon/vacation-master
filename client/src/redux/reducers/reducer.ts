@@ -13,9 +13,6 @@ export const rootReducer = (oldState: AppState, action: Action): AppState => {
     case ActionType.addToken:
       newState.tokens = action.payloud
       break
-    case ActionType.updateField:
-      newState.user[action.payloud.prop] = action.payloud.input
-      break
     case ActionType.deleteUser:
       console.log(action.payloud)
       newState.user = action.payloud

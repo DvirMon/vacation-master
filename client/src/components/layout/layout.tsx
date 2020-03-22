@@ -7,6 +7,7 @@ import Register from "../register/register";
 import Admin from "../admin/admin/admin";
 import Input from "../input/input";
 import User from "../user/user";
+import Reg from "../register/reg";
  
 export class Layout extends Component {
   render() {
@@ -15,7 +16,8 @@ export class Layout extends Component {
         <BrowserRouter>  
           <Switch>  
             <Route path="/login" component={Login} exact></Route>
-            <Route path="/register" component={Register} exact></Route>
+            <Route path="/register" component={Reg} exact></Route>
+            {/* <Route path="/register" component={Register} exact></Route> */}
             <Route path="/admin" component={Admin} exact></Route>
             <Route path="/user/:id" component={User} exact></Route>
             <Redirect from="/" to="/login"></Redirect>

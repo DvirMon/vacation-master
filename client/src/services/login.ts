@@ -26,10 +26,10 @@ export const logInRequest = async user => {
 
 export const loginLegal = (user, errors) => {
   if (
-    errors.userName.length > 0 ||
-    errors.password.length > 0 ||
     user.userName === undefined ||
-    user.password === undefined
+    user.password === undefined ||
+    errors.userName.length > 0 ||
+    errors.password.length > 0  
   ) {
     return true;
   }

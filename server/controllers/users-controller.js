@@ -46,7 +46,7 @@ router.post("/details", async (request, response, next) => {
     const dbUser = await usersLogic.isUserExist(userName);
 
     if (dbUser) {
-      response.status(409).json("Username is already taken");
+      response.status(409).json("username is already taken");
       return;
     }
 
@@ -72,7 +72,7 @@ router.post("/", async (request, response, next) => {
     // valid userName in db
     const dbUser = await usersLogic.isUserExist(user.userName);
     if (dbUser) {
-      response.status(409).json("Username is already taken");
+      response.status(409).json("username is already taken");
       return;
     }
 
@@ -98,7 +98,6 @@ router.post("/login", async (request, response, next) => {
   try {
     const user = request.body;
 
-    console.log(user)
     // valid user schema
     const error = UserModel.validateLogin(user);
     if (error) {
@@ -106,19 +105,13 @@ router.post("/login", async (request, response, next) => {
       return;
     }
 
-    // validate user username against db
+    // validate username and password from database
     const dbUser = await usersLogic.isUserExist(user.userName);
-
-    if (!dbUser) {
-      response.status(409).json("Username or password are incorrect");
-      return;
-    }
- 
-    // validate password from db
     const password = await usersLogic.getUserPassword(dbUser.userName)
     const validPassword = await bcrypt.compare(user.password, password.password);
-    if (!validPassword) {
-      response.status(409).json("Username or password are incorrect");
+
+    if (!dbUser || !validPassword) {
+      response.status(409).json("username or password are incorrect");
       return;
     }
 

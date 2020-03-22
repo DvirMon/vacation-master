@@ -22,11 +22,6 @@ export class AppUser extends Component<AppUserProps, any> {
     
     return (
         <React.Fragment>
-          <MenuItem>
-            <IconButton color="inherit">
-              <AccountCircle />
-            </IconButton>
-          </MenuItem>
           <Typography variant="h6" className="tim-note">
             {userInfo && `${userInfo.firstName} ${userInfo.lastName}`}
           </Typography>

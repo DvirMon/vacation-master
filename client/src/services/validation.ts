@@ -21,6 +21,9 @@ export const handleMassage = (err) => {
     case "any.empty":
       err.message = "This field is required";
       break
+    case "string.min":
+      err.message = `This field should be at last ${err.context.limit} characters`;
+      break
     case "date.ref":
       err.message = "Please choose the start date before";
       break

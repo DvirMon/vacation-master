@@ -59,15 +59,20 @@ export class UserModel {
           })
           return errors;
         }),
-        userName: Joi.string().trim().min(3).max(10),
-        password: Joi.string().trim().min(8).max(24).regex(password).error(errors => {
+        userName: Joi.string().trim().min(3).max(10).error(errors => {
           errors.forEach(err => {
             handleMassage(err)
           })
           return errors;
         }),
+        password: Joi.string().trim().min(8).max(24).regex(password).error(errors => {
+          errors.forEach(err => {
+            console.log()
+            handleMassage(err)
+          })
+          return errors;
+        }),
       }).unknown()
-
     const error = Joi.validate(user, schema).error
     if (error) {
       return error.details[0].message
