@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
-import { MenuItem, IconButton, Typography, Toolbar } from "@material-ui/core";
+import { MenuItem, IconButton, Typography, Toolbar, MenuList } from "@material-ui/core";
 import BarChartIcon from "@material-ui/icons/BarChart";
 
 export class AppAdmin extends Component<any, any> {
@@ -10,8 +10,7 @@ export class AppAdmin extends Component<any, any> {
 
   render() {
     return (
-      <div>
-        <Toolbar>
+      <React.Fragment>
           <MenuItem>
             <NavLink
               to={{
@@ -32,11 +31,10 @@ export class AppAdmin extends Component<any, any> {
               Add Vacation
             </NavLink>
           </MenuItem>
-          <MenuItem>
+          <MenuItem> 
             <NavLink to="/admin">Home</NavLink>
           </MenuItem>
-        </Toolbar>
-      </div>
+      </React.Fragment>
     );
   }
 }

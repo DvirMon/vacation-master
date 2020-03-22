@@ -11,7 +11,11 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
-import { handleServerResponse, loginLegal,logInRequest } from "../../services/login";
+import {
+  handleServerResponse,
+  loginLegal,
+  logInRequest
+} from "../../services/login";
 import { LoginErrors } from "../../models/error-model";
 import { Grid, Paper, Typography } from "@material-ui/core";
 import AppTop from "../app-top/app-top/app-top";
@@ -95,7 +99,11 @@ export class Login extends Component<any, LoginState> {
     return (
       <div className="login">
         <nav>
-          <AppTop admin={false} />
+          <AppTop
+            user={false}
+            reg={true}
+            registerButton={this.registerButton}
+          />
         </nav>
         <aside>
           <Form className="my-form">
@@ -167,12 +175,7 @@ export class Login extends Component<any, LoginState> {
                   handleErrors={this.handleErrors}
                   validInput={UserModel.validLogin}
                 />
-              </Grid>
-              <Grid className="d-flex justify-content-center" item xs={12}>
-                <NavLink to="/register" exact className="text-center">
-                  Don't have an account?
-                </NavLink>
-              </Grid>
+              </Grid> 
               <Grid className="text-center" item xs={12}>
                 <Button
                   className="btn-lg "
@@ -192,7 +195,7 @@ export class Login extends Component<any, LoginState> {
 
   public handleChange = (prop: string, input: string): void => {
     const user = { ...this.state.user };
-    user[prop] = input; 
+    user[prop] = input;
     this.setState({ user, serverError: "" });
     console.log(this.state.user);
   };
@@ -217,6 +220,10 @@ export class Login extends Component<any, LoginState> {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
+  };
+ 
+  public registerButton = () => {
+    this.props.history.push("/register");
   };
 }
 

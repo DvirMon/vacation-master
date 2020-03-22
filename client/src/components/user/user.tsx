@@ -52,14 +52,6 @@ export class User extends Component<any, UserState> {
     try {
       const user = getStorage();
 
-      const action: Action = {
-        type: ActionType.addUser,
-        payloud: user
-      };
-      store.dispatch(action);
-
-      console.log(user);
-
       if (!user) {
         this.props.history.push("/");
       }
@@ -86,12 +78,13 @@ export class User extends Component<any, UserState> {
     return (
       <div className="user-page">
           <nav>
-            <AppTop
+          <AppTop
+              user={true}
               admin={false}
-              userInfo={user}
+              userInfo={user} 
+              logo={"Travel-on"}
               handleLogOut={this.handleLogOut}
-              followUpCounter={followUp.length}
-            />
+            ></AppTop>
           </nav>
 
           <main>

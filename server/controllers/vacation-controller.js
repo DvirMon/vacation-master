@@ -32,7 +32,7 @@ router.get("/user", helpers.authorize(), async (request, response, next) => {
 
     const vacations = await vacationsLogic.getUserVacations(user.id);
     response.json(vacations);
-  } catch (err) {
+  } catch (err) { 
     next(err);
   }
 });

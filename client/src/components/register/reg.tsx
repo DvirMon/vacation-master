@@ -33,7 +33,7 @@ export class Reg extends Component<any, RegState> {
     return (
       <div className="register">
         <nav>
-          <AppTop admin={false} />
+          <AppTop user={false} reg={false} loginButton={this.loginButton} />
         </nav>
         <main>
           <Form className="register-form">
@@ -139,6 +139,10 @@ export class Reg extends Component<any, RegState> {
     this.setState({ password });
     this.handleChange("password", password);
   };
+
+  public loginButton = () => {
+    this.props.history.push("/")
+  }
 }
 
 export default Reg;

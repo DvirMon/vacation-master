@@ -97,18 +97,20 @@ router.post("/", async (request, response, next) => {
 router.post("/login", async (request, response, next) => {
   try {
     const user = request.body;
-
     // valid user schema
     const error = UserModel.validateLogin(user);
     if (error) {
       response.status(404).json(error);
       return;
     }
-
+    
     // validate username and password from database
     const dbUser = await usersLogic.isUserExist(user.userName);
     const password = await usersLogic.getUserPassword(dbUser.userName)
+    
     const validPassword = await bcrypt.compare(user.password, password.password);
+    
+    // console.log(request.body)
 
     if (!dbUser || !validPassword) {
       response.status(409).json("username or password are incorrect");

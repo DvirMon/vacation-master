@@ -1,8 +1,17 @@
 .app-top {
-    margin: 0;
-    padding: 0;
-  .tim-note {
-    margin-left: 5%;
+  margin: 0;
+  padding: 0;
+
+  .btn-register {
+    text-align: right;
+    position: relative;
+    right: 11%;
+    margin-top: 2%;
+  }
+
+  .btn-login {
+    position: relative;
+    left: 5%;
   }
 
   h5 {

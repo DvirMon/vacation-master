@@ -61,8 +61,10 @@ export class Admin extends Component<any, AdminState> {
         <BrowserRouter>
           <nav> 
             <AppTop
-              userInfo={admin}
+              user={true}
               admin={true}
+              userInfo={admin}
+              logo={"Travel-on"}
               handleLogOut={this.handleLogOut}
             ></AppTop>
           </nav>

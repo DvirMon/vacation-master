@@ -1,23 +1,32 @@
 import React, { Component } from "react";
-import "./app-top.scss";
+import clsx from "clsx";
 import MenuItem from "@material-ui/core/MenuItem";
 import { UserModel } from "../../../models/user-model";
 import Button from "react-bootstrap/Button";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import AppUser from "../app-user/app-user";
 import AppAdmin from "../app-admin/app-admin";
-import { TokensModel } from "../../../models/tokens.model";
-import clsx from "clsx";
+import MenuOutlinedIcon from "@material-ui/icons/MenuOutlined";
+import { IconButton, Grid, MenuList } from "@material-ui/core";
+import "./app-top.scss";
 
 interface AppTopProps {
+  logged?: boolean;
+  reg?: boolean;
+  user?: boolean;
+  admin?: boolean;
   userInfo?: UserModel;
   followUpCounter?: number;
+  logo?: any;
   handleLogOut?(): void;
-  admin: boolean; 
+  loginButton?(): void;
+  registerButton?(): void;
 }
 
 interface AppTopState {
-  user: boolean;
+  login: string;
+  logout: string;
+  register: string;
 }
 
 export class AppTop extends Component<AppTopProps, AppTopState> {
@@ -25,62 +34,91 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
     super(props);
 
     this.state = {
-      user: true
+      login: "Login",
+      logout: "Logout",
+      register: "Register"
     };
   }
 
-  public componentDidMount = () => {  
-    const admin = this.props.admin 
-    console.log(admin)
-    if (admin) {
-      this.setState({ user: false });
-    }
-  };
-
   render() {
-
-    const { userInfo, followUpCounter, admin } = this.props;
-    const { user } = this.state;
-    return ( 
-      <nav 
-        className={clsx('navbar', 'navbar-transparent', 'navbar-color-on-scroll', 'fixed-top', 'navbar-expand-lg')}
+    const {
+      logged,
+      reg,
+      user,
+      admin,
+      userInfo,
+      followUpCounter,
+      logo
+    } = this.props;
+    const { login, logout, register } = this.state;
+    return (
+      <nav
+        className={clsx(
+          "app-top",
+          "navbar",
+          "navbar-transparent",
+          "navbar-color-on-scroll",
+          "fixed-top",
+          "navbar-expand-lg"
+        )}
         color-on-scroll="100"
       >
-        <div className="container">
-          <div className="navbar-translate">
-            <h1 className="tim-note">Travel-On</h1>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="sr-only">Toggle navigation</span>
-              <span className="navbar-toggler-icon"></span>
-              <span className="navbar-toggler-icon"></span>
-              <span className="navbar-toggler-icon"></span>
-            </button>
-          </div>
-          <div className="collapse navbar-collapse">
-            <ul className="navbar-nav ml-auto">
-              {user && (
-                <AppUser
-                  userInfo={userInfo}
-                  followUpCounter={followUpCounter}
-                />
-              )}
-              {admin && <AppAdmin 
-              />}
-              <MenuItem>
-              
-                <Button className="btn btn-danger" onClick={this.handleLogOut}>
-                  {`Logout`} 
+        {user ? (
+          <Grid container className="justify-content-center">
+            <Grid item xs={6} className="navbar-translate">
+              <h1 className="tim-note">{logo}</h1>
+              <IconButton
+                className="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                aria-expanded="false"
+              >
+                <MenuOutlinedIcon color="inherit" fontSize="large" />
+              </IconButton>
+            </Grid>
+            <Grid item xs={6} className="collapse navbar-collapse">
+              <MenuList className="navbar-nav ml-auto">
+                {!admin && (
+                  <AppUser
+                    userInfo={userInfo}
+                    followUpCounter={followUpCounter}
+                  />
+                )} 
+                {admin && <AppAdmin />}
+                <MenuItem>
+                  <Button
+                    className="btn btn-danger"
+                    onClick={this.handleLogOut}
+                  >
+                    {logout}
+                  </Button>
+                </MenuItem>
+              </MenuList>
+            </Grid>
+          </Grid>
+        ) : (
+          <Grid container spacing={3}>
+            {!reg ? (
+              <Grid item xs={12} className="btn-login">
+                <Button
+                  className="btn btn-primary"
+                  onClick={this.loginButton}
+                >
+                  {login}
                 </Button>
-              </MenuItem>
-            </ul>
-          </div>
-        </div>
+              </Grid>
+            ) : (
+              <Grid item xs={12} className="btn-register">
+                <Button
+                  className="btn btn-danger"
+                  onClick={this.registerButton}
+                >
+                  {register}
+                </Button>
+              </Grid>
+            )}
+          </Grid>
+        )}
       </nav>
     );
   }
@@ -88,6 +126,18 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
   public handleLogOut = () => {
     if (this.props.handleLogOut) {
       this.props.handleLogOut();
+    }
+  };
+
+  public loginButton = () => {
+    if (this.props.loginButton) {
+      this.props.loginButton();
+    }
+  };
+
+  public registerButton = () => {
+    if (this.props.registerButton) {
+      this.props.registerButton();
     }
   };
 }

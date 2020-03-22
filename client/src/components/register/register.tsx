@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import { UserModel } from "../../models/user-model";
-import PersonalDetails from "./personal-details/personal details";
-import UsernameAndPassword from "./password-username/password-username";
 import Container from "react-bootstrap/Container";
 import "./register.scss";
 
@@ -9,7 +7,7 @@ interface RegisterState {
   user: UserModel;
   step: number;
   timeOut: number;
-}
+} 
 
 export class Register extends Component<any, RegisterState> {
   constructor(props: any) {
@@ -51,22 +49,11 @@ export class Register extends Component<any, RegisterState> {
       case 1:
         return (
           <Container className="register personal-details">
-            <PersonalDetails
-              handleChange={this.handleChange}
-              nextStep={this.nextStep}
-              user={user}
-            />
           </Container>
         );
       case 2:
         return (
           <Container className="register password-username">
-            <UsernameAndPassword
-              handleChange={this.handleChange}
-              prevStep={this.prevStep}
-              nextStep={this.nextStep}
-              user={user}
-            />
           </Container>
         );
       case 3:
