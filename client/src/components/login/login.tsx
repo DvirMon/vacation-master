@@ -46,8 +46,8 @@ export class Login extends Component<any, LoginState> {
       const storage = localStorage.getItem("user");
       const response = JSON.parse(storage);
       if (!response) {
-        this.props.history.push("/login");
-        console.log("Please Login");
+        // this.props.history.push("/login");
+        console.log("Login")
         return;
       }
 
@@ -97,7 +97,7 @@ export class Login extends Component<any, LoginState> {
     const { user, serverError, showPassword } = this.state;
 
     return (
-      <div className="login">
+      <div className="login page">
         <nav></nav>
         <main>
           <div className="header-login fade-up">

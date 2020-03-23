@@ -35,6 +35,8 @@ export class Register extends Component<any, RegisterState> {
     };
   }
 
+  public componentDidMount = () => {};
+
   public registrationFormLegal = (): boolean => {
     const user = this.state.user;
     const errors = this.state.errors;
@@ -77,7 +79,8 @@ export class Register extends Component<any, RegisterState> {
     const { user, password, serverError, serverErrorStyle } = this.state;
 
     return (
-        <div className="register">
+      <div className="register page">
+        <React.Fragment>
           <nav>
             <AppTop user={false} reg={true} loginButton={this.loginButton} />
           </nav>
@@ -143,7 +146,7 @@ export class Register extends Component<any, RegisterState> {
                     "Please enter a password or create one with the icon"
                   }
                 ></MyInput>
-                <Grid className="text-center" item xs={12}>
+                <Grid className="text-center" item xs={10}>
                   <Button
                     type="button"
                     className="register-button"
@@ -159,7 +162,8 @@ export class Register extends Component<any, RegisterState> {
               </Grid>
             </Form>
           </main>
-        </div>
+        </React.Fragment>
+      </div>
     );
   }
 
@@ -194,7 +198,7 @@ export class Register extends Component<any, RegisterState> {
   };
 
   public loginButton = () => {
-    this.props.history.push("/");
+    this.props.history.push("/login");
   };
 }
 
