@@ -38,25 +38,7 @@ router.get("/followup", helpers.authorize(),
 
 //---------------------------------------------- ---------------------------------------//
 
-// validate user username (register)
-router.post("/details", async (request, response, next) => {
-  try {
-    const userName = request.body;
-
-    const dbUser = await usersLogic.isUserExist(userName);
-
-    if (dbUser) {
-      response.status(409).json("username is already taken");
-      return;
-    }
-
-    response.json(null);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// add new user (confirm)
+// add new user (register)
 router.post("/", async (request, response, next) => {
   try {
 

@@ -3,10 +3,10 @@ import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
 import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
-import { formLegalValues, formLegalErrors } from "../../../services/validation";
+import { formLegalValues, formLegalErrors } from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
 import "./update.scss";
-import { putRequest, getRequest } from "../../../services/server";
+import { putRequest, getRequest } from "../../../services/serverService";
 import { store } from "../../../redux/store/store";
 import { Unsubscribe } from "redux";
 

@@ -1,6 +1,7 @@
 import Joi from 'joi'
 
-import { handleMassage } from '../services/validation';
+import { handleMassage } from '../services/validationService';
+import { register } from '../serviceWorker';
 
 export class UserModel {
 
@@ -38,8 +39,18 @@ export class UserModel {
     return null;
   };
 
+}
 
+export class RegisterModel {
 
+  public constructor(
+    public firstName?: string,
+    public lastName?: string,
+    public userName?: string,
+    public password?: string,
+  ) { }
+
+  
   static validRegistration = (user: UserModel) => {
 
     const name = /^[a-zA-Z]{3,25}$/;

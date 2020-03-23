@@ -6,7 +6,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from "@material-ui/pickers";
-import { setObjectForSchema } from "../../services/validation";
+import { setObjectForSchema } from "../../services/validationService";
 
 interface DatePickerState {
   selectedDate: Date;

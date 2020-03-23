@@ -7,6 +7,13 @@
   .row {
     justify-content: space-around;
     margin: 0;
+  }
+
+  .row-followed {
+    padding: 0;
+  }
+
+  .row-unFollowed {
     margin-left: 5%;
   }
 
@@ -14,5 +21,9 @@
     margin: 0;
     margin-bottom: 1%;
     padding: 0;
+  }
+  .col-sm-3 {
+    margin: 0;
+    margin-bottom: 1%;
   }
 }

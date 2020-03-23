@@ -20,11 +20,11 @@ export class LoginErrors {
 
 export class RegistrationErrors extends LoginErrors {
   public constructor(
-    public firstName?: string,
-    public lastName?: string,
-    userName?: string,
-    password?: string,
-    server?: string
+    public firstName: string,
+    public lastName: string,
+    userName: string,
+    password: string,
+    server: string
   ) {
     super(userName, password, server)
 

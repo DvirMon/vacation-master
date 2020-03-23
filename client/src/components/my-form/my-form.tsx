@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import MyInput from "../my-input/my-input";
 import { VacationModel } from "../../models/vacations-model";
 import { VacationErrors } from "../../models/error-model";
-import { uploadImage } from "../../services/server";
+import { uploadImage } from "../../services/serverService";
 import DatePicker from "../date-picker/date-picker";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
@@ -153,10 +153,12 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
             <MyInput
               width={8}
               value={vacation.description || ""}
+              type="text"
               label="Description"
-              prop={"description"}
+              prop="description" 
               placeholder="add description"
               fullWidth={true}
+              multiline={true}
               rows={5}
               handleChange={this.handleChange}
               handleErrors={this.handleErrors}

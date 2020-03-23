@@ -1,3 +1,4 @@
+
 .register {
   height: 100%;
   display: grid;
@@ -5,7 +6,10 @@
   grid-template-columns: repeat(12, 1fr);
   padding: 0;
   margin: 0;
-
+  // background-image: url("/assets/img/backgrounds/registration.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   nav {
     grid-column: 12 span;
   }
@@ -20,7 +24,7 @@
     width: 30%;
     background-color: #fafafa;
     border-radius: 25px;
-    padding: 3%;
+    padding: 3%0;
   }
 
   .register-button {

@@ -26,8 +26,7 @@ const getVacation = async (vacationID) => {
 const getUnFollowedVacations = async userID => {
   const sql = `SELECT ${vacationFormat}
   FROM vacations as v 
-  WHERE v.vacationID BETWEEN 1 AND 10 
-  AND v.vacationID NOT IN (
+  WHERE v.vacationID NOT IN (
        SELECT f.vacationID
        FROM  followers as f 
        WHERE f.userID = ${userID})`;

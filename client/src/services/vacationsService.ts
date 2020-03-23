@@ -1,4 +1,16 @@
-import { postRequest, deleteRequest, getRequest } from "../../services/server";
+import { VacationModel } from "../models/vacations-model";
+import { getRequest, postRequest, deleteRequest } from "./serverService";
+ 
+export const getVacations = async (accessToken): Promise<VacationModel[]> => {
+  const url = `http://localhost:3000/api/vacations/user`;
+  try {
+    const response = await getRequest(url, accessToken);
+    return response
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 
 export const getFollowersByVacation = async (vacationID) => {
   const url = `http://localhost:3000/api/followup/${vacationID}`;
@@ -28,3 +40,4 @@ export const deleteFollowUp = async (id, accessToken) => {
     console.log(err);
   }
 }; 
+

@@ -11,7 +11,6 @@ import { IconButton, Grid, MenuList } from "@material-ui/core";
 import "./app-top.scss";
 
 interface AppTopProps {
-  logged?: boolean;
   reg?: boolean;
   user?: boolean;
   admin?: boolean;
@@ -41,15 +40,7 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
   }
 
   render() {
-    const {
-      logged,
-      reg,
-      user,
-      admin,
-      userInfo,
-      followUpCounter,
-      logo
-    } = this.props;
+    const { reg, user, admin, userInfo, followUpCounter, logo } = this.props;
     const { login, logout, register } = this.state;
     return (
       <nav
@@ -83,7 +74,7 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
                     userInfo={userInfo}
                     followUpCounter={followUpCounter}
                   />
-                )} 
+                )}
                 {admin && <AppAdmin />}
                 <MenuItem>
                   <Button
@@ -98,22 +89,10 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
           </Grid>
         ) : (
           <Grid container spacing={3}>
-            {!reg ? (
+            {reg && (
               <Grid item xs={12} className="btn-login">
-                <Button
-                  className="btn btn-primary"
-                  onClick={this.loginButton}
-                >
+                <Button className="btn btn-primary" onClick={this.loginButton}>
                   {login}
-                </Button>
-              </Grid>
-            ) : (
-              <Grid item xs={12} className="btn-register">
-                <Button
-                  className="btn btn-danger"
-                  onClick={this.registerButton}
-                >
-                  {register}
                 </Button>
               </Grid>
             )}
@@ -132,12 +111,6 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
   public loginButton = () => {
     if (this.props.loginButton) {
       this.props.loginButton();
-    }
-  };
-
-  public registerButton = () => {
-    if (this.props.registerButton) {
-      this.props.registerButton();
     }
   };
 }

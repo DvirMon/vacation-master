@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./admin.scss";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-import { logOutService, getStorage } from "../../../services/login";
+import { logOutService, getStorage } from "../../../services/loginService";
 import AppTop from "../../app-top/app-top/app-top";
 import Insert from "../insert/insert";
 import Vacations from "../../vacations/vacations";

@@ -15,9 +15,9 @@ import {
   handleServerResponse,
   loginLegal,
   logInRequest
-} from "../../services/login";
+} from "../../services/loginService";
 import { LoginErrors } from "../../models/error-model";
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography, TextField } from "@material-ui/core";
 import AppTop from "../app-top/app-top/app-top";
 import "./login.scss";
 
@@ -98,13 +98,19 @@ export class Login extends Component<any, LoginState> {
 
     return (
       <div className="login">
-        <nav>
-          <AppTop
-            user={false}
-            reg={true}
-            registerButton={this.registerButton}
-          />
-        </nav>
+        <nav></nav>
+        <main>
+          <div className="header-login fade-up">
+            <h2>Explore destinations around the world!</h2>
+            <h3>We offer the best prices!</h3>
+            <h3>You can open an account for more information</h3>
+            <div className="btn-register">
+              <Button className="btn btn-danger" onClick={this.registerButton}>
+                Open an Account !
+              </Button>
+            </div>
+          </div>
+        </main>
         <aside>
           <Form className="my-form">
             <Grid className="row-header" spacing={2} container>
@@ -125,7 +131,7 @@ export class Login extends Component<any, LoginState> {
                 alignItems="flex-end"
                 className="d-flex justify-content-center p-3"
               >
-                <Grid item>
+                <Grid item className="icon-start">
                   <PersonIcon />
                 </Grid>
                 <MyInput
@@ -148,7 +154,7 @@ export class Login extends Component<any, LoginState> {
                 alignItems="flex-end"
                 className="d-flex justify-content-center p-3"
               >
-                <Grid item>
+                <Grid item className="icon-start">
                   <LockOpenIcon />
                 </Grid>
                 <MyInput
@@ -175,10 +181,10 @@ export class Login extends Component<any, LoginState> {
                   handleErrors={this.handleErrors}
                   validInput={UserModel.validLogin}
                 />
-              </Grid> 
-              <Grid className="text-center" item xs={12}>
+              </Grid>
+              <Grid className="text-center mt-4" item xs={12}>
                 <Button
-                  className="btn-lg "
+                  className="btn-lg"
                   variant="info"
                   type="button"
                   onClick={this.handleLogIn}
@@ -221,7 +227,7 @@ export class Login extends Component<any, LoginState> {
   ) => {
     event.preventDefault();
   };
- 
+
   public registerButton = () => {
     this.props.history.push("/register");
   };

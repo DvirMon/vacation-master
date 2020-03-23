@@ -8,7 +8,6 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import { UserModel } from "../../../models/user-model";
-// import "./app-user.scss";
 
 interface AppUserProps {
   userInfo?: UserModel;

@@ -1,7 +1,4 @@
-import { getTokens } from "./tokens";
-import { getRequest, postRequest, deleteRequest } from "./server";
-import Vacations from "../components/vacations/vacations";
-import { VacationModel } from "../models/vacations-model";
+import {  postRequest, deleteRequest } from "./serverService";
 import { store } from "../redux/store/store";
 import { Action } from "../redux/action/action";
 import { ActionType } from "../redux/action-type/action-type";
@@ -35,6 +32,17 @@ export const loginLegal = (user, errors) => {
   }
   return false;
 };
+export const registrationLegal = (user, errors) => {
+  if (
+    user.userName === undefined ||
+    user.password === undefined ||
+    errors.userName.length > 0 ||
+    errors.password.length > 0  
+  ) {
+    return true;
+  }
+  return false;
+};
 
 export const handleServerResponse = response => {
  
@@ -42,33 +50,22 @@ export const handleServerResponse = response => {
     case "string":
       return false
     case "object":
-    
     const action: Action = {
         type: ActionType.addUser,
         payloud: response
       }
       store.dispatch(action)
+
       localStorage.setItem("user", JSON.stringify(response));
       return true;
   }
 };
 
-export const getVacations = async (accessToken): Promise<VacationModel[]> => {
-  const url = `http://localhost:3000/api/vacations/user`;
-  try {
-    const response = await getRequest(url, accessToken);
-    return response
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 export const logOutService = async (tokens, history) => {
 
   try {
-
     const user = new UserModel()
-    console.log(user)
 
     const action : Action = {
       type : ActionType.deleteUser,

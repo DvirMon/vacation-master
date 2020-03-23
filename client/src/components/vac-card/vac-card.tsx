@@ -11,15 +11,15 @@ import Typography from "@material-ui/core/Typography";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import "./vac-card.scss";
 import { UserVacationModel } from "../../models/vacations-model";
 import Moment from "react-moment";
 import {
   deleteFollowUp,
-  addFollowUp,
+  addFollowUp, 
   getFollowersByVacation
-} from "./vac-card-service";
+} from "../../services/vacationsService";
 import CardTopIcons from "./card-top-icons/card-top-icons";
+import "./vac-card.scss";
 
 interface VacCardProps {
   vacation: UserVacationModel;
@@ -99,7 +99,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
     return (
       <div className="vac-card">
-        <Card className={`root`}>
+        <Card className="root"> 
           <CardHeader
             className={"card-header"}
             action={

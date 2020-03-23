@@ -3,7 +3,7 @@ import CanvasJSReact from "../../../assets/canvasjs.react";
 import "./charts.scss";
 import { ChartModel } from "../../../models/charts-model";
 import { TokensModel } from "../../../models/tokens.model";
-import { getRequest } from "../../../services/server";
+import { getRequest } from "../../../services/serverService";
 import { store } from "../../../redux/store/store";
 
 import { Unsubscribe } from "redux";

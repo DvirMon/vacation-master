@@ -1,4 +1,4 @@
-import { postRequest, getData } from "./server";
+import { postRequest, getData } from "./serverService";
 import { Action } from "../redux/action/action";
 import { ActionType } from "../redux/action-type/action-type";
 import { store } from "../redux/store/store";

@@ -6,7 +6,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import FormLabel from "react-bootstrap/FormLabel";
 import { UserModel } from "../../models/user-model";
-import { isRequired, setObjectForSchema } from "../../services/validation";
+import { isRequired, setObjectForSchema } from "../../services/validationService";
 import { Typography } from "@material-ui/core";
 
 import TextField from "@material-ui/core/TextField";
@@ -21,16 +21,19 @@ export interface MyInputProps {
   width?: number;
   value?: string | number;
   schema?: {};
-  type?: string;
+  type: string;
   prop?: string;
   label?: string;
   placeholder?: string;
   autoFocus?: boolean;
   fullWidth?: boolean;
   passwordIcon?: any;
-  serverError?: string;
+  serverError?: string; 
+  serverErrorStyle?: boolean;
+  required? : boolean
   helperText? : string
   rows?: number;
+  multiline? : boolean  
 
   handleChange?(prop: string, input: string): void;
   handleErrors?(prop: string, error?: string): void;
@@ -64,7 +67,6 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       value,
       type,
       prop,
-      schema,
       label,
       autoFocus,
       fullWidth,
@@ -72,6 +74,9 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       placeholder,
       helperText,
       serverError,
+      serverErrorStyle,
+      required,
+      multiline,
       rows
     } = this.props;
     const { error, errorMessage } = this.state;
@@ -80,13 +85,13 @@ class MyInput extends Component<MyInputProps, MyInputState> {
         <Grid item xs={width}>
           <TextField
             value={value}
-            type={type}
-            autoFocus={autoFocus}
+            type={type} 
             fullWidth={fullWidth}
             label={label}
             placeholder={placeholder}
-            error={error}
-            multiline 
+            error={error ? error : serverErrorStyle}
+            required={required}
+            multiline={multiline} 
             rows={rows}
             onChange={this.handleChange(prop)}
             onBlur={this.handleBlur(prop)}

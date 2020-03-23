@@ -24,15 +24,17 @@ export const handleMassage = (err) => {
     case "string.min":
       err.message = `This field should be at last ${err.context.limit} characters`;
       break
+    case "string.max":
+      err.message = `This field must be less than or equal to  ${err.context.limit} characters long}`;
+      break
     case "date.ref":
-      err.message = "Please choose the start date before";
+      err.message = "Please choose departing date and only then returning date";
       break
     case "date.greater":
       err.message = `This date must be greater then ${err.context.limit.toISOString().slice(0, 10).replace("T", " ")}`;
       break
   }
 }
-
 
 export const setObjectForSchema = (schema: {}, prop: string, input: string) => {
   schema[prop] = input;
@@ -54,11 +56,17 @@ export const formLegalErrors = (errors) => {
 
 export const formLegalValues = (obj) => {
   for (const value in obj) {
-    if (obj[value] === undefined)
+    if (obj[value] === undefined) {
       return value
-  }
+    }
+    else {
+      continue
+    }
+  };
   return null
-};
+}
+
+
 
 
 

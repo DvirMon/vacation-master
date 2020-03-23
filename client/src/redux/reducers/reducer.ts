@@ -14,26 +14,7 @@ export const rootReducer = (oldState: AppState, action: Action): AppState => {
       newState.tokens = action.payloud
       break
     case ActionType.deleteUser:
-      console.log(action.payloud)
       newState.user = action.payloud
-      console.log(newState.user)
-      break
-    case ActionType.getAllVacations:
-      newState.followUp = action.payloud
-      break
-    case ActionType.getAllVacations:
-      newState.unFollowUp = action.payloud
-      break
-    case ActionType.addVacation:
-      // only with user ?
-      newState.followUp.push(action.payloud)
-      const indexToDelete = newState.unFollowUp.findIndex(item => item.followUpID === action.payloud)
-      newState.unFollowUp.splice(indexToDelete, 1)
-      break
-    case ActionType.deleteVacations:
-      const followUpDelete = newState.followUp.findIndex(item => item.vacationID === action.payloud)
-      newState.followUp.splice(followUpDelete, 1)
-      newState.unFollowUp.push(action.payloud)
       break
   }
   return newState

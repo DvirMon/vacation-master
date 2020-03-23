@@ -4,9 +4,9 @@ import MyForm from "../../my-form/my-form";
 import Button from "react-bootstrap/Button";
 import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
-import { formLegalValues, formLegalErrors } from "../../../services/validation";
+import { formLegalValues, formLegalErrors } from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
-import { postRequest } from "../../../services/server";
+import { postRequest } from "../../../services/serverService";
 
 import { store } from "../../../redux/store/store";
 import { Unsubscribe } from "redux";

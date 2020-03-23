@@ -2,10 +2,7 @@ body, html, #root {
 height: 100%;
 padding: 0;
 margin: 0;
-background-image: url("/assets/img/home2.jpg");
-background-size: cover;
-background-repeat: no-repeat;
-background-position: center;
+
 
 }
 
@@ -17528,6 +17525,8 @@ footer .pull-center {
   .navbar-collapse .navbar-nav {
     position: relative;
     z-index: 3;
+    background-color: rgb(231, 211, 231);
+    
   }
   .navbar-collapse .navbar-nav .nav-item .nav-link {
     color: #3C4858;
