@@ -3,12 +3,17 @@ import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
 import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
-import { formLegalValues, formLegalErrors } from "../../../services/validationService";
+import {
+  formLegalValues,
+  formLegalErrors
+} from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
-import "./update.scss";
 import { putRequest, getRequest } from "../../../services/serverService";
 import { store } from "../../../redux/store/store";
-import { Unsubscribe } from "redux";
+import AppTop from "../../app-top/app-top/app-top";
+import { getStorage } from "../../../services/loginService";
+import Loader from "../../loader/loader";
+import "./update.scss";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -18,7 +23,6 @@ interface UpdateState {
 }
 
 export class Update extends Component<any, UpdateState> {
-  private unsubscribeStore: Unsubscribe;
 
   constructor(props: any) {
     super(props);
@@ -26,30 +30,36 @@ export class Update extends Component<any, UpdateState> {
     this.state = {
       vacation: new VacationModel(),
       errors: null,
-      tokens: store.getState().tokens,
+      tokens: new TokensModel(),
       updated: true
     };
 
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({ tokens: store.getState().tokens });
-    });
   }
 
   public componentDidMount = async () => {
-    const vacationID = this.props.match.params.id;
-    const url = `http://localhost:3000/api/vacations/${vacationID}`;
-    const vacation = await getRequest(url);
-    this.setState({ vacation });
+    const user = getStorage("user");
+
+    if (!user || user.isAdmin === 0) {
+      this.props.history.push("/login");
+      console.log("Not Admin");
+      return;
+    }
+
+    try {
+      const tokens = getStorage("tokens");
+      const vacationID = this.props.match.params.id;
+      const url = `http://localhost:3000/api/vacations/${vacationID}`;
+      const vacation = await getRequest(url);
+      this.setState({ vacation, updated: true, tokens });
+    } catch (err) {
+      console.log(err);
+    }
   };
-
-  public componentWillUnmount(): void {
-    this.unsubscribeStore();
-  }
-
+ 
   public updateVacation = async () => {
     if (this.state.updated) {
       const answer = window.confirm(
-        "No change has been made do you want to continue?"
+        "No change has been notice, do you wish to continue?"
       );
       if (!answer) {
         return;
@@ -63,44 +73,59 @@ export class Update extends Component<any, UpdateState> {
 
     try {
       const { vacation, tokens } = this.state;
+
+      console.log(tokens);
       const vacationID = this.props.match.params.id;
 
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
       const response = await putRequest(url, vacation, tokens.accessToken);
-      
-      if(response.message === 'success') {
-        this.props.history.push("/admin");
-      } 
 
+      if (response.message === "success") {
+        this.props.history.push("/admin");
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
   render() {
-    const { vacation } = this.state;
+    const { vacation, tokens } = this.state;
 
     return (
-      <div className="update">
-        <main>
-          {vacation && (
-            <MyForm
-              vacation={vacation}
-              handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
-              handleVacation={this.updateVacation}
-            />
-          )}
-        </main>
-        <aside>
-          <VacCard
-            vacation={vacation}
-            followIcon={false}
-            admin={false}
-            accessToken={""}
-          />
-        </aside>
-      </div>
+      <React.Fragment>
+        {!vacation ? (
+          <Loader />
+        ) : (
+          <div className="update page">
+            <nav>
+              <AppTop
+                user={true}
+                admin={true}
+                logo={"Travel-on"}
+                tokens={tokens}
+              ></AppTop>
+            </nav>
+            <main>
+              {vacation && (
+                <MyForm
+                  vacation={vacation}
+                  handleChange={this.handleChange}
+                  handleErrors={this.handleErrors}
+                  handleVacation={this.updateVacation}
+                />
+              )}
+            </main>
+            <aside>
+              <VacCard
+                vacation={vacation}
+                followIcon={false}
+                admin={false}
+                accessToken={""}
+              />
+            </aside>
+          </div>
+        )}
+      </React.Fragment>
     );
   }
 

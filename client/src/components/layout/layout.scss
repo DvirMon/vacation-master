@@ -1,33 +1,35 @@
-.app {
-  height: 100%;
+.page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow-x: hidden;
+}
 
-  .page {
-    position: absolute;
-    left: 0;
-    right: 0;
-  }
+.slide-appear,
+.slide-enter {
+  transform: translateX(-100%);
+  opacity: 0;
+  position: absolute;
+  // overflow-x: hidden;
+}
+.slide-appear-active,
+.slide-enter.slide-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 5000;
+  // overflow-x: hidden;
+}
 
-  .slide-appear,
-  .slide-enter {
-    transform: translateX(-100%);
-    opacity: 0;
-    position: absolute;
-  }
-  .slide-appear-active,
-  .slide-enter.slide-enter-active {
-    transform: translateX(0);
-    opacity: 1;
-    transition: all 300ms linear 300ms;
-  }
+.slide-exit {
+  transform: translateX(0);
+  opacity: 1;
+  // overflow-x: hidden;
+}
 
-  .slide-exit {
-    transform: translateX(0);
-    opacity: 1;
-  }
-
-  .slide-exit.slide-exit-active {
-    transform: translateX(100vw);
-    opacity: 0;
-    transition: all 300ms linear;
-  }
+.slide-exit.slide-exit-active {
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 5000;
+  // overflow-x: hidden;
 }

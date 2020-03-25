@@ -1,7 +1,5 @@
 import Joi from 'joi'
-
 import { handleMassage } from '../services/validationService';
-import { register } from '../serviceWorker';
 
 export class UserModel {
 

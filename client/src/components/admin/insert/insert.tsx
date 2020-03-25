@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
-import Button from "react-bootstrap/Button";
 import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
-import { formLegalValues, formLegalErrors } from "../../../services/validationService";
+import {
+  formLegalValues,
+  formLegalErrors
+} from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
 import { postRequest } from "../../../services/serverService";
-
-import { store } from "../../../redux/store/store";
-import { Unsubscribe } from "redux";
-
+import AppTop from "../../app-top/app-top/app-top";
+import { getStorage } from "../../../services/loginService";
 import "./insert.scss";
 
 interface InsertState {
@@ -20,25 +20,29 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
-  private unsubscribeStore: Unsubscribe;
-
   constructor(props: any) {
     super(props);
 
     this.state = {
       vacation: new VacationModel(),
       errors: null,
-      tokens: store.getState().tokens
+      tokens: new TokensModel()
     };
-
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({ tokens: store.getState().tokens });
-    });
   }
 
-  public componentWillUnmount(): void {
-    this.unsubscribeStore();
-  }
+  public componentDidMount = async () => {
+    
+    const user = getStorage("user");
+    const tokens = getStorage("tokens");
+
+    if (!user || user.isAdmin === 0) {
+      this.props.history.push("/login");
+      console.log("Not Admin");
+      return;
+    }
+
+    this.setState({ tokens });
+  };
 
   public addVacation = async () => {
     if (this.vacationFormLegal()) {
@@ -47,10 +51,10 @@ export class Insert extends Component<any, InsertState> {
 
     try {
       const { vacation, tokens } = this.state;
-
       const url = `http://localhost:3000/api/vacations`;
-      const response = await postRequest(url, vacation, tokens.accessToken);
 
+      await postRequest(url, vacation, tokens.accessToken);
+      alert("New Vacation has been added!");
       this.props.history.push("/admin");
     } catch (err) {
       console.log(err);
@@ -58,9 +62,17 @@ export class Insert extends Component<any, InsertState> {
   };
 
   render() {
-    const { vacation } = this.state;
+    const { vacation, tokens } = this.state;
     return (
-      <div className="insert">
+      <div className="insert page">
+        <nav>
+          <AppTop
+            user={true}
+            admin={true}
+            logo={"Travel-on"}
+            tokens={tokens}
+          ></AppTop>
+        </nav>
         <main>
           <MyForm
             vacation={vacation}

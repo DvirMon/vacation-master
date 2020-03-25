@@ -2,11 +2,11 @@ const express = require("express");
 const followUpLogic = require("../bll/followup-logic");
 const usersLogic = require("../bll/users-logic");
 const router = express.Router();
-const Helper = require("../helpers/helpers");
+const auth = require("../services/auth");
 
 
 // get all followup vacation
-router.get("/", Helper.authorize(1) ,async (request, response, next) => {
+router.get("/", auth.authorize(1) ,async (request, response, next) => {
   try {
     const followers = await followUpLogic.getAllFollowUp();
     response.json(followers);
@@ -31,7 +31,7 @@ router.get("/:id", async (request, response, next) => {
 });
 
 // add new followup
-router.post("/", Helper.authorize(), async (request, response, next) => {
+router.post("/", auth.authorize(), async (request, response, next) => {
   try {
     // get vacationID uuid from request
     const followup = request.body;
@@ -58,7 +58,7 @@ router.post("/", Helper.authorize(), async (request, response, next) => {
 
 
 // delete followup
-router.delete("/:id", Helper.authorize(), async (request, response, next) => {
+router.delete("/:id", auth.authorize(), async (request, response, next) => {
   try {
     const id = request.params.id;
     await followUpLogic.deleteFollowUp(id);

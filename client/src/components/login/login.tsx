@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
-import Button from "react-bootstrap/Button";
-import { NavLink } from "react-router-dom";
 import { UserModel } from "../../models/user-model";
 import MyInput from "../my-input/my-input";
 import PersonIcon from "@material-ui/icons/Person";
@@ -10,6 +8,7 @@ import LockOpenIcon from "@material-ui/icons/LockOpen";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import {
   handleServerResponse,
@@ -17,8 +16,7 @@ import {
   logInRequest
 } from "../../services/loginService";
 import { LoginErrors } from "../../models/error-model";
-import { Grid, Paper, Typography, TextField } from "@material-ui/core";
-import AppTop from "../app-top/app-top/app-top";
+import Grid from "@material-ui/core/Grid";
 import "./login.scss";
 
 interface LoginState {
@@ -47,8 +45,7 @@ export class Login extends Component<any, LoginState> {
       const response = JSON.parse(storage);
       if (!response) {
         // this.props.history.push("/login");
-        console.log("Login")
-        return;
+        console.log("Login");
       }
 
       //   if so route according to role
@@ -104,11 +101,7 @@ export class Login extends Component<any, LoginState> {
             <h2>Explore destinations around the world!</h2>
             <h3>We offer the best prices!</h3>
             <h3>You can open an account for more information</h3>
-            <div className="btn-register">
-              <Button className="btn btn-danger" onClick={this.registerButton}>
-                Open an Account !
-              </Button>
-            </div>
+            <div className="btn-register"></div>
           </div>
         </main>
         <aside>
@@ -182,14 +175,26 @@ export class Login extends Component<any, LoginState> {
                   validInput={UserModel.validLogin}
                 />
               </Grid>
-              <Grid className="text-center mt-4" item xs={12}>
+              <Grid className="text-center" item xs={12}>
                 <Button
-                  className="btn-lg"
-                  variant="info"
                   type="button"
+                  className="text-buttons"
+                  variant="outlined"
+                  color="primary"
                   onClick={this.handleLogIn}
-                >
+                  >
                   Login
+                </Button>
+              </Grid>
+              <Grid className="text-center" item xs={12}>
+                <Button
+                  type="button"
+                  className="text-buttons"
+                  variant="outlined"
+                  color="secondary"
+                  onClick={this.registerButton}
+                >
+                  Open an Account !
                 </Button>
               </Grid>
             </Grid>
@@ -203,7 +208,6 @@ export class Login extends Component<any, LoginState> {
     const user = { ...this.state.user };
     user[prop] = input;
     this.setState({ user, serverError: "" });
-    console.log(this.state.user);
   };
 
   public handleErrors = (prop: string, error: string) => {

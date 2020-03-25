@@ -15,7 +15,7 @@ import { UserVacationModel } from "../../models/vacations-model";
 import Moment from "react-moment";
 import {
   deleteFollowUp,
-  addFollowUp, 
+  addFollowUp,
   getFollowersByVacation
 } from "../../services/vacationsService";
 import CardTopIcons from "./card-top-icons/card-top-icons";
@@ -99,14 +99,19 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
     return (
       <div className="vac-card">
-        <Card className="root"> 
+        <Card
+          className={clsx({
+            root: true, 
+            "root-hover": !admin
+          })}
+        >
           <CardHeader
             className={"card-header"}
             action={
               <CardTopIcons
                 vacation={vacation}
                 handleIconClick={this.handleIconClick}
-                color={color}
+                color={color} 
                 followIcon={followIcon}
                 admin={admin}
                 handleDelete={this.handleDelete}
@@ -155,7 +160,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     const clickEvent = this.state.clickEvent;
     this.setState({ clickEvent: !clickEvent });
     await this.handleFollowUp(vacationID);
-  }; 
+  };
 
   public handleExpandClick = event => {
     const expanded = this.state.expanded;
@@ -176,12 +181,11 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   };
 
   public handleDelete = (vacationID: number) => {
-  
     if (this.props.handleDelete) {
       this.props.handleDelete(vacationID);
     }
   };
-  
+
   public handleEdit = (vacationID: number) => {
     if (this.props.handleEdit) {
       this.props.handleEdit(vacationID);

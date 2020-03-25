@@ -5,8 +5,8 @@ import { ActionType } from "../redux/action-type/action-type";
 import { UserModel } from "../models/user-model";
 
 
-export const getStorage = () => {
-  const storage = localStorage.getItem("user");
+export const getStorage = (key) => {
+  const storage = localStorage.getItem(key);
   const response = JSON.parse(storage);
   return response
 }
@@ -32,6 +32,7 @@ export const loginLegal = (user, errors) => {
   }
   return false;
 };
+
 export const registrationLegal = (user, errors) => {
   if (
     user.userName === undefined ||
@@ -82,7 +83,7 @@ export const logOutService = async (tokens, history) => {
     localStorage.clear();
 
     // redirect to login page
-    history.push("/login");
+    history.push("/");
   }
   catch (err) {
     console.log(err)

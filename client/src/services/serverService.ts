@@ -17,18 +17,12 @@ export const getData = async (url: string, options?: {}) => {
 
 export const getRequest = async (url: string, accessToken?: string) => {
 
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  const request = new Request(url, { signal });
-
   const options = {
     headers: {
       "Authorization": accessToken,
-    },
-    signal: signal
+    }
   };
-  
+
   try {
     const response = await getData(url, options);
     return response
@@ -39,10 +33,10 @@ export const getRequest = async (url: string, accessToken?: string) => {
 }
 
 export const postRequest = async (url: string, body?: any, accessToken?: string) => {
-  
+
   const controller = new AbortController();
   const signal = controller.signal;
-  
+
   const options = {
     method: "POST",
     headers: {
@@ -52,7 +46,7 @@ export const postRequest = async (url: string, body?: any, accessToken?: string)
     signal: signal,
     body: JSON.stringify(body)
   };
-  
+
   try {
     const response = await getData(url, options);
     return response

@@ -18,8 +18,6 @@ export class VacationModel {
 
   static validVacation = (vacation: VacationModel): string => {
 
-    // const pattern = /^[a-zA-Z ]$/;
-
     const schema = Joi.object().keys({
       destination: Joi.string().max(50),
       description: Joi.string().max(1000),
@@ -31,7 +29,7 @@ export class VacationModel {
         })
         return errors;
       }),
-      price: Joi.number()
+      price: Joi.number().min(1)
     }).unknown()
 
     const error = Joi.validate(vacation, schema).error;

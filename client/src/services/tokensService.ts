@@ -34,6 +34,8 @@ export const getTokens = async user => {
     };
     store.dispatch(action);
 
+    localStorage.setItem("tokens", JSON.stringify(tokens));
+
     return tokens
   } catch (err) {
     console.log(err);

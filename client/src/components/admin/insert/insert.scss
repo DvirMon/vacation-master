@@ -1,19 +1,24 @@
 .insert {
   height: 100%;
   display: grid;
-  grid-template-rows: 100%;
-  grid-template-columns: repeat(12 , 1fr);
-
+  padding: 0;
+  margin: 0;
+  grid-template-rows: 15% 85%;
+  grid-template-columns: repeat(12, 1fr);
+  background-color: #fafafa7e;
+  
+  
+  nav {
+    grid-column: 12 span;
+  }
+  
   main {
     grid-column: 8 span;
-    position: relative;
   }
   
   aside {
     grid-column: 3 span;
     position: relative;
-    top: 4%;
     left: 10%;
   }
-
 }

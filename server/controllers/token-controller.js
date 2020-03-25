@@ -5,9 +5,9 @@ const router = express.Router();
 // import logic
 const tokenLogic = require("../bll/tokens-logic");
 
-// import helpers
+// import auth
 const jwt = require("jsonwebtoken");
-const helpers = require("../helpers/helpers");
+const auth = require("../services/auth");
 
 // set refreshToken and first accessToken when login 
 router.post("/", async (request, response, next) => {
@@ -16,10 +16,10 @@ router.post("/", async (request, response, next) => {
   
   try {
     // create accessToken for user
-    const accessToken = await helpers.setToken(user);
+    const accessToken = await auth.setToken(user);
 
     // create refreshToken for user
-    const refreshToken = await helpers.refreshToken(user);
+    const refreshToken = await auth.refreshToken(user);
 
     const token = {
       refreshToken : refreshToken
@@ -58,7 +58,7 @@ router.post("/new", async (request, response, next) => {
     }
 
     // generate new accessToken
-    const accessToken = await helpers.setToken({
+    const accessToken = await auth.setToken({
       userName: verify.sub,
       isAdmin: verify.role
     });

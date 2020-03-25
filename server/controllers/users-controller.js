@@ -10,7 +10,7 @@ const followUpLogic = require("../bll/followup-logic");
 const UserModel = require("../models/user-model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const helpers = require("../helpers/helpers");
+const helpers = require("../services/auth");
 
 // get user followup vacations
 router.get("/followup", helpers.authorize(),
@@ -92,8 +92,6 @@ router.post("/login", async (request, response, next) => {
     
     const validPassword = await bcrypt.compare(user.password, password.password);
     
-    // console.log(request.body)
-
     if (!dbUser || !validPassword) {
       response.status(409).json("username or password are incorrect");
       return;

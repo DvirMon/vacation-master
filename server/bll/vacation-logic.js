@@ -1,5 +1,4 @@
 const dal = require("../dal/dal");
-const helpers = require("../helpers/helpers");
 const followUpLogic = require("../bll/followup-logic");
 
 const vacationFormat = `v.vacationID, description, destination, image,
@@ -20,7 +19,7 @@ const getVacation = async (vacationID) => {
   const sql = `SELECT ${vacationFormat} FROM vacations as v WHERE vacationID = ${vacationID}`;
   const vacation = await dal.executeAsync(sql);
 
-  return vacation[0];
+  return vacation[0]; 
 };
 
 const getUnFollowedVacations = async userID => {

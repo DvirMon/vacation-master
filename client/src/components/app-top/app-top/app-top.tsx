@@ -2,25 +2,28 @@ import React, { Component } from "react";
 import clsx from "clsx";
 import MenuItem from "@material-ui/core/MenuItem";
 import { UserModel } from "../../../models/user-model";
-import Button from "react-bootstrap/Button";
-import FavoriteIcon from "@material-ui/icons/Favorite";
+import Button from "@material-ui/core/Button";
 import AppUser from "../app-user/app-user";
 import AppAdmin from "../app-admin/app-admin";
 import MenuOutlinedIcon from "@material-ui/icons/MenuOutlined";
 import { IconButton, Grid, MenuList } from "@material-ui/core";
 import "./app-top.scss";
+import { TokensModel } from "../../../models/tokens.model";
 
 interface AppTopProps {
   reg?: boolean;
   user?: boolean;
   admin?: boolean;
+  logoutButton?: boolean;
   userInfo?: UserModel;
   followUpCounter?: number;
   logo?: any;
+  tokens? : TokensModel;
+  scrolled? : boolean
   handleLogOut?(): void;
   loginButton?(): void;
   registerButton?(): void;
-}
+} 
 
 interface AppTopState {
   login: string;
@@ -40,19 +43,27 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
   }
 
   render() {
-    const { reg, user, admin, userInfo, followUpCounter, logo } = this.props;
-    const { login, logout, register } = this.state;
+    const {
+      reg,
+      user,
+      admin,
+      userInfo,
+      followUpCounter,
+      logo,
+      logoutButton,
+      scrolled
+    } = this.props;
+    const { login, logout } = this.state;
     return (
       <nav
         className={clsx(
           "app-top",
-          "navbar",
+          "navbar", 
           "navbar-transparent",
           "navbar-color-on-scroll",
           "fixed-top",
-          "navbar-expand-lg"
+          "navbar-expand-lg",
         )}
-        color-on-scroll="100"
       >
         {user ? (
           <Grid container className="justify-content-center">
@@ -75,15 +86,20 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
                     followUpCounter={followUpCounter}
                   />
                 )}
-                {admin && <AppAdmin />}
-                <MenuItem>
-                  <Button
-                    className="btn btn-danger"
-                    onClick={this.handleLogOut}
-                  >
-                    {logout}
-                  </Button>
-                </MenuItem>
+                {admin && <AppAdmin  
+                tokens={this.props.tokens}
+                />}
+                {logoutButton && (
+                  <MenuItem>
+                    <Button
+                      className="btn btn-danger text-buttons"
+                      variant="contained"
+                      onClick={this.handleLogOut}
+                    >
+                      {logout}
+                    </Button>
+                  </MenuItem>
+                )}
               </MenuList>
             </Grid>
           </Grid>
@@ -91,7 +107,12 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
           <Grid container spacing={3}>
             {reg && (
               <Grid item xs={12} className="btn-login">
-                <Button className="btn btn-primary" onClick={this.loginButton}>
+                <Button
+                  className="text-buttons"
+                  variant="contained"
+                  color="primary"
+                  onClick={this.loginButton}
+                >
                   {login}
                 </Button>
               </Grid>

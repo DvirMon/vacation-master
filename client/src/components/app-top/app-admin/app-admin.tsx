@@ -1,39 +1,43 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
-import { MenuItem, IconButton, Typography, Toolbar, MenuList } from "@material-ui/core";
+import MenuItem from "@material-ui/core/MenuItem";
 import BarChartIcon from "@material-ui/icons/BarChart";
+import { TokensModel } from "../../../models/tokens.model";
 
-export class AppAdmin extends Component<any, any> {
-  constructor(props: any) {
-    super(props);
-  }
+interface AppAdminProps {
+  tokens : TokensModel
+}
+
+export class AppAdmin extends Component<AppAdminProps, any> {
 
   render() {
     return (
       <React.Fragment>
-          <MenuItem>
-            <NavLink
-              to={{
-                pathname: "/admin/charts"
-              }}
-              exact
-            >
-              Charts
-              <BarChartIcon />
-            </NavLink>
-          </MenuItem>
-          <MenuItem>
-            <NavLink
-              to={{
-                pathname: "/admin/vacation-new"
-              }}
-            >
-              Add Vacation
-            </NavLink>
-          </MenuItem>
-          <MenuItem> 
-            <NavLink to="/admin">Home</NavLink>
-          </MenuItem>
+        <MenuItem>
+          <BarChartIcon />
+          <NavLink
+            to={{
+              pathname: "/admin/charts", 
+              state: { detail: this.props.tokens }
+
+            }}
+            exact
+          >
+            Charts
+          </NavLink>
+        </MenuItem>
+        <MenuItem>
+          <NavLink
+            to={{
+              pathname: "/admin/vacation-new"
+            }}
+          >
+            Add Vacation
+          </NavLink>
+        </MenuItem>
+        <MenuItem>
+          <NavLink to="/admin">Home</NavLink>
+        </MenuItem>
       </React.Fragment>
     );
   }

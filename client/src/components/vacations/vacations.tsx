@@ -12,6 +12,8 @@ import { getStorage, logOutService } from "../../services/loginService";
 import { store } from "../../redux/store/store";
 import { Action } from "../../redux/action/action";
 import { ActionType } from "../../redux/action-type/action-type";
+import Loader from "../loader/loader";
+import AppTop from "../app-top/app-top/app-top";
 import { Unsubscribe } from "redux";
 import "./vacations.scss";
 
@@ -20,11 +22,16 @@ interface VacationsProps {
 }
 
 interface VacationsState {
+  admin: boolean;
+  followUpCounter: number;
   followUp?: UserVacationModel[];
   unFollowUp?: UserVacationModel[];
   user: UserModel;
   followIcon: boolean;
   tokens: TokensModel;
+  scrolled: boolean;
+  scrollPixelsY: number
+
 }
 
 export class Vacations extends Component<any, VacationsState> {
@@ -34,11 +41,15 @@ export class Vacations extends Component<any, VacationsState> {
     super(props);
 
     this.state = {
+      admin: false,
       followUp: [],
       unFollowUp: [],
       user: store.getState().user,
       tokens: store.getState().tokens,
-      followIcon: false
+      followUpCounter: 0,
+      followIcon: true,
+      scrolled: true,
+      scrollPixelsY: 0
     };
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
@@ -47,42 +58,46 @@ export class Vacations extends Component<any, VacationsState> {
       });
     });
   }
-
+  
   public componentDidMount = async () => {
+    
+    window.addEventListener('scroll', this.handleScroll, true);
+    
     try {
       // first request for tokens
-      const user = getStorage();
+      const user = getStorage("user");
 
       const action: Action = {
         type: ActionType.addUser,
         payloud: user
       };
       store.dispatch(action);
-
+      
       const tokens = await getTokens(user);
       const response = await getVacations(tokens.accessToken);
 
       const vacations = this.handleResponse(response);
-      const followIcon = this.handelRole();
+      const admin = this.handelRole();
 
       // update state
       this.setState({
+        admin,
+        followUpCounter: vacations.followUp.length,
         followUp: vacations.followUp,
-        unFollowUp: vacations.unFollowUp,
-        followIcon
+        unFollowUp: vacations.unFollowUp
       });
 
-      if (vacations.followUp.length > 0) {
+      if (this.props.handleFollowUpCounter) {
         this.props.handleFollowUpCounter(vacations.followUp.length);
       }
+
+
     } catch (err) {
       console.log(err);
     }
   };
 
   public componentWillUnmount(): void {
-    const controller = new AbortController();
-    controller.abort();
     this.unsubscribeStore();
   }
 
@@ -92,6 +107,7 @@ export class Vacations extends Component<any, VacationsState> {
       case "string":
         alert(response);
         this.props.history.push("/");
+        break;
       case "object":
         return response;
     }
@@ -100,15 +116,20 @@ export class Vacations extends Component<any, VacationsState> {
   public handelRole = () => {
     const user = store.getState().user;
     if (user.isAdmin === 1) {
-      return false;
+      return true;
     }
-    return true;
   };
 
+  // update access token every 10 minutes
   public handleTokens = setInterval(async () => {
     const tokens = { ...this.state.tokens };
     const accessToken = await refreshToken(tokens.dbToken);
     tokens.accessToken = accessToken;
+
+
+    //add to storage
+    localStorage.setItem("tokens", JSON.stringify(tokens));
+
     // add to store
     const action: Action = {
       type: ActionType.addToken,
@@ -118,56 +139,80 @@ export class Vacations extends Component<any, VacationsState> {
   }, 600000);
 
   render() {
-    const { followUp, unFollowUp, user, followIcon, tokens } = this.state;
+    const {
+      followUp,
+      unFollowUp,
+      user,
+      admin,
+      followUpCounter,
+      tokens,
+      scrolled
+    } = this.state;
 
     return (
-      <div className="vacations">
-        { unFollowUp.length === 0 ? (  
-          <img src="/assets/img/loader.gif" style={{width: "100px", height : "100px"}} /> 
-        ) : ( 
-          <React.Fragment>
-            <Row>
-              {followUp.length > 0 && (
-                <h1 className="card-title">My Wish List</h1>
-              )}
-            </Row>
-            <Row className="row-followed">
-              {followUp.map(vacation => (
-                <Col key={vacation.vacationID} sm={3}>
-                  <VacCard
-                    vacation={vacation}
-                    accessToken={tokens.accessToken}
-                    follow={true}
-                    update={this.componentDidMount}
-                    followIcon={followIcon}
-                  ></VacCard>
-                </Col>
-              ))}
-            </Row>
-            <Row>
-              {unFollowUp.length > 0 && (
-                <h1 className="card-title">Explore Our Vacations</h1>
-              )}
-            </Row>
-            <Row className="row-unFollowed">
-              {unFollowUp.map(vacation => (
-                <Col key={vacation.vacationID} sm={4}>
-                  <VacCard
-                    vacation={vacation}
-                    accessToken={tokens.accessToken}
-                    follow={false}
-                    followIcon={followIcon}
-                    admin={true}
-                    handleDelete={this.handleDelete}
-                    handleEdit={this.handleEdit}
-                    update={this.componentDidMount}
-                  ></VacCard>
-                </Col>
-              ))}
-            </Row>
-          </React.Fragment>
+      <React.Fragment>
+        {unFollowUp.length === 0 ? (
+          <Loader />
+        ) : (
+          <div className="vacations page">
+            <nav>
+              <AppTop
+                user={true}
+                logoutButton={true}
+                admin={admin}
+                userInfo={user}
+                logo={"Travel-on"}
+                followUpCounter={followUpCounter}
+                tokens={tokens}
+                handleLogOut={this.handleLogOut}
+                scrolled={scrolled}
+              ></AppTop>
+            </nav>
+            <main>
+              <Row>
+                {followUp.length > 0 && (
+                  <h1 className="card-title">My Wish List</h1>
+                )}
+              </Row>
+              <Row className="row-followed">
+                {followUp.map(vacation => (
+                  <Col key={vacation.vacationID} sm={3}>
+                    <VacCard
+                      vacation={vacation}
+                      accessToken={tokens.accessToken}
+                      follow={true}
+                      update={this.componentDidMount}
+                      followIcon={true}
+                    ></VacCard>
+                  </Col>
+                ))}
+              </Row>
+              <Row>
+                {unFollowUp.length > 0 ||
+                  (admin && (
+                    <h1 className="card-title">Explore Our Vacations</h1>
+                  ))}
+              </Row>
+              <Row className="row-unFollowed">
+                {unFollowUp.map(vacation => (
+                  <Col key={vacation.vacationID} sm={4}>
+                    <VacCard
+                      vacation={vacation}
+                      accessToken={tokens.accessToken}
+                      follow={false}
+                      followIcon={!admin}
+                      admin={admin}
+                      handleDelete={this.handleDelete}
+                      handleEdit={this.handleEdit}
+                      update={this.componentDidMount}
+                    ></VacCard>
+                  </Col>
+                ))}
+              </Row>
+            </main>
+          </div>
         )}
-      </div>
+      </React.Fragment>
     );
   }
 
@@ -193,6 +238,20 @@ export class Vacations extends Component<any, VacationsState> {
   public handleEdit = (vacationID: number) => {
     this.props.history.push(`/admin/vacation/${vacationID}`);
   };
-}
+
+  public handleScroll = () => {
+    const isTop = window.scrollY < 100;
+    if (isTop) {
+      this.setState({ scrolled: false });
+    } else {
+      this.setState({ scrolled: true });
+    }    
+    
+    this.setState({
+      scrollPixelsY: window.scrollY
+    });
+
+  };
+} 
 
 export default Vacations;

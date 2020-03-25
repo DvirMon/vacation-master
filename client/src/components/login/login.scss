@@ -1,7 +1,9 @@
+
+
 .login {
   height: 100%;
   display: grid;
-  grid-template-rows: 15% 75%;
+  grid-template-rows: 15% 85%;
   grid-template-columns: repeat(12, 1fr);
   padding: 0;
   margin: 0;
@@ -58,6 +60,7 @@
     grid-column: 4 span;
 
     .my-form {
+      height: 80%;
       left: 3%;
       margin: 0;
       padding: 0;
@@ -70,8 +73,13 @@
   .row-header {
     padding: 5%;
   }
+  
   .icon-start {
     position: relative;
     bottom: 20%;
+  }
+
+  .text-buttons {
+    text-transform: none;
   }
 }

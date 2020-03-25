@@ -1,20 +1,7 @@
 import React, { Component } from "react";
-import clsx from "clsx";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import InputGroup from "react-bootstrap/InputGroup";
-import FormControl from "react-bootstrap/FormControl";
-import FormLabel from "react-bootstrap/FormLabel";
-import { UserModel } from "../../models/user-model";
-import { isRequired, setObjectForSchema } from "../../services/validationService";
-import { Typography } from "@material-ui/core";
-
-import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
-import { store } from "../../redux/store/store";
-import { Action } from "../../redux/action/action";
-import { ActionType } from "../../redux/action-type/action-type";
-
+import TextField from "@material-ui/core/TextField";
+import { isRequired, setObjectForSchema } from "../../services/validationService";
 import "./my-input.scss";
 
 export interface MyInputProps {
@@ -81,11 +68,12 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     } = this.props;
     const { error, errorMessage } = this.state;
 
-    return (
+    return ( 
         <Grid item xs={width}>
           <TextField
             value={value}
             type={type} 
+            autoFocus={autoFocus}
             fullWidth={fullWidth}
             label={label}
             placeholder={placeholder}
@@ -139,17 +127,19 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       }
     }
 
-    // update objectScheme values in parent
+    // update object values in parent
     this.props.handleChange(prop, input);
   };
 
   public validInput = (input: string, prop: string) => {
-    let schema = {};
-
-    if (this.props.schema) {
-      schema = { ...this.props.schema };
-    }
-
+    
+    
+    // if (this.props.schema) {
+      //   schema = { ...this.props.schema };
+      // }
+    
+    const schema = {};
+      
     const validSchema = setObjectForSchema(schema, prop, input);
 
     const error = this.props.validInput(validSchema);
@@ -158,8 +148,10 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   };
 
   public handleErrors = (errorMessage: string, prop: string) => {
+    
     const serverError = this.props.serverError;
 
+    // joi errors
     if (errorMessage) {
       this.setState({
         errorMessage,
@@ -170,18 +162,21 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       this.props.handleErrors(prop, errorMessage);
       return;
     }
-
+    
+    // server errors
     if (serverError) {
       this.setState({ error: true, success: false, danger: true });
       return;
     }
-
+    
+    // no errors
     this.setState({
       errorMessage: "",
       error: false,
       success: true,
       danger: false
     });
+    
     this.props.handleErrors(prop, "");
   };
 }

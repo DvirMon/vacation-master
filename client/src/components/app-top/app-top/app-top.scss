@@ -2,16 +2,21 @@
   margin: 0;
   padding: 0;
 
-  .btn-register {
-    text-align: right;
-    position: relative;
-    right: 11%;
-    margin-top: 2%;
+  .on-scroll {
+    background-color: #fff;
+  }
+
+  a {
+    color: white;
   }
 
   .btn-login {
     position: relative;
     left: 5%;
+  }
+
+  .text-buttons {
+    text-transform: none;
   }
 
   h5 {

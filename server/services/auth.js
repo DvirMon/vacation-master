@@ -2,11 +2,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid/v4");
 
+// start function to protect password
 const hushPassword = async password => {
   const hushPassword = await bcrypt.hash(password, 10);
   return hushPassword;
 };
+// end of function
 
+// function to create first access token
 const setToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
@@ -19,10 +22,13 @@ const setToken = user => {
         }
         resolve(result);
       }
-    );
+      );
   });
 };
+// end of function
 
+
+// function to create the refresh token
 const refreshToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
@@ -37,49 +43,41 @@ const refreshToken = user => {
     );
   });
 };
+// end of function
+
+// function to handle authorization
 
 const authorize = role => (request, response, next) => {
-  // verify if token exist
 
+  // verify if token exist
   const token = request.headers["authorization"];
   if (!token) {
     return response.status(403).json("Please Login To Continue");
   }
-
+  
   try {
+    
+    
+    // verify token
     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-
+    
     request.user = verified;
-
+    
+    // verify admin
     if (role === 1 && request.user.role === 0) {
       return response.status(401).json("Unauthorized");
     }
-
+    
     next();
   } catch (err) {
     response.status(403).json("invalid Token");
   }
 };
-
-const saveImageLocally = image => {
-  const extension = image.name.substr(image.name.lastIndexOf("."));
-  const path = "../client/public/assets/img/cards/";
-  try {
-    
-    const fileName = uuid();
-    const file = fileName + extension;
-
-    image.mv(path + file);
-    return fileName;
-  } catch (err) {
-    console.log(err);
-  }
-};
+// end of function
 
 module.exports = {
   hushPassword,
   setToken,
   refreshToken,
   authorize,
-  saveImageLocally
 };

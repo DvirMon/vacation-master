@@ -60,7 +60,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
         this.setState({ date });
         return;
       }
-    }, 300);
+    }, 1000);
   };
 
   render() {
@@ -75,7 +75,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
           method="post"
           encType="multipart/form-data"
           target="hidden-iframe"
-        > 
+        >
           <Grid container spacing={2} className="pos">
             <MyInput
               width={5}
@@ -87,6 +87,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               handleChange={this.handleChange}
               handleErrors={this.handleErrors}
               validInput={VacationModel.validVacation}
+              helperText={"Enter vacation destination"}
             />
             <MyInput
               width={5}
@@ -98,6 +99,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               handleChange={this.handleChange}
               handleErrors={this.handleErrors}
               validInput={VacationModel.validVacation}
+              helperText={"Enter vacation price"}
             />
           </Grid>
           <Grid container spacing={2} className="pos">
@@ -110,6 +112,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                 handleChange={this.handleChange}
                 handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
+                helperText={"Enter departing date"}
               />
             </Grid>
             <Grid item xs={5} className="justify-content-center">
@@ -121,21 +124,21 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                 handleChange={this.handleChange}
                 handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
-                />
+                helperText={"Enter returning date"}
+              />
             </Grid>
             <Grid
               item
               xs={3}
               className="d-flex align-self-end justify-content-end"
-              >
-              <input
-                className="input-file btn btn-primary"
-                type="file"
-                id="upload-file"
-                accept="image/*"
-                onChange={this.getImage}
+            >
+              <label className="upload-button">
+                <input
+                  className="input-file btn btn-primary"
+                  type="file"
+                  accept="image/*"
+                  onChange={this.getImage}
                 />
-              <label className="upload-button" htmlFor="upload-file">
                 <Button
                   className="upload-button"
                   component="span"
@@ -143,19 +146,19 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                   color="primary"
                   disableRipple={true}
                   disableFocusRipple={true}
-                  >
+                >
                   Choose a file
                 </Button>
               </label>
             </Grid>
           </Grid>
-          <Grid container spacing={2} className="pos"> 
+          <Grid container spacing={2} className="pos">
             <MyInput
               width={8}
               value={vacation.description || ""}
               type="text"
               label="Description"
-              prop="description" 
+              prop="description"
               placeholder="add description"
               fullWidth={true}
               multiline={true}
@@ -163,8 +166,11 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               handleChange={this.handleChange}
               handleErrors={this.handleErrors}
               validInput={VacationModel.validVacation}
-              ></MyInput>
-            <Grid item xs={4}
+              helperText={"Enter vacation description"}
+            ></MyInput>
+            <Grid
+              item
+              xs={4}
               className="d-flex align-self-end justify-content-center"
             >
               <Button

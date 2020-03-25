@@ -11,7 +11,8 @@ import { setObjectForSchema } from "../../services/validationService";
 interface DatePickerState {
   selectedDate: Date;
   setSelectedDate: Date;
-  error: string;
+  errorMessage: string;
+  error: boolean;
   on: boolean;
   success: boolean;
   danger: boolean;
@@ -23,6 +24,7 @@ interface DatePickerProps {
   schema: {};
   label: string;
   prop: string;
+  helperText?: string;
   handleChange(prop: string, input: string): void;
   handleErrors(prop: string, error?: string): void;
   validInput?(schema: {}): string;
@@ -35,7 +37,8 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
     this.state = {
       selectedDate: new Date(),
       setSelectedDate: new Date(),
-      error: "",
+      error: false,
+      errorMessage: "",
       on: false,
       success: false,
       danger: false,
@@ -44,21 +47,20 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
   }
 
   public componentDidMount = () => {
-    
     setTimeout(() => {
       if (this.props.dateNow) {
         const date = new Date(this.props.dateNow);
         this.setState({ selectedDate: date });
       }
-    }, 300);
-    
+    }, 1000);
+
     const date = new Date();
     this.handleDateChange(date, false);
   };
 
   render() {
-    const { selectedDate, error } = this.state;
-    const { label } = this.props;
+    const { selectedDate, error, errorMessage } = this.state;
+    const { label, helperText } = this.props;
 
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -67,13 +69,14 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
             margin="normal"
             id="date-picker-dialog"
             label={label}
+            error={error}
             format="MM/dd/yyyy"
             value={selectedDate}
             onChange={this.handleDateChange}
             KeyboardButtonProps={{
               "aria-label": "change date"
             }}
-            helperText={error}
+            helperText={errorMessage ? errorMessage : helperText}
           />
         </Grid>
       </MuiPickersUtilsProvider>
@@ -98,22 +101,33 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
   };
 
   public validInput = (input: string, prop: string) => {
-
+    
     const schema = setObjectForSchema(this.props.schema, prop, input);
 
-    const error = this.props.validInput(schema);
+    const errorMessage = this.props.validInput(schema);
 
-    this.handleErrors(error, prop);
+    this.handleErrors(errorMessage, prop);
   };
 
-  public handleErrors = (error: string, prop: string): boolean => {
-    if (error) {
-      this.setState({ error, success: false, danger: true });
-      this.props.handleErrors(prop, error);
+  public handleErrors = (errorMessage: string, prop: string): boolean => {
+    if (errorMessage) {
+      this.setState({
+        errorMessage,
+        error: true,
+        success: false,
+        danger: true
+      });
+      this.props.handleErrors(prop, errorMessage);
       return;
     }
 
-    this.setState({ error: "", success: true, danger: false });
+    this.setState({
+      errorMessage: "",
+      error: false,
+      success: true,
+      danger: false
+    });
+
     this.props.handleErrors(prop, "");
   };
 }

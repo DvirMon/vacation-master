@@ -3,7 +3,8 @@ const vacationsLogic = require("../bll/vacation-logic");
 const usersLogic = require("../bll/users-logic");
 const VacationModel = require("../models/vacation-model");
 const router = express.Router();
-const helpers = require("../helpers/helpers");
+const auth = require("../services/auth");
+const saveImageLocally = require("../services/image");
 
 // get all vacations
 router.get("/", async (request, response, next) => {
@@ -17,7 +18,7 @@ router.get("/", async (request, response, next) => {
 
 
 //get users vacation
-router.get("/user", helpers.authorize(), async (request, response, next) => {
+router.get("/user", auth.authorize(), async (request, response, next) => {
   try {
 
     const userName = request.user.sub;
@@ -56,7 +57,7 @@ router.get("/:id", async (request, response, next) => {
 
 
 // add vacation (admin)
-router.post("/", helpers.authorize(1), async (request, response, next) => {
+router.post("/", auth.authorize(1), async (request, response, next) => {
  
   const vacation = request.body;
   const error = VacationModel.validation(vacation);
@@ -64,7 +65,7 @@ router.post("/", helpers.authorize(1), async (request, response, next) => {
     response.status(400).json({body : error, message :  "error"});
     return;
   }
-
+ 
   try {
     const addedVacation = await vacationsLogic.addVacation(vacation);
     response.status(201).json({body : addedVacation, message : "success"});
@@ -75,7 +76,8 @@ router.post("/", helpers.authorize(1), async (request, response, next) => {
 });
 
 // update vacation (admin only)
-router.put("/:id", helpers.authorize(1), async (request, response) => {
+router.put("/:id", auth.authorize(1), async (request, response) => {
+
   // vacation id
   const vacationID = request.params.id;
   const vacation = request.body;
@@ -91,7 +93,6 @@ router.put("/:id", helpers.authorize(1), async (request, response) => {
   
   try {
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
-    console.log(updatedVacation)
     if (updatedVacation === null) {
       response.sendStatus(404);
       return;
@@ -104,7 +105,7 @@ router.put("/:id", helpers.authorize(1), async (request, response) => {
 });
 
 // delete vacation (admin only)
-router.delete("/:id", helpers.authorize(1), async (request, response) => {
+router.delete("/:id", auth.authorize(1), async (request, response) => {
   try {
     const id = request.params.id;
     await vacationsLogic.deleteVacation(id);
@@ -124,7 +125,7 @@ router.post("/upload-image", async (request, response, next) => {
     }
     const image = request.files.image; 
 
-    const fileName = helpers.saveImageLocally(image);
+    const fileName = saveImageLocally(image);
 
     response.json(fileName);
   } catch (err) {

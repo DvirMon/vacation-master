@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import Form from "react-bootstrap/Form";
-import { Grid, Tooltip, IconButton, Button } from "@material-ui/core";
+import { Grid, Tooltip, IconButton } from "@material-ui/core";
 import MyInput from "../my-input/my-input";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Button from '@material-ui/core/Button';
 import { RegistrationErrors } from "../../models/error-model";
-import { RegisterModel } from "../../models/user-model";
+import { RegisterModel } from "../../models/user-model"; 
 import generator from "generate-password";
 import AppTop from "../app-top/app-top/app-top";
 import { postRequest } from "../../services/serverService";
@@ -83,7 +84,7 @@ export class Register extends Component<any, RegisterState> {
         <React.Fragment>
           <nav>
             <AppTop user={false} reg={true} loginButton={this.loginButton} />
-          </nav>
+          </nav> 
           <main>
             <Form className="register-form">
               <Grid container spacing={3} className="justify-content-center">
@@ -147,7 +148,7 @@ export class Register extends Component<any, RegisterState> {
                   }
                 ></MyInput>
                 <Grid className="text-center" item xs={10}>
-                  <Button
+                  <Button 
                     type="button"
                     className="register-button"
                     variant="contained"
@@ -155,7 +156,7 @@ export class Register extends Component<any, RegisterState> {
                     fullWidth={true}
                     onClick={this.addUser}
                     disabled={this.registrationFormLegal()}
-                  >
+                  > 
                     Sigh-in
                   </Button>
                 </Grid>

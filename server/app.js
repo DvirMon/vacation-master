@@ -1,9 +1,8 @@
 require("dotenv").config();
 const express = require("express");
-const expressSession = require("express-session");
 const cors = require("cors");
-const errorHandler = require("./helpers/error-handler");
 const fileUpload = require("express-fileupload");
+const errorHandler = require("./services/errors");
 
 // invoke server
 const server = express();
@@ -17,14 +16,6 @@ const tokensController = require("./controllers/token-controller");
 // middleware functions
 server.use(express.json());
 server.use(cors());
-server.use(
-  expressSession({
-    name: "keepUser",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-  })
-);
 server.use(express.static(__dirname));
 server.use(fileUpload());
 
@@ -40,3 +31,4 @@ server.use(errorHandler);
 server.listen(3000, () => console.log("Listening To http://localhost:3000"));
 
 
+ 

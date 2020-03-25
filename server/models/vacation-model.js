@@ -29,7 +29,7 @@ class VacationModel {
       image: Joi.string().required(),
       startDate: Joi.date().iso().required(),
       endDate: Joi.date().iso().greater(Joi.ref("startDate")).required(),
-      price: Joi.number().required()
+      price: Joi.number().min(1).required() 
     }).unknown()
 
     const error = Joi.validate(vacation, schema, { abortEarly: false }).error;
@@ -38,7 +38,7 @@ class VacationModel {
       return error.details.map(err => err.message);
     }
     return null;
-  };
+  }; 
 }
 
 module.exports = VacationModel;
