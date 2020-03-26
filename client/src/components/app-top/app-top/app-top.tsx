@@ -61,7 +61,7 @@ export class AppTop extends Component<AppTopProps, AppTopState> {
           "navbar", 
           "navbar-transparent",
           "navbar-color-on-scroll",
-          "fixed-top",
+          false && "fixed-top",
           "navbar-expand-lg",
         )}
       >

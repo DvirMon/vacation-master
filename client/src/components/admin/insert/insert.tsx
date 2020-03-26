@@ -17,6 +17,8 @@ interface InsertState {
   vacation: VacationModel;
   errors: VacationErrors;
   tokens: TokensModel;
+  preview : string
+
 }
 
 export class Insert extends Component<any, InsertState> {
@@ -26,7 +28,9 @@ export class Insert extends Component<any, InsertState> {
     this.state = {
       vacation: new VacationModel(),
       errors: null,
-      tokens: new TokensModel()
+      tokens: new TokensModel(),
+      preview : ""
+
     };
   }
 
@@ -45,6 +49,7 @@ export class Insert extends Component<any, InsertState> {
   };
 
   public addVacation = async () => {
+    
     if (this.vacationFormLegal()) {
       return;
     }
@@ -52,6 +57,19 @@ export class Insert extends Component<any, InsertState> {
     try {
       const { vacation, tokens } = this.state;
       const url = `http://localhost:3000/api/vacations`;
+
+      // creat formatDate file
+
+      const myFormData = new FormData();
+
+      for(const prop in vacation) {
+        myFormData.append(prop, vacation[prop]);
+      } 
+
+      console.log(myFormData)
+
+
+
 
       await postRequest(url, vacation, tokens.accessToken);
       alert("New Vacation has been added!");
@@ -62,7 +80,7 @@ export class Insert extends Component<any, InsertState> {
   };
 
   render() {
-    const { vacation, tokens } = this.state;
+    const { vacation, tokens, preview } = this.state;
     return (
       <div className="insert page">
         <nav>
@@ -79,6 +97,8 @@ export class Insert extends Component<any, InsertState> {
             handleChange={this.handleChange}
             handleErrors={this.handleErrors}
             handleVacation={this.addVacation}
+            handleImage={this.handleImage}
+
           />
         </main>
         <aside>
@@ -87,13 +107,18 @@ export class Insert extends Component<any, InsertState> {
             followIcon={false}
             admin={false}
             accessToken={""}
+            preview={preview}
           />
         </aside>
       </div>
     );
   }
 
-  public handleChange = (prop: string, input: string): void => {
+  public handleImage = (preview: string) => {
+    this.setState({ preview });
+  };
+
+  public handleChange = (prop: string, input: any): void => {
     const vacation = { ...this.state.vacation };
     vacation[prop] = input;
     this.setState({ vacation });

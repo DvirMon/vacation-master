@@ -72,15 +72,15 @@ export const putRequest = async (url: string, body?: any, accessToken?: string) 
   } catch (err) {
     return err
   }
-}
-
-export const uploadImage = async (url: string, image?: any, accessToken?: string) => {
+} 
+ 
+export const updateVacation = async (url: string, vacation?: FormData, accessToken?: string) => {
   const options = {
-    method: "POST",
+    method: "PUT",
     headers: {
       "Authorization": accessToken
     },
-    body: image
+    body: vacation
   };
 
   try {

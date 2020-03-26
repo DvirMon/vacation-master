@@ -67,8 +67,8 @@ export class Vacations extends Component<any, VacationsState> {
       // first request for tokens
       const user = getStorage("user");
 
-      const action: Action = {
-        type: ActionType.addUser,
+      const action: Action = { 
+        type: ActionType.Login,
         payloud: user
       };
       store.dispatch(action);

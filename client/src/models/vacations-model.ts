@@ -8,10 +8,10 @@ export class VacationModel {
   constructor(
     public destination?: string,
     public price?: number, 
-    public image?: string,
     public startDate?: string,
     public endDate?: string,
-    public description?: string
+    public description?: string,
+    public image?: File
   ) {
 
   }
@@ -47,12 +47,12 @@ export class UserVacationModel extends VacationModel{
     public vacationID?: number, 
     destination?: string,
     price?: number,
-    image?: string, 
     startDate?: string,
     endDate?: string,  
-    description?: string
+    description?: string,
+    image?: File
   ) {
-    super(destination, price, image, startDate, endDate, description)
+    super(destination, price, description, startDate, endDate, image)
   }
  
 }  

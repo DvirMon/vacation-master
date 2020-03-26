@@ -27,6 +27,7 @@ interface VacCardProps {
   follow?: boolean;
   followIcon: boolean;
   admin?: boolean;
+  preview?: string;
   update?(): void;
   handleDelete?(vacationID?: number): void;
   handleEdit?(vacationID?: number): void;
@@ -61,8 +62,10 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       });
     }
   };
-
+ 
   public componentDidMount = async () => {
+    console.log(this.props.preview);
+
     const vacationID = this.props.vacation.vacationID;
     if (vacationID) {
       const followers = await getFollowersByVacation(vacationID);
@@ -95,13 +98,13 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
   render() {
     const { expanded, color, followers } = this.state;
-    const { vacation, followIcon, admin } = this.props;
+    const { vacation, followIcon, admin, preview } = this.props;
 
     return (
       <div className="vac-card">
         <Card
           className={clsx({
-            root: true, 
+            root: true,
             "root-hover": !admin
           })}
         >
@@ -111,7 +114,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
               <CardTopIcons
                 vacation={vacation}
                 handleIconClick={this.handleIconClick}
-                color={color} 
+                color={color}
                 followIcon={followIcon}
                 admin={admin}
                 handleDelete={this.handleDelete}
@@ -123,7 +126,9 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
           />
           <CardMedia
             className="media"
-            image={`/assets/img/cards/${vacation.image}.jpg`}
+            image={ 
+              preview ? preview : `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`
+            }
             title=""
           ></CardMedia>
           <CardActions disableSpacing>

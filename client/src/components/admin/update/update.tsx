@@ -12,6 +12,7 @@ import { putRequest, getRequest } from "../../../services/serverService";
 import { store } from "../../../redux/store/store";
 import AppTop from "../../app-top/app-top/app-top";
 import { getStorage } from "../../../services/loginService";
+import { updateVacation } from "../../../services/serverService";
 import Loader from "../../loader/loader";
 import "./update.scss";
 
@@ -20,10 +21,10 @@ interface UpdateState {
   errors: VacationErrors;
   tokens: TokensModel;
   updated: boolean;
+  preview: string;
 }
 
 export class Update extends Component<any, UpdateState> {
-
   constructor(props: any) {
     super(props);
 
@@ -31,9 +32,9 @@ export class Update extends Component<any, UpdateState> {
       vacation: new VacationModel(),
       errors: null,
       tokens: new TokensModel(),
-      updated: true
+      updated: true,
+      preview: ""
     };
-
   }
 
   public componentDidMount = async () => {
@@ -55,7 +56,7 @@ export class Update extends Component<any, UpdateState> {
       console.log(err);
     }
   };
- 
+
   public updateVacation = async () => {
     if (this.state.updated) {
       const answer = window.confirm(
@@ -74,11 +75,24 @@ export class Update extends Component<any, UpdateState> {
     try {
       const { vacation, tokens } = this.state;
 
-      console.log(tokens);
+      console.log(vacation);
       const vacationID = this.props.match.params.id;
 
+      const myFormData = new FormData();
+
+      myFormData.append("description", vacation.description);
+      myFormData.append("destination", vacation.destination);
+      myFormData.append("startDate", vacation.startDate);
+      myFormData.append("endDate", vacation.endDate);
+      myFormData.append("price", vacation.price.toString());
+      myFormData.append("image", vacation.image, vacation.image.name);
+
+      console.log(tokens);
+
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
-      const response = await putRequest(url, vacation, tokens.accessToken);
+
+      const response = await updateVacation(url, myFormData, tokens.accessToken);
+      return;
 
       if (response.message === "success") {
         this.props.history.push("/admin");
@@ -89,7 +103,7 @@ export class Update extends Component<any, UpdateState> {
   };
 
   render() {
-    const { vacation, tokens } = this.state;
+    const { vacation, tokens, preview } = this.state;
 
     return (
       <React.Fragment>
@@ -112,6 +126,7 @@ export class Update extends Component<any, UpdateState> {
                   handleChange={this.handleChange}
                   handleErrors={this.handleErrors}
                   handleVacation={this.updateVacation}
+                  handleImage={this.handleImage}
                 />
               )}
             </main>
@@ -121,6 +136,7 @@ export class Update extends Component<any, UpdateState> {
                 followIcon={false}
                 admin={false}
                 accessToken={""}
+                preview={preview}
               />
             </aside>
           </div>
@@ -129,7 +145,11 @@ export class Update extends Component<any, UpdateState> {
     );
   }
 
-  public handleChange = (prop: string, input: string): void => {
+  public handleImage = (preview: string) => {
+    this.setState({ preview });
+  };
+
+  public handleChange = (prop: string, input: any): void => {
     const vacation = { ...this.state.vacation };
     vacation[prop] = input;
     this.setState({ vacation, updated: false });

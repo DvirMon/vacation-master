@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import MyInput from "../my-input/my-input";
 import { VacationModel } from "../../models/vacations-model";
 import { VacationErrors } from "../../models/error-model";
-import { uploadImage } from "../../services/serverService";
 import DatePicker from "../date-picker/date-picker";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
@@ -17,6 +16,7 @@ interface MyFormProps {
   handleChange(prop: string, input: string): void;
   handleErrors(prop: string, error?: string): void;
   handleVacation(): any;
+  handleImage(preview: string): void;
 }
 
 interface MyFormState {
@@ -40,15 +40,28 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     };
   }
 
-  public getImage = async event => {
-    const selectedFile = event.target.files[0];
-    const fd = new FormData();
+  public handleImage = async event => {
+    const image = event.target.files[0];
 
-    fd.append("image", selectedFile);
+    // Display image on client:
+    const reader = new FileReader();
+    reader.onload = args => {
+      if (this.props.handleImage) {
+        this.props.handleImage(args.target.result.toString());
+      }
+    };
 
-    const url = `http://localhost:3000/api/vacations/upload-image`;
-    const response = await uploadImage(url, fd);
-    this.props.handleChange("image", response);
+    reader.readAsDataURL(image); // Read the image.
+ 
+  
+    // update image in values
+    this.handleChange("image", image);
+
+    return;
+
+    // const url = `http://localhost:3000/api/vacations/upload-image`;
+    // const response = await uploadImage(url, fd);
+    // this.props.handleChange("image", response);
   };
 
   public componentDidMount = () => {
@@ -137,7 +150,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                   className="input-file btn btn-primary"
                   type="file"
                   accept="image/*"
-                  onChange={this.getImage}
+                  onChange={this.handleImage}
                 />
                 <Button
                   className="upload-button"
@@ -193,7 +206,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     }
   };
 
-  public handleChange = (prop: string, input: string) => {
+  public handleChange = (prop: string, input: any) => {
     this.props.handleChange(prop, input);
   };
 

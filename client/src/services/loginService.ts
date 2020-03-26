@@ -6,9 +6,13 @@ import { UserModel } from "../models/user-model";
 
 
 export const getStorage = (key) => {
-  const storage = localStorage.getItem(key);
+  const storage = sessionStorage.getItem(key);
   const response = JSON.parse(storage);
   return response
+}
+  
+export const setStorage = (key  :string , data : {}) => {
+  sessionStorage.setItem(key, JSON.stringify(data));
 }
 
 export const logInRequest = async user => {
@@ -51,29 +55,22 @@ export const handleServerResponse = response => {
     case "string":
       return false
     case "object":
-    const action: Action = {
-        type: ActionType.addUser,
-        payloud: response
-      }
-      store.dispatch(action)
 
-      localStorage.setItem("user", JSON.stringify(response));
+      store.dispatch({type : ActionType.Login, response})
+   
+      setStorage("user", response)
+
+      // localStorage.setItem("user", JSON.stringify(response));
       return true;
   }
 };
-
+ 
 
 export const logOutService = async (tokens, history) => {
 
   try {
-    const user = new UserModel()
 
-    const action : Action = {
-      type : ActionType.deleteUser,
-      payloud : user
-    }
-
-    store.dispatch(action)
+    store.dispatch({type : ActionType.Logout})
 
     // clear refreshToken from db
     const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;

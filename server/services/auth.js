@@ -52,11 +52,10 @@ const authorize = role => (request, response, next) => {
   // verify if token exist
   const token = request.headers["authorization"];
   if (!token) {
-    return response.status(403).json("Please Login To Continue");
+    return response.status(401).json("Please Login To Continue");
   }
   
   try {
-    
     
     // verify token
     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
@@ -65,12 +64,12 @@ const authorize = role => (request, response, next) => {
     
     // verify admin
     if (role === 1 && request.user.role === 0) {
-      return response.status(401).json("Unauthorized");
+      return response.status(403).json("Unauthorized");
     }
     
     next();
   } catch (err) {
-    response.status(403).json("invalid Token");
+    response.status(401).json("invalid Token");
   }
 };
 // end of function

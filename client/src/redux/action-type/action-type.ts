@@ -1,5 +1,5 @@
 export enum ActionType {
-  addUser,
+  Login,
   addToken,
-  deleteUser,
+  Logout,
 } 

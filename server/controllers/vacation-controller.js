@@ -16,14 +16,12 @@ router.get("/", async (request, response, next) => {
   }
 });
 
-
 //get users vacation
 router.get("/user", auth.authorize(), async (request, response, next) => {
   try {
-
     const userName = request.user.sub;
-    console.log(userName)
-    
+    console.log(userName);
+
     // get user id from db
     const user = await usersLogic.isUserIdExist(userName);
     if (user.length > 0) {
@@ -33,7 +31,7 @@ router.get("/user", auth.authorize(), async (request, response, next) => {
 
     const vacations = await vacationsLogic.getUserVacations(user.id);
     response.json(vacations);
-  } catch (err) { 
+  } catch (err) {
     next(err);
   }
 });
@@ -41,12 +39,11 @@ router.get("/user", auth.authorize(), async (request, response, next) => {
 // get  vacations
 router.get("/:id", async (request, response, next) => {
   try {
-    
-    const vacationID = request.params.id
+    const vacationID = request.params.id;
     const vacation = await vacationsLogic.getVacation(vacationID);
 
-    if(!vacation) {
-      response.sendStatus(404)
+    if (!vacation) {
+      response.sendStatus(404);
     }
 
     response.json(vacation);
@@ -55,42 +52,47 @@ router.get("/:id", async (request, response, next) => {
   }
 });
 
-
 // add vacation (admin)
 router.post("/", auth.authorize(1), async (request, response, next) => {
- 
   const vacation = request.body;
   const error = VacationModel.validation(vacation);
   if (error) {
-    response.status(400).json({body : error, message :  "error"});
+    response.status(400).json({ body: error, message: "error" });
     return;
   }
- 
+
   try {
     const addedVacation = await vacationsLogic.addVacation(vacation);
-    response.status(201).json({body : addedVacation, message : "success"});
-
+    response.status(201).json({ body: addedVacation, message: "success" });
   } catch (err) {
     next();
   }
 });
 
 // update vacation (admin only)
-router.put("/:id", auth.authorize(1), async (request, response) => {
-
+router.put("/:id", async (request, response) => {
   // vacation id
   const vacationID = request.params.id;
   const vacation = request.body;
-  
+  const file = request.files.image;
+
+  if (!file) {
+    response.status(400).json("No Files Sent!");
+    return;
+  }
+  const fileName = saveImageLocally(file);
+
+  vacation.image = fileName;
+
   //validate schema
   const error = VacationModel.validation(vacation);
   if (error) {
-    response.status(400).send({body : error, message :  "error"});
+    response.status(400).send({ body: error, message: "error" });
     return;
   }
-  
-  vacation.vacationID = vacationID
-  
+
+  vacation.vacationID = vacationID;
+
   try {
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
     if (updatedVacation === null) {
@@ -98,9 +100,9 @@ router.put("/:id", auth.authorize(1), async (request, response) => {
       return;
     }
 
-    response.json({body : updatedVacation, message : 'success'});
+    response.json({ body: updatedVacation, message: "success" });
   } catch (err) {
-    response.status(500).json({body : err, message : 'error'});
+    response.status(500).json({ body: err, message: "error" });
   }
 });
 
@@ -112,22 +114,15 @@ router.delete("/:id", auth.authorize(1), async (request, response) => {
     response.sendStatus(204);
   } catch (err) {
     response.status(500).json(err.message);
-  }
+  } 
 });
 
-router.post("/upload-image", async (request, response, next) => {
+// route for  getting images from the server
+router.get("/uploads/:imgName", async (request, response, next) => {
   try {
-    
-    if (!request.files) {
-      console.log("No Files Sent");
-      response.status(400).json("No Files Sent!");
-      return;
-    }
-    const image = request.files.image; 
-
-    const fileName = saveImageLocally(image);
-
-    response.json(fileName);
+    console.log(__dirname)
+    const dirName = __dirname.substring(0, 44)
+    response.sendFile(dirName + "\\uploads\\" + request.params.imgName);
   } catch (err) {
     next(err);
   }

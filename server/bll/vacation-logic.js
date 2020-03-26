@@ -16,7 +16,9 @@ const getAllVacations = async () => {
 ;
 const getVacation = async (vacationID) => {
 
-  const sql = `SELECT ${vacationFormat} FROM vacations as v WHERE vacationID = ${vacationID}`;
+  const sql = `SELECT description, destination, image,
+  DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
+  DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price FROM vacations as v WHERE vacationID = ${vacationID}`;
   const vacation = await dal.executeAsync(sql);
 
   return vacation[0]; 

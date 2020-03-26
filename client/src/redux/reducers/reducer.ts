@@ -7,14 +7,14 @@ export const rootReducer = (oldState: AppState, action: Action): AppState => {
   const newState = { ...oldState }
 
   switch (action.type) {
-    case ActionType.addUser:
+    case ActionType.Login:
       newState.user = action.payloud
       break
     case ActionType.addToken:
       newState.tokens = action.payloud
-      break
-    case ActionType.deleteUser:
-      newState.user = action.payloud
+      break 
+    case ActionType.Logout:
+      newState.user = null
       break
   }
   return newState

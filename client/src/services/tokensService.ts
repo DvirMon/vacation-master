@@ -2,6 +2,7 @@ import { postRequest, getData } from "./serverService";
 import { Action } from "../redux/action/action";
 import { ActionType } from "../redux/action-type/action-type";
 import { store } from "../redux/store/store";
+import { setStorage } from "./loginService";
 
 export const getAccessToken = async refreshToken => {
 
@@ -34,7 +35,7 @@ export const getTokens = async user => {
     };
     store.dispatch(action);
 
-    localStorage.setItem("tokens", JSON.stringify(tokens));
+    setStorage("tokens", tokens)
 
     return tokens
   } catch (err) {

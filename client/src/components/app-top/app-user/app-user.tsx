@@ -22,7 +22,7 @@ export class AppUser extends Component<AppUserProps, any> {
     return (
         <React.Fragment>
           <Typography variant="h6" className="tim-note">
-            {userInfo && `${userInfo.firstName} ${userInfo.lastName}`}
+            {userInfo ? `${userInfo.firstName} ${userInfo.lastName}` : "Guest"}
           </Typography>
           <MenuItem>
             <Typography className="tim-note">{`Welcome Back!`}</Typography>
