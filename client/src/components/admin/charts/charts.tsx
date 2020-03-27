@@ -5,17 +5,18 @@ import { ChartModel } from "../../../models/charts-model";
 import { TokensModel } from "../../../models/tokens.model";
 import { getRequest } from "../../../services/serverService";
 import { store } from "../../../redux/store/store";
-import AppTop from "../../app-top/app-top/app-top";
 
 import { Unsubscribe } from "redux";
 import Loader from "../../loader/loader";
-import { getStorage } from "../../../services/loginService";
+import { ActionType } from "../../../redux/action-type/action-type";
+import { MenuModel, AdminMenu } from "../../../models/menu-model";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 interface ChartsState {
   tokens: TokensModel;
   dataPoints: ChartModel[];
+  menu: MenuModel;
 }
 
 export class Charts extends Component<any, ChartsState> {
@@ -25,7 +26,8 @@ export class Charts extends Component<any, ChartsState> {
 
     this.state = {
       tokens: store.getState().tokens,
-      dataPoints: []
+      dataPoints: [],
+      menu: AdminMenu
     };
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({ tokens: store.getState().tokens });
@@ -34,20 +36,21 @@ export class Charts extends Component<any, ChartsState> {
 
   public componentDidMount = async () => {
     // verify admin
-    const user = getStorage("user");
-    
+    const user = store.getState().user;
+
     if (!user || user.isAdmin === 0) {
       this.props.history.push("/login");
       console.log("Not Admin");
       return;
     }
-    
+
+    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
+    store.dispatch({ type: ActionType.updateBackground, payload: "" });
+
     try {
-      const tokens = getStorage("tokens");
-      const accessToken = tokens.accessToken;
-      
-      const dataPoints = await this.getChartsData(accessToken);
-      this.setState({ tokens, dataPoints });
+      const tokens = store.getState().tokens;
+      const dataPoints = await this.getChartsData(tokens.accessToken);
+      this.setState({ dataPoints });
     } catch (err) {
       alert(err);
     }
@@ -64,7 +67,7 @@ export class Charts extends Component<any, ChartsState> {
   };
 
   render() {
-    const { dataPoints, tokens } = this.state;
+    const { dataPoints } = this.state;
 
     const options = {
       title: {
@@ -74,7 +77,7 @@ export class Charts extends Component<any, ChartsState> {
         title: "Users",
         includeZero: false
       },
-      
+
       axisX: {
         title: "VacationID"
       },
@@ -91,18 +94,10 @@ export class Charts extends Component<any, ChartsState> {
         {dataPoints.length === 0 ? (
           <Loader />
         ) : (
-          <div className="charts page">
-            <nav>
-              <AppTop
-                user={true}
-                admin={true}
-                logo={"Travel-on"}
-                tokens={tokens}
-              ></AppTop>
-            </nav>
-            <main className="container">
+          <div className="charts">
+            <div className="container">
               <CanvasJSChart options={options} />
-            </main>
+            </div>
           </div>
         )}
       </React.Fragment>

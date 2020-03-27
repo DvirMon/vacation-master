@@ -2,20 +2,6 @@
   height: 100%;
   padding: 0;
   margin: 0;
-  display: grid;
-  grid-template-rows: 20% 80%;
-  grid-template-columns: repeat(12, 1fr);
-  background-image: url("/assets/img/backgrounds/user.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-
-  nav,
-  main {
-    grid-column: 12 span;
-    padding: 0;
-    margin: 0;
-  }
 
   .row {
     justify-content: space-around;

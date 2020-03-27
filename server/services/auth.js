@@ -1,6 +1,5 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const uuid = require("uuid/v4");
 
 // start function to protect password
 const hushPassword = async password => {
@@ -15,7 +14,7 @@ const setToken = user => {
     jwt.sign(
       { sub: user.userName, role: user.isAdmin },
       process.env.TOKEN_SECRET,
-      { expiresIn: "15m" },
+      { expiresIn: "150m" },
       (err, result) => {
         if (err) {
           reject(err);
@@ -66,10 +65,10 @@ const authorize = role => (request, response, next) => {
     if (role === 1 && request.user.role === 0) {
       return response.status(403).json("Unauthorized");
     }
-    
+     
     next();
   } catch (err) {
-    response.status(401).json("invalid Token");
+    response.status(401).json("Token has expired");
   }
 };
 // end of function

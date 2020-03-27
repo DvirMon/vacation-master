@@ -5,15 +5,17 @@ import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
 import {
   formLegalValues,
-  formLegalErrors
+  formLegalErrors,
+  formLegal
 } from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
 import { putRequest, getRequest } from "../../../services/serverService";
 import { store } from "../../../redux/store/store";
-import AppTop from "../../app-top/app-top/app-top";
-import { getStorage } from "../../../services/loginService";
 import { updateVacation } from "../../../services/serverService";
 import Loader from "../../loader/loader";
+import { ActionType } from "../../../redux/action-type/action-type";
+import { Grid } from "@material-ui/core";
+import { MenuModel, AdminMenu } from "../../../models/menu-model";
 import "./update.scss";
 
 interface UpdateState {
@@ -22,6 +24,7 @@ interface UpdateState {
   tokens: TokensModel;
   updated: boolean;
   preview: string;
+  menu: MenuModel;
 }
 
 export class Update extends Component<any, UpdateState> {
@@ -33,25 +36,39 @@ export class Update extends Component<any, UpdateState> {
       errors: null,
       tokens: new TokensModel(),
       updated: true,
-      preview: ""
+      preview: "",
+      menu: AdminMenu
     };
   }
 
   public componentDidMount = async () => {
-    const user = getStorage("user");
-
+    // verify admin
+    const user = store.getState().user;
     if (!user || user.isAdmin === 0) {
       this.props.history.push("/login");
       console.log("Not Admin");
       return;
     }
 
+    // update style
+    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
+    store.dispatch({ type: ActionType.updateBackground, payload: "" });
+    store.dispatch({
+      type: ActionType.refreshVacation,
+      payload: new VacationModel()
+    });
+
     try {
-      const tokens = getStorage("tokens");
+      
+      const tokens = store.getState().tokens;
       const vacationID = this.props.match.params.id;
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
       const vacation = await getRequest(url);
-      this.setState({ vacation, updated: true, tokens });
+      this.setState({ vacation });
+
+      setTimeout(() => {
+        this.setState({ updated: true });
+      }, 1100);
     } catch (err) {
       console.log(err);
     }
@@ -67,35 +84,44 @@ export class Update extends Component<any, UpdateState> {
       }
     }
 
+    const { vacation } = this.state;
+
     // validate form
-    if (this.vacationFormLegal()) {
+    if (formLegal(vacation)) {
       return;
     }
 
     try {
-      const { vacation, tokens } = this.state;
-
-      console.log(vacation);
+      const tokens = store.getState().tokens;
       const vacationID = this.props.match.params.id;
 
+      // create formatDate file
       const myFormData = new FormData();
-
       myFormData.append("description", vacation.description);
       myFormData.append("destination", vacation.destination);
       myFormData.append("startDate", vacation.startDate);
       myFormData.append("endDate", vacation.endDate);
       myFormData.append("price", vacation.price.toString());
-      myFormData.append("image", vacation.image, vacation.image.name);
 
-      console.log(tokens);
+      if (typeof vacation.image === "string") {
+        myFormData.append("image", vacation.image);
+      } else {
+        myFormData.append("image", vacation.image, vacation.image.name);
+      }
 
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
 
-      const response = await updateVacation(url, myFormData, tokens.accessToken);
-      return;
+      const response = await updateVacation(
+        url,
+        myFormData,
+        tokens.accessToken
+      );
 
       if (response.message === "success") {
+        alert("Vacation has been updated successfully!");
         this.props.history.push("/admin");
+      } else {
+        alert(response.body);
       }
     } catch (err) {
       console.log(err);
@@ -103,23 +129,15 @@ export class Update extends Component<any, UpdateState> {
   };
 
   render() {
-    const { vacation, tokens, preview } = this.state;
+    const { vacation, preview } = this.state;
 
     return (
       <React.Fragment>
         {!vacation ? (
           <Loader />
         ) : (
-          <div className="update page">
-            <nav>
-              <AppTop
-                user={true}
-                admin={true}
-                logo={"Travel-on"}
-                tokens={tokens}
-              ></AppTop>
-            </nav>
-            <main>
+          <Grid container className="update">
+            <Grid item xs={8}>
               {vacation && (
                 <MyForm
                   vacation={vacation}
@@ -129,17 +147,18 @@ export class Update extends Component<any, UpdateState> {
                   handleImage={this.handleImage}
                 />
               )}
-            </main>
-            <aside>
+            </Grid>
+            <Grid item xs={4}>
               <VacCard
                 vacation={vacation}
                 followIcon={false}
                 admin={false}
+                hover={false}
                 accessToken={""}
                 preview={preview}
               />
-            </aside>
-          </div>
+            </Grid>
+          </Grid>
         )}
       </React.Fragment>
     );
@@ -149,7 +168,7 @@ export class Update extends Component<any, UpdateState> {
     this.setState({ preview });
   };
 
-  public handleChange = (prop: string, input: any): void => {
+  public handleChange = (prop: string, input: any) => {
     const vacation = { ...this.state.vacation };
     vacation[prop] = input;
     this.setState({ vacation, updated: false });

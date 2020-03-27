@@ -1,18 +1,21 @@
-import {  postRequest, deleteRequest } from "./serverService";
+import { postRequest, deleteRequest } from "./serverService";
 import { store } from "../redux/store/store";
-import { Action } from "../redux/action/action";
 import { ActionType } from "../redux/action-type/action-type";
-import { UserModel } from "../models/user-model";
 
 
-export const getStorage = (key) => {
-  const storage = sessionStorage.getItem(key);
-  const response = JSON.parse(storage);
-  return response
+export const verifyAdminPath= (history) => {
+  if(history.location.pathname == "/admin") {
+    return 
+  } 
+  history.push("/admin")
 }
-  
-export const setStorage = (key  :string , data : {}) => {
-  sessionStorage.setItem(key, JSON.stringify(data));
+ 
+export const verifyUserPath= (user, history) => {
+  const userName = history.location.pathname.substring(6)
+  if(userName === user.userName) {
+    return 
+  }  
+  history.push("/")
 }
 
 export const logInRequest = async user => {
@@ -30,7 +33,7 @@ export const loginLegal = (user, errors) => {
     user.userName === undefined ||
     user.password === undefined ||
     errors.userName.length > 0 ||
-    errors.password.length > 0  
+    errors.password.length > 0
   ) {
     return true;
   }
@@ -42,7 +45,7 @@ export const registrationLegal = (user, errors) => {
     user.userName === undefined ||
     user.password === undefined ||
     errors.userName.length > 0 ||
-    errors.password.length > 0  
+    errors.password.length > 0
   ) {
     return true;
   }
@@ -50,41 +53,15 @@ export const registrationLegal = (user, errors) => {
 };
 
 export const handleServerResponse = response => {
- 
+
   switch (typeof response) {
     case "string":
-      return false
+      return true
     case "object":
-
-      store.dispatch({type : ActionType.Login, response})
-   
-      setStorage("user", response)
-
-      // localStorage.setItem("user", JSON.stringify(response));
-      return true;
+      return false;
   }
 };
- 
 
-export const logOutService = async (tokens, history) => {
 
-  try {
-
-    store.dispatch({type : ActionType.Logout})
-
-    // clear refreshToken from db
-    const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;
-    await deleteRequest(url);
-
-    // clear localStorage
-    localStorage.clear();
-
-    // redirect to login page
-    history.push("/");
-  }
-  catch (err) {
-    console.log(err)
-  }
-};
 
 

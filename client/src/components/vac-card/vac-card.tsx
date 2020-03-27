@@ -27,6 +27,7 @@ interface VacCardProps {
   follow?: boolean;
   followIcon: boolean;
   admin?: boolean;
+  hover? : boolean
   preview?: string;
   update?(): void;
   handleDelete?(vacationID?: number): void;
@@ -62,10 +63,8 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       });
     }
   };
- 
-  public componentDidMount = async () => {
-    console.log(this.props.preview);
 
+  public componentDidMount = async () => {
     const vacationID = this.props.vacation.vacationID;
     if (vacationID) {
       const followers = await getFollowersByVacation(vacationID);
@@ -98,14 +97,14 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
   render() {
     const { expanded, color, followers } = this.state;
-    const { vacation, followIcon, admin, preview } = this.props;
+    const { vacation, followIcon, admin, preview, hover } = this.props;
 
     return (
       <div className="vac-card">
         <Card
           className={clsx({
             root: true,
-            "root-hover": !admin
+            "root-hover": hover
           })}
         >
           <CardHeader
@@ -126,8 +125,10 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
           />
           <CardMedia
             className="media"
-            image={ 
-              preview ? preview : `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`
+            image={
+              preview
+                ? preview 
+                : `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`
             }
             title=""
           ></CardMedia>

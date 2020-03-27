@@ -2,23 +2,30 @@
   height: 100%;
   margin: 0;
   padding: 0;
+  background-image: url("/assets/img/backgrounds/transition.jpg");
+  background-size: cover;
 
   a {
     color: white;
     font-size: 30px;
   }
- 
+
+  .mrg-bottom {
+    margin-bottom : 2%
+  }
+  
   .pnf-pos {
     color : white;
     text-align: center;
     position: relative;
-    top: 40%;
+    top: 15%;
   }
-
+  
   .pnf-button {
     text-transform: none;
     outline: white;
     border: 1px solid white;
+    margin-top : 15%
   }
 
   .pnf-button:hover {

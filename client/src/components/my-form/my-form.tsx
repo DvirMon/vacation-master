@@ -10,10 +10,12 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import "./my-form.scss";
+import { store } from "../../redux/store/store";
+import { ActionType } from "../../redux/action-type/action-type";
 
 interface MyFormProps {
   vacation: VacationModel;
-  handleChange(prop: string, input: string): void;
+  handleChange(prop: string, input: any): void;
   handleErrors(prop: string, error?: string): void;
   handleVacation(): any;
   handleImage(preview: string): void;
@@ -28,6 +30,8 @@ interface MyFormState {
 }
 
 export class MyForm extends Component<MyFormProps, MyFormState> {
+  private fileInput: HTMLInputElement;
+
   constructor(props: MyFormProps) {
     super(props);
 
@@ -40,40 +44,17 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     };
   }
 
-  public handleImage = async event => {
-    const image = event.target.files[0];
-
-    // Display image on client:
-    const reader = new FileReader();
-    reader.onload = args => {
-      if (this.props.handleImage) {
-        this.props.handleImage(args.target.result.toString());
-      }
-    };
-
-    reader.readAsDataURL(image); // Read the image.
- 
-  
-    // update image in values
-    this.handleChange("image", image);
-
-    return;
-
-    // const url = `http://localhost:3000/api/vacations/upload-image`;
-    // const response = await uploadImage(url, fd);
-    // this.props.handleChange("image", response);
-  };
-
   public componentDidMount = () => {
     setTimeout(() => {
-      if (this.props.vacation.startDate || this.props.vacation.endDate) {
-        const date = { ...this.state.date };
-        date.startDate = this.props.vacation.startDate;
-        date.endDate = this.props.vacation.endDate;
-        this.setState({ date });
-        return;
-      }
-    }, 1000);
+      this.updateDate();
+    }, 1500);
+  };
+
+  public updateDate = () => {
+    const date = { ...this.state.date };
+    date.startDate = this.props.vacation.startDate;
+    date.endDate = this.props.vacation.endDate;
+    this.setState({ date });
   };
 
   render() {
@@ -121,7 +102,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                 dateNow={vacation.startDate || ""}
                 prop="startDate"
                 label="Departing"
-                schema={date}
                 handleChange={this.handleChange}
                 handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
@@ -151,6 +131,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                   type="file"
                   accept="image/*"
                   onChange={this.handleImage}
+                  ref={fi => (this.fileInput = fi)}
                 />
                 <Button
                   className="upload-button"
@@ -207,17 +188,45 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
   };
 
   public handleChange = (prop: string, input: any) => {
-    this.props.handleChange(prop, input);
-  };
+    
+    if (prop === "startDate") {
+      const date = { ...this.state.date };
+      date.startDate = input;
+      this.setState({ date });
+    }
 
-  public handleTextArea = (prop: string) => event => {
-    const input = event.target.value;
-    this.props.handleChange(prop, input);
+    if (this.props.handleChange) {
+      this.props.handleChange(prop, input);
+    }
   };
 
   public handleErrors = (prop: string, error: string) => {
     if (this.props.handleErrors) {
       this.props.handleErrors(prop, error);
+    }
+  };
+
+  public handleImage = async event => {
+    const image = event.target.files[0];
+    if (!image) {
+      alert("Please choose image");
+      return;
+    }
+
+    // Display image on client:
+    try {
+      const reader = new FileReader();
+      reader.onload = args => {
+        if (this.props.handleImage) {
+          this.props.handleImage(args.target.result.toString());
+        }
+      };
+      reader.readAsDataURL(image); // Read the image.
+      // update image in values
+      this.handleChange("image", image);
+      return;
+    } catch (err) {
+      console.log(err);
     }
   };
 }

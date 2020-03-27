@@ -8,11 +8,11 @@ import { Typography } from "@material-ui/core";
 class PageNotFound extends Component {
   public render(): JSX.Element {
     return ( 
-      <div className="page-not-found">
+      <div className="page-not-found page">
         <Grid container className="pnf-pos">
-          <Grid item xs={12}>
-            <Typography variant={"h4"}>There are many routes but this is not one of them...</Typography>
-            <Typography variant={"h1"}>404</Typography>
+          <Grid item xs={12} > 
+            <Typography className="mrg-bottom" variant={"h4"}>There are many routes but this is not one of them...</Typography>
+            <Typography    variant={"h1"}>404</Typography>
             <Button type="button" className="pnf-button tim-note" variant="outlined">
               <NavLink to="/login" exact>
                 Back To Home

@@ -7,7 +7,7 @@ export class VacationModel {
 
   constructor(
     public destination?: string,
-    public price?: number, 
+    public price?: number,
     public startDate?: string,
     public endDate?: string,
     public description?: string,
@@ -19,43 +19,53 @@ export class VacationModel {
   static validVacation = (vacation: VacationModel): string => {
 
     const schema = Joi.object().keys({
-      destination: Joi.string().max(50),
-      description: Joi.string().max(1000),
-      image: Joi.string(),
-      startDate: Joi.date().iso(),
-      endDate: Joi.date().iso().greater(Joi.ref("startDate")).error(errors => {
-        errors.forEach(err => {
-          handleMassage(err)
-        })
+      destination: Joi.string().max(50).error(errors => {
+        errors.forEach(err => handleMassage(err))
         return errors;
       }),
-      price: Joi.number().min(1)
+      description: Joi.string().max(1000).error(errors => {
+        errors.forEach(err => handleMassage(err))
+        return errors;
+      }),
+      startDate: Joi.date().iso().error(errors => {
+        errors.forEach(err => handleMassage(err))
+        return errors;
+      }),
+      endDate: Joi.date().iso().greater(Joi.ref("startDate")).error(errors => {
+        errors.forEach(err => handleMassage(err))
+        return errors;
+      }),
+      price: Joi.number().min(1).error(errors => {
+        errors.forEach(err => handleMassage(err))
+        return errors;
+      })
     }).unknown()
 
     const error = Joi.validate(vacation, schema).error;
     if (error) {
+      console.log(error.details[0])
       return error.details[0].message
     }
     return null;
   };
 }
 
-export class UserVacationModel extends VacationModel{
+export class UserVacationModel extends VacationModel {
 
-  constructor( 
+  constructor(
     public followUpID?: number,
-    public vacationID?: number, 
+    public vacationID?: number,
     destination?: string,
     price?: number,
     startDate?: string,
-    endDate?: string,  
+    endDate?: string,
     description?: string,
     image?: File
   ) {
     super(destination, price, description, startDate, endDate, image)
   }
- 
-}  
+
+}
 
 export class FollowUpModel {
 

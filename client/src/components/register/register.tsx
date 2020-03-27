@@ -3,11 +3,10 @@ import Form from "react-bootstrap/Form";
 import { Grid, Tooltip, IconButton } from "@material-ui/core";
 import MyInput from "../my-input/my-input";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import { RegistrationErrors } from "../../models/error-model";
-import { RegisterModel } from "../../models/user-model"; 
+import { RegisterModel } from "../../models/user-model";
 import generator from "generate-password";
-import AppTop from "../app-top/app-top/app-top";
 import { postRequest } from "../../services/serverService";
 import { handleServerResponse } from "../../services/loginService";
 import {
@@ -15,6 +14,9 @@ import {
   formLegalErrors
 } from "../../services/validationService";
 import "./register.scss";
+import { store } from "../../redux/store/store";
+import { ActionType } from "../../redux/action-type/action-type";
+import { MenuModel } from "../../models/menu-model";
 
 interface RegisterState {
   user: RegisterModel;
@@ -22,6 +24,7 @@ interface RegisterState {
   password: string;
   serverError: string;
   serverErrorStyle: boolean;
+  menu: MenuModel;
 }
 export class Register extends Component<any, RegisterState> {
   constructor(props: any) {
@@ -32,11 +35,15 @@ export class Register extends Component<any, RegisterState> {
       errors: new RegistrationErrors("", "", "", "", ""),
       password: "",
       serverError: "",
-      serverErrorStyle: false
+      serverErrorStyle: false,
+      menu: new MenuModel({}, false, true, false, false, 0)
     };
   }
 
-  public componentDidMount = () => {};
+  public componentDidMount = () => {
+    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
+    store.dispatch({ type: ActionType.updateBackground, payload: "home" });
+  };
 
   public registrationFormLegal = (): boolean => {
     const user = this.state.user;
@@ -65,12 +72,17 @@ export class Register extends Component<any, RegisterState> {
       const url = `http://localhost:3000/api/user`;
       const serverResponse = await postRequest(url, user);
 
-      if (!handleServerResponse(serverResponse)) {
+      console.log(serverResponse);
+
+      if (handleServerResponse(serverResponse)) {
         this.setState({ serverError: serverResponse, serverErrorStyle: true });
+        return;
+      } else {
+        store.dispatch({ type: ActionType.Login, payload: serverResponse });
+        this.props.history.push("/login");
         return;
       }
 
-      this.props.history.push("/");
     } catch (err) {
       console.log(err);
     }
@@ -80,90 +92,81 @@ export class Register extends Component<any, RegisterState> {
     const { user, password, serverError, serverErrorStyle } = this.state;
 
     return (
-      <div className="register page">
-        <React.Fragment>
-          <nav>
-            <AppTop user={false} reg={true} loginButton={this.loginButton} />
-          </nav> 
-          <main>
-            <Form className="register-form">
-              <Grid container spacing={3} className="justify-content-center">
-                <MyInput
-                  width={10}
-                  fullWidth={true}
-                  value={user.firstName || ""}
-                  type={"text"}
-                  prop="firstName"
-                  label="First Name"
-                  handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={RegisterModel.validRegistration}
-                  helperText={"Please enter your first name"}
-                ></MyInput>
-                <MyInput
-                  width={10}
-                  fullWidth={true}
-                  value={user.lastName || ""}
-                  type={"text"}
-                  prop="lastName"
-                  label="Last Name"
-                  handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={RegisterModel.validRegistration}
-                  helperText={"Please enter your last name"}
-                ></MyInput>
-                <MyInput
-                  width={10}
-                  fullWidth={true}
-                  value={user.userName || ""}
-                  type={"text"}
-                  prop={"userName"}
-                  label="Username"
-                  handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={RegisterModel.validRegistration}
-                  serverError={serverError}
-                  serverErrorStyle={serverErrorStyle}
-                  helperText={"Please choose a username"}
-                ></MyInput>
-                <MyInput
-                  width={10}
-                  fullWidth={true}
-                  value={user.password || password}
-                  type="text"
-                  prop={"password"}
-                  label="Password (8-24 characters)"
-                  passwordIcon={
-                    <Tooltip title="Generate strong password" placement="top">
-                      <IconButton onClick={this.getPassword}>
-                        <LockOutlinedIcon />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                  handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={RegisterModel.validRegistration}
-                  helperText={
-                    "Please enter a password or create one with the icon"
-                  }
-                ></MyInput>
-                <Grid className="text-center" item xs={10}>
-                  <Button 
-                    type="button"
-                    className="register-button"
-                    variant="contained"
-                    color="secondary"
-                    fullWidth={true}
-                    onClick={this.addUser}
-                    disabled={this.registrationFormLegal()}
-                  > 
-                    Sigh-in
-                  </Button>
-                </Grid>
-              </Grid>
-            </Form>
-          </main>
-        </React.Fragment>
+      <div className="register">
+        <Form className="register-form">
+          <Grid container spacing={3} className="justify-content-center">
+            <MyInput
+              width={10}
+              fullWidth={true}
+              value={user.firstName || ""}
+              type={"text"}
+              prop="firstName"
+              label="First Name"
+              handleChange={this.handleChange}
+              handleErrors={this.handleErrors}
+              validInput={RegisterModel.validRegistration}
+              helperText={"Please enter your first name"}
+            ></MyInput>
+            <MyInput
+              width={10}
+              fullWidth={true}
+              value={user.lastName || ""}
+              type={"text"}
+              prop="lastName"
+              label="Last Name"
+              handleChange={this.handleChange}
+              handleErrors={this.handleErrors}
+              validInput={RegisterModel.validRegistration}
+              helperText={"Please enter your last name"}
+            ></MyInput>
+            <MyInput
+              width={10}
+              fullWidth={true}
+              value={user.userName || ""}
+              type={"text"}
+              prop={"userName"}
+              label="Username"
+              handleChange={this.handleChange}
+              handleErrors={this.handleErrors}
+              validInput={RegisterModel.validRegistration}
+              serverError={serverError}
+              serverErrorStyle={serverErrorStyle}
+              helperText={"Please choose a username"}
+            ></MyInput>
+            <MyInput
+              width={10}
+              fullWidth={true}
+              value={user.password || password}
+              type="text"
+              prop={"password"}
+              label="Password (8-24 characters)"
+              passwordIcon={
+                <Tooltip title="Generate strong password" placement="top">
+                  <IconButton onClick={this.getPassword}>
+                    <LockOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+              }
+              handleChange={this.handleChange}
+              handleErrors={this.handleErrors}
+              validInput={RegisterModel.validRegistration}
+              helperText={"Please enter a password or create one with the icon"}
+            ></MyInput>
+            <Grid className="text-center" item xs={10}>
+              <Button
+                type="button"
+                className="register-button"
+                variant="contained"
+                color="secondary"
+                fullWidth={true}
+                onClick={this.addUser}
+                disabled={this.registrationFormLegal()}
+              >
+                Sigh-in
+              </Button>
+            </Grid>
+          </Grid>
+        </Form>
       </div>
     );
   }

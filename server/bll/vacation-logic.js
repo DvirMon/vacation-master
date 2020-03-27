@@ -65,7 +65,6 @@ const updateVacation = async vacation => {
   price = ${vacation.price}
   WHERE vacationID = ${vacation.vacationID}`;
   const info = await dal.executeAsync(sql);
-  console.log(info)
   return info.affectedRows === 0 ? null : vacation;
 };
 

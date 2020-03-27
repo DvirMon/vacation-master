@@ -1,16 +1,9 @@
 .charts {
   height: 100%;
-  display: grid;
-  grid-template-rows: 15% 85%;
-  grid-template-columns: repeat(12, 1fr);
-  background-color: #fafafa7e;
   padding: 0;
   margin: 0;
+  background-color: #fafafa7e;
 
-  nav,
-  main {
-    grid-column: 12 span;
-  }
   .container {
     position: relative;
     top: 10%;

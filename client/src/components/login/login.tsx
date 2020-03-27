@@ -18,12 +18,16 @@ import {
 import { LoginErrors } from "../../models/error-model";
 import Grid from "@material-ui/core/Grid";
 import "./login.scss";
+import { store } from "../../redux/store/store";
+import { MenuModel } from "../../models/menu-model";
+import { ActionType } from "../../redux/action-type/action-type";
 
 interface LoginState {
   user: UserModel;
   errors: LoginErrors;
   showPassword: boolean;
   serverError: string;
+  menu: MenuModel;
 }
 
 export class Login extends Component<any, LoginState> {
@@ -34,23 +38,22 @@ export class Login extends Component<any, LoginState> {
       user: new UserModel(),
       errors: new LoginErrors(),
       showPassword: false,
-      serverError: ""
+      serverError: "",
+      menu: new MenuModel({}, false, false, false, false, 0)
     };
   }
 
   public componentDidMount = async () => {
-    try {
-      //  check if user is still login
-      const storage = localStorage.getItem("user");
-      const response = JSON.parse(storage);
-      if (!response) {
-        // this.props.history.push("/login");
-        console.log("Login");
-      }
+    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
+    store.dispatch({ type: ActionType.updateBackground, payload: "home" });
 
-      //   if so route according to role
-      const user = response;
-      this.handleRouting(user);
+    try {
+      if (store.getState().user === null) {
+        console.log("Login");
+        return;
+      } else {
+        this.handleRouting(this.props.history);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -58,6 +61,7 @@ export class Login extends Component<any, LoginState> {
 
   public handleLogIn = async () => {
     const user = { ...this.state.user };
+    console.log(user);
     const errors = { ...this.state.errors };
 
     // disabled request if form is not legal
@@ -67,44 +71,45 @@ export class Login extends Component<any, LoginState> {
 
     try {
       const serverResponse = await logInRequest(user);
-      const response = handleServerResponse(serverResponse);
 
-      // if false response is error
-      if (!response) {
+      // if true server returned error
+      if (handleServerResponse(serverResponse)) {
         this.setState({ serverError: serverResponse });
         return;
+      } else {
+        // serverResponse is the user
+        store.dispatch({ type: ActionType.Login, payload: serverResponse });
+        this.handleRouting(this.props.history);
       }
 
-      this.handleRouting(serverResponse);
     } catch (err) {
       console.log(err);
     }
   };
 
-  public handleRouting = user => {
-    //admin route
+  public handleRouting = history => {
+    const user = store.getState().user;
     if (user.isAdmin === 1) {
-      this.props.history.push(`/admin`);
-      return 1;
+      history.push(`/admin`);
+      return;
     }
-    this.props.history.push(`/user/${user.userName}`);
+    history.push(`/user/${user.userName}`);
   };
 
   render() {
     const { user, serverError, showPassword } = this.state;
 
     return (
-      <div className="login page">
-        <nav></nav>
-        <main>
+      <div className="login">
+        <div className="login-main">
           <div className="header-login fade-up">
             <h2>Explore destinations around the world!</h2>
             <h3>We offer the best prices!</h3>
             <h3>You can open an account for more information</h3>
             <div className="btn-register"></div>
           </div>
-        </main>
-        <aside>
+        </div>
+        <div className="login-aside">
           <Form className="my-form">
             <Grid className="row-header" spacing={2} container>
               <Grid item xs={4}>
@@ -182,7 +187,7 @@ export class Login extends Component<any, LoginState> {
                   variant="outlined"
                   color="primary"
                   onClick={this.handleLogIn}
-                  >
+                >
                   Login
                 </Button>
               </Grid>
@@ -199,7 +204,7 @@ export class Login extends Component<any, LoginState> {
               </Grid>
             </Grid>
           </Form>
-        </aside>
+        </div>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 
 import Joi from "joi"
+import { VacationModel } from "../models/vacations-model"
 
 export const isRequired = (prop: string) => {
   const error = Joi.validate(prop, Joi.required()).error
@@ -19,19 +20,27 @@ export const handleMassage = (err) => {
       err.message = "This field should only include a-z/A-Z letters";
       break
     case "any.empty":
-      err.message = "This field is required";
+      console.log(err.path[0])
+      if (err.path[0] === "firstName" || err.path[0] === "lastName") {
+        err.message = "This field is required";
+        break
+      }
+      err.message = `${err.path[0].toLowerCase()} is required`
       break
     case "string.min":
       err.message = `This field should be at last ${err.context.limit} characters`;
       break
     case "string.max":
-      err.message = `This field must be less than or equal to  ${err.context.limit} characters long}`;
+      err.message = `This field must be less than or equal to ${err.context.limit} characters long}`;
       break
     case "date.ref":
       err.message = "Please choose departing date and only then returning date";
       break
     case "date.greater":
-      err.message = `This date must be greater then ${err.context.limit.toISOString().slice(0, 10).replace("T", " ")}`;
+      err.message = `Departing date cant be before ${err.context.limit.toISOString().slice(0, 10).replace("T", " ")}`;
+      break
+    case "number.base":
+      err.message = `price is required`;
       break
   }
 }
@@ -64,6 +73,31 @@ export const formLegalValues = (obj) => {
     }
   };
   return null
+}
+
+export const formLegal = (vacation, errors?) => {
+
+  const value = formLegalValues(vacation);
+  if (value) {
+    alert(`Filed ${value} is required`);
+    return true;
+  }
+
+  // const error = formLegalErrors(errors);
+  // if (error) {
+  //   alert(error);
+  //   return true;
+  // }
+
+  // validate again for date
+  const schemeError = VacationModel.validVacation(vacation)
+  if (schemeError) {
+    alert(schemeError)
+    return true
+  }
+
+  return false;
+
 }
 
 

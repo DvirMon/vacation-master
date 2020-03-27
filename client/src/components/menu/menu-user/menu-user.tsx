@@ -9,12 +9,12 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import { UserModel } from "../../../models/user-model";
 
-interface AppUserProps {
+interface MenuUserProps {
   userInfo?: UserModel;
   followUpCounter?: number;
 } 
  
-export class AppUser extends Component<AppUserProps, any> {
+export class MenuUser extends Component<MenuUserProps, any> {
   render() {
 
     const { userInfo , followUpCounter} = this.props;
@@ -47,4 +47,4 @@ export class AppUser extends Component<AppUserProps, any> {
   }
 }
 
-export default AppUser;
+export default MenuUser;

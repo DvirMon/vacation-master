@@ -4,7 +4,7 @@ const usersLogic = require("../bll/users-logic");
 const VacationModel = require("../models/vacation-model");
 const router = express.Router();
 const auth = require("../services/auth");
-const saveImageLocally = require("../services/image");
+const imageLogic = require("../services/image");
 
 // get all vacations
 router.get("/", async (request, response, next) => {
@@ -55,6 +55,17 @@ router.get("/:id", async (request, response, next) => {
 // add vacation (admin)
 router.post("/", auth.authorize(1), async (request, response, next) => {
   const vacation = request.body;
+  const file = request.files.image;
+
+  // verify file
+  if (!file) {
+    response.status(400).json("No Files Sent!");
+    return;
+  }
+  const fileName = imageLogic.saveImageLocally(file);
+  vacation.image = fileName;
+
+  // verify vacation schema
   const error = VacationModel.validation(vacation);
   if (error) {
     response.status(400).json({ body: error, message: "error" });
@@ -70,21 +81,22 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
 });
 
 // update vacation (admin only)
-router.put("/:id", async (request, response) => {
-  // vacation id
+router.put("/:id", auth.authorize(1), async (request, response) => {
   const vacationID = request.params.id;
   const vacation = request.body;
-  const file = request.files.image;
+  const file = request.files;
 
-  if (!file) {
-    response.status(400).json("No Files Sent!");
-    return;
+  // verify file
+  if (file) {
+    const fileName = imageLogic.saveImageLocally(file.image);
+    vacation.image = fileName;
+  } else if (!file && vacation.image === undefined) {
+    response.status(400).json("No image Sent!");
   }
-  const fileName = saveImageLocally(file);
 
-  vacation.image = fileName;
+  console.log(vacation)
 
-  //validate schema
+  //verify schema
   const error = VacationModel.validation(vacation);
   if (error) {
     response.status(400).send({ body: error, message: "error" });
@@ -96,10 +108,9 @@ router.put("/:id", async (request, response) => {
   try {
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
     if (updatedVacation === null) {
-      response.sendStatus(404);
-      return;
+      response.sendStatus(404); 
+      return; 
     }
-
     response.json({ body: updatedVacation, message: "success" });
   } catch (err) {
     response.status(500).json({ body: err, message: "error" });
@@ -114,14 +125,23 @@ router.delete("/:id", auth.authorize(1), async (request, response) => {
     response.sendStatus(204);
   } catch (err) {
     response.status(500).json(err.message);
-  } 
+  }
+});
+
+router.get("/update/image/:imgName", async (request, response, next) => {
+  try {
+    const imageName = request.params.imgName;
+    const image = await imageLogic.readImage(imageName);
+    response.sendFile(image);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // route for  getting images from the server
 router.get("/uploads/:imgName", async (request, response, next) => {
   try {
-    console.log(__dirname)
-    const dirName = __dirname.substring(0, 44)
+    const dirName = __dirname.substring(0, 44);
     response.sendFile(dirName + "\\uploads\\" + request.params.imgName);
   } catch (err) {
     next(err);

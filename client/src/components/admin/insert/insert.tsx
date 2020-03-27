@@ -5,20 +5,23 @@ import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
 import {
   formLegalValues,
-  formLegalErrors
+  formLegalErrors,
+  formLegal
 } from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
-import { postRequest } from "../../../services/serverService";
-import AppTop from "../../app-top/app-top/app-top";
-import { getStorage } from "../../../services/loginService";
+import { addVacation } from "../../../services/serverService";
+import { store } from "../../../redux/store/store";
+import { ActionType } from "../../../redux/action-type/action-type";
+import { Grid } from "@material-ui/core";
+import { MenuModel, AdminMenu } from "../../../models/menu-model";
 import "./insert.scss";
 
 interface InsertState {
   vacation: VacationModel;
   errors: VacationErrors;
   tokens: TokensModel;
-  preview : string
-
+  preview: string;
+  menu: MenuModel;
 }
 
 export class Insert extends Component<any, InsertState> {
@@ -28,80 +31,78 @@ export class Insert extends Component<any, InsertState> {
     this.state = {
       vacation: new VacationModel(),
       errors: null,
-      tokens: new TokensModel(),
-      preview : ""
-
+      tokens: store.getState().tokens,
+      preview: "",
+      menu: AdminMenu
     };
   }
 
   public componentDidMount = async () => {
-    
-    const user = getStorage("user");
-    const tokens = getStorage("tokens");
-
+    // verify admin
+    const user = store.getState().user;
     if (!user || user.isAdmin === 0) {
       this.props.history.push("/login");
       console.log("Not Admin");
       return;
     }
-
-    this.setState({ tokens });
+    // update style
+    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
+    store.dispatch({ type: ActionType.updateBackground, payload: "" });
+    store.dispatch({
+      type: ActionType.refreshVacation,
+      payload: new VacationModel()
+    });
   };
 
   public addVacation = async () => {
-    
-    if (this.vacationFormLegal()) {
+
+    const { vacation } = this.state;
+
+    if (formLegal(vacation)) {
       return;
     }
 
     try {
-      const { vacation, tokens } = this.state;
+      const tokens = store.getState().tokens;
+
       const url = `http://localhost:3000/api/vacations`;
 
-      // creat formatDate file
-
+      // create formatDate file
       const myFormData = new FormData();
+      myFormData.append("description", vacation.description);
+      myFormData.append("destination", vacation.destination);
+      myFormData.append("startDate", vacation.startDate);
+      myFormData.append("endDate", vacation.endDate);
+      myFormData.append("price", vacation.price.toString());
+      myFormData.append("image", vacation.image, vacation.image.name);
 
-      for(const prop in vacation) {
-        myFormData.append(prop, vacation[prop]);
-      } 
+      const response = await addVacation(url, myFormData, tokens.accessToken);
 
-      console.log(myFormData)
-
-
-
-
-      await postRequest(url, vacation, tokens.accessToken);
-      alert("New Vacation has been added!");
-      this.props.history.push("/admin");
+      if (response.message === "success") {
+        alert("New Vacation has been added!");
+        this.props.history.push("/admin");
+      } else {
+        alert(response.body);
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
   render() {
-    const { vacation, tokens, preview } = this.state;
+    const { vacation, preview } = this.state;
     return (
-      <div className="insert page">
-        <nav>
-          <AppTop
-            user={true}
-            admin={true}
-            logo={"Travel-on"}
-            tokens={tokens}
-          ></AppTop>
-        </nav>
-        <main>
+      <Grid container className="insert">
+        <Grid item xs={8}>
           <MyForm
             vacation={vacation}
             handleChange={this.handleChange}
             handleErrors={this.handleErrors}
             handleVacation={this.addVacation}
             handleImage={this.handleImage}
-
           />
-        </main>
-        <aside>
+        </Grid>
+        <Grid item xs={4}>
           <VacCard
             vacation={vacation}
             followIcon={false}
@@ -109,8 +110,8 @@ export class Insert extends Component<any, InsertState> {
             accessToken={""}
             preview={preview}
           />
-        </aside>
-      </div>
+        </Grid>
+      </Grid>
     );
   }
 
@@ -135,23 +136,6 @@ export class Insert extends Component<any, InsertState> {
     this.setState({ errors });
   };
 
-  public vacationFormLegal = (): boolean => {
-    const vacation = { ...this.state.vacation };
-    const errors = { ...this.state.errors };
-
-    const value = formLegalValues(vacation);
-    if (value) {
-      alert(`Filed ${value} is required`);
-      return true;
-    }
-
-    const error = formLegalErrors(errors);
-    if (error) {
-      alert(error);
-      return true;
-    }
-    return false;
-  };
 }
 
 export default Insert;

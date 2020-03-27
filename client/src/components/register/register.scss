@@ -1,28 +1,13 @@
-
 .register {
   height: 100%;
-  display: grid;
-  grid-template-rows: 15% 75%;
-  grid-template-columns: repeat(12, 1fr);
   padding: 0;
   margin: 0;
-  background-image: url("/assets/img/backgrounds/home.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-
-  nav {
-    grid-column: 12 span;
-  }
-
-  main {
-    grid-column: 12 span;
-  }
 
   .register-form {
-    margin: auto;
-    height: 100%;
+    position: relative;
+    height: 90%;
     width: 30%;
+    margin: auto;
     background-color: #fafafa;
     border-radius: 25px;
     padding: 3%0;

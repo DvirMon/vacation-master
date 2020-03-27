@@ -7,6 +7,8 @@ import {
   KeyboardDatePicker
 } from "@material-ui/pickers";
 import { setObjectForSchema } from "../../services/validationService";
+import { ActionType } from "../../redux/action-type/action-type";
+import { store } from "../../redux/store/store";
 
 interface DatePickerState {
   selectedDate: Date;
@@ -21,7 +23,7 @@ interface DatePickerState {
 
 interface DatePickerProps {
   dateNow?: string;
-  schema: {};
+  schema?: {};
   label: string;
   prop: string;
   helperText?: string;
@@ -50,12 +52,12 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
     setTimeout(() => {
       if (this.props.dateNow) {
         const date = new Date(this.props.dateNow);
-        this.setState({ selectedDate: date });
+        this.handleDateChange(date, false);
+      } else {
+        const date = new Date();
+        this.handleDateChange(date, false);
       }
     }, 1000);
-
-    const date = new Date();
-    this.handleDateChange(date, false);
   };
 
   render() {
@@ -95,14 +97,24 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
       this.validInput(input, this.props.prop);
     }
 
+    store.dispatch({
+      type: ActionType.updatedVacation,
+      payload: { prop: this.props.prop, input: input }
+    });
+
     if (this.props.handleChange) {
       this.props.handleChange(this.props.prop, input);
     }
   };
 
   public validInput = (input: string, prop: string) => {
-    
-    const schema = setObjectForSchema(this.props.schema, prop, input);
+    let schema = {};
+
+    if (this.props.schema) {
+      schema = setObjectForSchema(this.props.schema, prop, input);
+    } else {
+      schema = setObjectForSchema(schema, prop, input);
+    }
 
     const errorMessage = this.props.validInput(schema);
 

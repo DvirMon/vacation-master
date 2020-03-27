@@ -6,15 +6,14 @@ import VacCard from "../vac-card/vac-card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { deleteRequest } from "../../services/serverService";
-import { refreshToken, getTokens } from "../../services/tokensService";
 import { getVacations } from "../../services/vacationsService";
-import { getStorage, logOutService } from "../../services/loginService";
-import { store } from "../../redux/store/store";
-import { Action } from "../../redux/action/action";
-import { ActionType } from "../../redux/action-type/action-type";
-import Loader from "../loader/loader";
-import AppTop from "../app-top/app-top/app-top";
+import { verifyAdminPath, verifyUserPath } from "../../services/loginService";
+import Loader from "../loader/loader"; 
+import { getTokens, refreshToken } from "../../services/tokensService";
 import { Unsubscribe } from "redux";
+import { store } from "../../redux/store/store";
+import { MenuModel } from "../../models/menu-model";
+import { ActionType } from "../../redux/action-type/action-type";
 import "./vacations.scss";
 
 interface VacationsProps {
@@ -22,16 +21,16 @@ interface VacationsProps {
 }
 
 interface VacationsState {
+  user: UserModel;
   admin: boolean;
   followUpCounter: number;
   followUp?: UserVacationModel[];
   unFollowUp?: UserVacationModel[];
-  user: UserModel;
   followIcon: boolean;
   tokens: TokensModel;
   scrolled: boolean;
-  scrollPixelsY: number
-
+  scrollPixelsY: number;
+  menu: MenuModel;
 }
 
 export class Vacations extends Component<any, VacationsState> {
@@ -42,14 +41,15 @@ export class Vacations extends Component<any, VacationsState> {
 
     this.state = {
       admin: false,
-      followUp: [],
-      unFollowUp: [],
       user: store.getState().user,
       tokens: store.getState().tokens,
+      followUp: [],
+      unFollowUp: [],
       followUpCounter: 0,
       followIcon: true,
       scrolled: true,
-      scrollPixelsY: 0
+      scrollPixelsY: 0,
+      menu: null
     };
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
@@ -58,22 +58,30 @@ export class Vacations extends Component<any, VacationsState> {
       });
     });
   }
-  
+
   public componentDidMount = async () => {
     
-    window.addEventListener('scroll', this.handleScroll, true);
-    
     try {
-      // first request for tokens
-      const user = getStorage("user");
+      // verify login
+      if (store.getState().isLoggedIn === false) {
+        this.props.history.push("/");
+        return;
+      }
 
-      const action: Action = { 
-        type: ActionType.Login,
-        payloud: user
-      };
-      store.dispatch(action);
+      const user = store.getState().user;
+      if (user.isAdmin === 1) {
+        verifyAdminPath(this.props.history);
+      } else {
+        verifyUserPath(user, this.props.history);
+      }
+
+      // set tokens
+      if (store.getState().tokens === null) {
+        await getTokens(store.getState().user);
+      }
+
+      const tokens = store.getState().tokens;
       
-      const tokens = await getTokens(user);
       const response = await getVacations(tokens.accessToken);
 
       const vacations = this.handleResponse(response);
@@ -87,11 +95,12 @@ export class Vacations extends Component<any, VacationsState> {
         unFollowUp: vacations.unFollowUp
       });
 
+     this.handleMenu()
+
+
       if (this.props.handleFollowUpCounter) {
         this.props.handleFollowUpCounter(vacations.followUp.length);
       }
-
-
     } catch (err) {
       console.log(err);
     }
@@ -99,14 +108,35 @@ export class Vacations extends Component<any, VacationsState> {
 
   public componentWillUnmount(): void {
     this.unsubscribeStore();
+    clearInterval(this.handleTokens);
   }
+
+  public handleMenu = () => {
+   
+    const menu = store.getState().menu
+    menu.user = this.state.user
+    menu.admin = this.state.admin
+    menu.isLoggedIn = true
+    menu.followUpCounter = this.state.followUp.length
+    menu.logoutButton = true 
+    store.dispatch({type : ActionType.updateMenu, payload : menu})
+  }
+
+  public handleTokens = setInterval(async () => {
+    const tokens = JSON.parse(sessionStorage.getItem("tokens"));
+    if (!tokens) {
+      console.log("a");
+      return;
+    }
+    await refreshToken(tokens.dbToken);
+  }, 600000);
 
   public handleResponse = response => {
     // validate response
     switch (typeof response) {
       case "string":
-        alert(response);
-        this.props.history.push("/");
+        console.log(response);
+        // this.props.history.push("/");
         break;
       case "object":
         return response;
@@ -116,111 +146,68 @@ export class Vacations extends Component<any, VacationsState> {
   public handelRole = () => {
     const user = store.getState().user;
     if (user.isAdmin === 1) {
+      store.dispatch({ type: ActionType.updateBackground, payload: "" });
       return true;
     }
+    store.dispatch({type : ActionType.updateBackground, payload : "user"})
+    return false;
   };
 
-  // update access token every 10 minutes
-  public handleTokens = setInterval(async () => {
-    const tokens = { ...this.state.tokens };
-    const accessToken = await refreshToken(tokens.dbToken);
-    tokens.accessToken = accessToken;
-
-
-    //add to storage
-    localStorage.setItem("tokens", JSON.stringify(tokens));
-
-    // add to store
-    const action: Action = {
-      type: ActionType.addToken,
-      payloud: tokens
-    };
-    store.dispatch(action);
-  }, 600000);
-
   render() {
-    const {
-      followUp,
-      unFollowUp,
-      user,
-      admin,
-      followUpCounter,
-      tokens,
-      scrolled
-    } = this.state;
+    const { followUp, unFollowUp, admin, tokens } = this.state;
 
     return (
       <React.Fragment>
         {unFollowUp.length === 0 ? (
           <Loader />
         ) : (
-          <div className="vacations page">
-            <nav>
-              <AppTop
-                user={true}
-                logoutButton={true}
-                admin={admin}
-                userInfo={user}
-                logo={"Travel-on"}
-                followUpCounter={followUpCounter}
-                tokens={tokens}
-                handleLogOut={this.handleLogOut}
-                scrolled={scrolled}
-              ></AppTop>
-            </nav>
-            <main>
-              <Row>
-                {followUp.length > 0 && (
-                  <h1 className="card-title">My Wish List</h1>
-                )}
-              </Row>
-              <Row className="row-followed">
-                {followUp.map(vacation => (
-                  <Col key={vacation.vacationID} sm={3}>
-                    <VacCard
-                      vacation={vacation}
-                      accessToken={tokens.accessToken}
-                      follow={true}
-                      update={this.componentDidMount}
-                      followIcon={true}
-                    ></VacCard>
-                  </Col>
+          <div className="vacations">
+            <Row>
+              {followUp.length > 0 && (
+                <h1 className="card-title">My Wish List</h1>
+              )}
+            </Row>
+            <Row className="row-followed">
+              {followUp.map(vacation => (
+                <Col key={vacation.vacationID} sm={3}>
+                  <VacCard
+                    vacation={vacation}
+                    accessToken={tokens ? tokens.accessToken : ""}
+                    follow={true}
+                    update={this.componentDidMount}
+                    followIcon={true}
+                  ></VacCard>
+                </Col>
+              ))}
+            </Row>
+            <Row>
+              {unFollowUp.length > 0 ||
+                (admin && (
+                  <h1 className="card-title">Explore Our Vacations</h1>
                 ))}
-              </Row>
-              <Row>
-                {unFollowUp.length > 0 ||
-                  (admin && (
-                    <h1 className="card-title">Explore Our Vacations</h1>
-                  ))}
-              </Row>
-              <Row className="row-unFollowed">
-                {unFollowUp.map(vacation => (
-                  <Col key={vacation.vacationID} sm={4}>
-                    <VacCard
-                      vacation={vacation}
-                      accessToken={tokens.accessToken}
-                      follow={false}
-                      followIcon={!admin}
-                      admin={admin}
-                      handleDelete={this.handleDelete}
-                      handleEdit={this.handleEdit}
-                      update={this.componentDidMount}
-                    ></VacCard>
-                  </Col>
-                ))}
-              </Row>
-            </main>
+            </Row>
+            <Row className="row-unFollowed">
+              {unFollowUp.map(vacation => (
+                <Col key={vacation.vacationID} sm={4}>
+                  <VacCard
+                    vacation={vacation}
+                    accessToken={tokens ? tokens.accessToken : ""}
+                    follow={false}
+                    followIcon={!admin}
+                    hover={!admin}
+                    admin={admin}
+                    handleDelete={this.handleDelete}
+                    handleEdit={this.handleEdit}
+                    update={this.componentDidMount}
+                  ></VacCard>
+                </Col>
+              ))}
+            </Row>
           </div>
         )}
       </React.Fragment>
     );
   }
-
-  public handleLogOut = async () => {
-    const tokens = { ...this.state.tokens };
-    const history = this.props.history;
-    await logOutService(tokens, history);
-  };
 
   public handleDelete = async (vacationID: number) => {
     const tokens = { ...this.state.tokens };
@@ -245,13 +232,12 @@ export class Vacations extends Component<any, VacationsState> {
       this.setState({ scrolled: false });
     } else {
       this.setState({ scrolled: true });
-    }    
-    
+    }
+
     this.setState({
       scrollPixelsY: window.scrollY
     });
-
   };
-} 
+}
 
 export default Vacations;

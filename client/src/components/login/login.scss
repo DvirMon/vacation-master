@@ -3,19 +3,11 @@
 .login {
   height: 100%;
   display: grid;
-  grid-template-rows: 15% 85%;
   grid-template-columns: repeat(12, 1fr);
   padding: 0;
   margin: 0;
-  background-image: url("/assets/img/backgrounds/home.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
 
-  nav {
-    grid-column: 12 span;
-  }
-  main {
+  .login-main {
     grid-column: 7 span;
     
     .fade-up {
@@ -56,11 +48,11 @@
     }
   }
 
-  aside {
+  .login-aside {
     grid-column: 4 span;
 
     .my-form {
-      height: 80%;
+      height: 85%;
       left: 3%;
       margin: 0;
       padding: 0;

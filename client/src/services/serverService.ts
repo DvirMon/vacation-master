@@ -90,6 +90,22 @@ export const updateVacation = async (url: string, vacation?: FormData, accessTok
     return err
   }
 }
+export const addVacation = async (url: string, vacation?: FormData, accessToken?: string) => {
+  const options = {
+    method: "POST",
+    headers: {
+      "Authorization": accessToken
+    },
+    body: vacation
+  };
+
+  try {
+    const response = await getData(url, options);
+    return response
+  } catch (err) {
+    return err
+  }
+}
 
 export const deleteRequest = async (url: string, accessToken?: string) => {
   const options = {

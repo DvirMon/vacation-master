@@ -2,13 +2,10 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
 import BarChartIcon from "@material-ui/icons/BarChart";
-import { TokensModel } from "../../../models/tokens.model";
 
-interface AppAdminProps {
-  tokens : TokensModel
-}
 
-export class AppAdmin extends Component<AppAdminProps, any> {
+
+export class MenuAdmin extends Component {
 
   render() {
     return (
@@ -17,9 +14,7 @@ export class AppAdmin extends Component<AppAdminProps, any> {
           <BarChartIcon />
           <NavLink
             to={{
-              pathname: "/admin/charts", 
-              state: { detail: this.props.tokens }
-
+              pathname: "/admin/charts"
             }}
             exact
           >
@@ -29,7 +24,7 @@ export class AppAdmin extends Component<AppAdminProps, any> {
         <MenuItem>
           <NavLink
             to={{
-              pathname: "/admin/vacation-new"
+              pathname: "/admin/vacation/new"
             }}
           >
             Add Vacation
@@ -43,4 +38,4 @@ export class AppAdmin extends Component<AppAdminProps, any> {
   }
 }
 
-export default AppAdmin;
+export default MenuAdmin;
