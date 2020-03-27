@@ -15,13 +15,15 @@ import { ActionType } from "../../../redux/action-type/action-type";
 import { Grid } from "@material-ui/core";
 import { MenuModel, AdminMenu } from "../../../models/menu-model";
 import "./insert.scss";
+import { getAccessToken } from "../../../services/tokensService";
+import { setFormData } from "../../../services/vacationsService";
+import { adminStyle } from "../../../services/styleService";
 
 interface InsertState {
   vacation: VacationModel;
   errors: VacationErrors;
   tokens: TokensModel;
   preview: string;
-  menu: MenuModel;
 }
 
 export class Insert extends Component<any, InsertState> {
@@ -32,8 +34,7 @@ export class Insert extends Component<any, InsertState> {
       vacation: new VacationModel(),
       errors: null,
       tokens: store.getState().tokens,
-      preview: "",
-      menu: AdminMenu
+      preview: ""
     };
   }
 
@@ -45,17 +46,17 @@ export class Insert extends Component<any, InsertState> {
       console.log("Not Admin");
       return;
     }
-    // update style
-    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
-    store.dispatch({ type: ActionType.updateBackground, payload: "" });
-    store.dispatch({
-      type: ActionType.refreshVacation,
-      payload: new VacationModel()
-    });
+
+    // refresh store vacation
+    store.dispatch({type: ActionType.refreshVacation,payload: new VacationModel()});
+
   };
 
-  public addVacation = async () => {
+  public componentWillUnmount(): void {
+    clearInterval(this.handleTokens);
+  }
 
+  public addVacation = async () => {
     const { vacation } = this.state;
 
     if (formLegal(vacation)) {
@@ -68,13 +69,7 @@ export class Insert extends Component<any, InsertState> {
       const url = `http://localhost:3000/api/vacations`;
 
       // create formatDate file
-      const myFormData = new FormData();
-      myFormData.append("description", vacation.description);
-      myFormData.append("destination", vacation.destination);
-      myFormData.append("startDate", vacation.startDate);
-      myFormData.append("endDate", vacation.endDate);
-      myFormData.append("price", vacation.price.toString());
-      myFormData.append("image", vacation.image, vacation.image.name);
+      const myFormData = setFormData(vacation);
 
       const response = await addVacation(url, myFormData, tokens.accessToken);
 
@@ -88,6 +83,15 @@ export class Insert extends Component<any, InsertState> {
       console.log(err);
     }
   };
+
+  public handleTokens = setInterval(async () => {
+    const tokens = JSON.parse(sessionStorage.getItem("tokens"));
+    if (!tokens) {
+      return;
+    }
+    await getAccessToken(tokens);
+    console.log(store.getState().tokens.accessToken);
+  }, 600000);
 
   render() {
     const { vacation, preview } = this.state;
@@ -135,7 +139,6 @@ export class Insert extends Component<any, InsertState> {
     }
     this.setState({ errors });
   };
-
 }
 
 export default Insert;

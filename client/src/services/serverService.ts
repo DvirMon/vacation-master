@@ -34,16 +34,12 @@ export const getRequest = async (url: string, accessToken?: string) => {
 
 export const postRequest = async (url: string, body?: any, accessToken?: string) => {
 
-  const controller = new AbortController();
-  const signal = controller.signal;
-
   const options = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Authorization": accessToken
     },
-    signal: signal,
     body: JSON.stringify(body)
   };
 

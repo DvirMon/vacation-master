@@ -1,6 +1,6 @@
 import { UserModel } from "../../models/user-model";
 import { TokensModel } from "../../models/tokens.model";
-import { MenuModel } from "../../models/menu-model";
+import { MenuModel, AdminMenu } from "../../models/menu-model";
 import { VacationModel } from "../../models/vacations-model";
 
 export class AppState {
@@ -26,6 +26,7 @@ export class AppState {
     }
     else if (this.user.isAdmin === 1) {
       this.backgroundImage = "admin"
+      this.menu = AdminMenu
     }
   }
 } 

@@ -1,9 +1,9 @@
 const dal = require("../dal/dal");
 
-const getToken = async token => {
-  const sql = `SELECT * FROM tokens WHERE refreshToken = '${token}'`;
-  const dbToken = await dal.executeAsync(sql);
-  return dbToken[0];
+const getDatabaseToken = async id => {
+  const sql = `SELECT refreshToken FROM tokens WHERE id = ${id}`;
+  const refreshToken = await dal.executeAsync(sql);
+  return refreshToken[0];
 };
 
 const addToken = async token => {
@@ -20,7 +20,7 @@ const deleteToken = async id => {
 };
 
 module.exports = {
-  getToken,
+  getDatabaseToken,
   addToken,
   deleteToken
 };

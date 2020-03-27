@@ -1,27 +1,8 @@
 import { postRequest, getData } from "./serverService";
-import { Action } from "../redux/action/action";
 import { ActionType } from "../redux/action-type/action-type";
 import { store } from "../redux/store/store";
 
-export const getAccessToken = async refreshToken => {
-
-  const options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ refreshToken })
-  };
-  const url = `http://localhost:3000/api/tokens/new`;
-
-  try {
-    const response = await getData(url, options);
-    return response
-  } catch (err) {
-    console.log(err);
-  }
-};
-
+// function for getting first accessToken and refreshToken
 export const getTokens = async user => {
   const url = `http://localhost:3000/api/tokens`;
   try {
@@ -31,12 +12,25 @@ export const getTokens = async user => {
     console.log(err);
   }
 };
+//end of function
 
-export const refreshToken = async (dbToken) => {
-  const accessToken = await getAccessToken(dbToken.refreshToken);
-  const tokens = store.getState().tokens
-  tokens.accessToken = accessToken
-  store.dispatch({ type: ActionType.addToken, payload: tokens })
-}
+// function for new accessToken
+export const getAccessToken = async storageTokens => {
+
+  const dbToken = storageTokens.dbToken
+  const accessToken = storageTokens.accessToken
+
+  try {
+    const url = `http://localhost:3000/api/tokens/new`;
+    const newAccessToken = await postRequest(url, dbToken, accessToken)
+
+    const tokens = store.getState().tokens
+    tokens.accessToken = newAccessToken
+    store.dispatch({ type: ActionType.addToken, payload: tokens })
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 
 

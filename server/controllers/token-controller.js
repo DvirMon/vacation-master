@@ -9,11 +9,10 @@ const tokenLogic = require("../bll/tokens-logic");
 const jwt = require("jsonwebtoken");
 const auth = require("../services/auth");
 
-// set refreshToken and first accessToken when login 
+// set refreshToken and first accessToken when login
 router.post("/", async (request, response, next) => {
-
   const user = request.body;
-  
+
   try {
     // create accessToken for user
     const accessToken = await auth.setToken(user);
@@ -22,36 +21,34 @@ router.post("/", async (request, response, next) => {
     const refreshToken = await auth.refreshToken(user);
 
     const token = {
-      refreshToken : refreshToken
-    }
+      refreshToken: refreshToken
+    };
 
     // save refreshToken in db
     const dbToken = await tokenLogic.addToken(token);
 
-    response.status(201).json({accessToken, dbToken});
+    response.status(201).json({ accessToken, dbToken });
   } catch (err) {
     next(err);
   }
 });
 
 // get new token
-router.post("/new", async (request, response, next) => {
+router.post("/new", auth.authorize(), async (request, response, next) => {
+
   try {
     // get refreshToken from client
-    const refreshToken = request.body.refreshToken;
+    const dbToken = request.body;
 
     // validate refreshToken in db
-    const dbToken = await tokenLogic.getToken(refreshToken);
-    if (!dbToken) {
+    const refreshToken = await tokenLogic.getDatabaseToken(dbToken.id);
+    if (!refreshToken) {
       response.sendStatus(403);
       return;
     }
 
-    // get token info
-    const verify = jwt.verify(
-      dbToken.refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
+    // verify token
+    const verify = jwt.verify(refreshToken.refreshToken, process.env.REFRESH_TOKEN_SECRET);
     if (!verify) {
       response.sendStatus(403);
       return;
@@ -63,7 +60,7 @@ router.post("/new", async (request, response, next) => {
       isAdmin: verify.role
     });
 
-    response.json(accessToken);
+    response.status(201).json(accessToken);
   } catch (err) {
     next(err);
   }

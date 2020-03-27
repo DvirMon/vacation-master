@@ -12,12 +12,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const helpers = require("../services/auth");
 
+
 // get user followup vacations
-router.get("/followup", helpers.authorize(),
-  async (request, response, next) => {
-    try { 
+router.get("/followup", helpers.authorize(),async (request, response, next) => {
+   
+  try { 
       const userName = request.user.sub
-      // const userID = request.user.id;
 
       // validate id against db in case id is not exist
       const id = await usersLogic.isUserIdExist(userName);

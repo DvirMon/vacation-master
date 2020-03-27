@@ -7,9 +7,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { deleteRequest } from "../../services/serverService";
 import { getVacations } from "../../services/vacationsService";
-import { verifyAdminPath, verifyUserPath } from "../../services/loginService";
-import Loader from "../loader/loader"; 
-import { getTokens, refreshToken } from "../../services/tokensService";
+import { verifyAdminPath, verifyUserPath, handleServerResponse } from "../../services/loginService";
+import Loader from "../loader/loader";
+import { getTokens, getAccessToken } from "../../services/tokensService";
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store/store";
 import { MenuModel } from "../../models/menu-model";
@@ -40,8 +40,8 @@ export class Vacations extends Component<any, VacationsState> {
     super(props);
 
     this.state = {
-      admin: false,
       user: store.getState().user,
+      admin: false,
       tokens: store.getState().tokens,
       followUp: [],
       unFollowUp: [],
@@ -60,7 +60,6 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   public componentDidMount = async () => {
-    
     try {
       // verify login
       if (store.getState().isLoggedIn === false) {
@@ -68,6 +67,7 @@ export class Vacations extends Component<any, VacationsState> {
         return;
       }
 
+      // unable for client to change routes
       const user = store.getState().user;
       if (user.isAdmin === 1) {
         verifyAdminPath(this.props.history);
@@ -75,32 +75,38 @@ export class Vacations extends Component<any, VacationsState> {
         verifyUserPath(user, this.props.history);
       }
 
-      // set tokens
+      // get tokens
       if (store.getState().tokens === null) {
         await getTokens(store.getState().user);
       }
 
+      // send request for vacations
       const tokens = store.getState().tokens;
-      
       const response = await getVacations(tokens.accessToken);
 
-      const vacations = this.handleResponse(response);
+      // handle response - if true there is an error
+ 
+      if(handleServerResponse(response)) {
+        alert(response)
+        this.props.history.push("/logout");
+        return
+      } 
+ 
+      // const vacations = this.handleResponse(response);
+
+      // update page according to client role
       const admin = this.handelRole();
 
       // update state
       this.setState({
-        admin,
-        followUpCounter: vacations.followUp.length,
-        followUp: vacations.followUp,
-        unFollowUp: vacations.unFollowUp
+        admin, 
+        followUpCounter: response.followUp.length,
+        followUp: response.followUp,
+        unFollowUp: response.unFollowUp
       });
 
-     this.handleMenu()
-
-
-      if (this.props.handleFollowUpCounter) {
-        this.props.handleFollowUpCounter(vacations.followUp.length);
-      }
+      // update menu according to client role
+      this.handleMenu();
     } catch (err) {
       console.log(err);
     }
@@ -111,32 +117,21 @@ export class Vacations extends Component<any, VacationsState> {
     clearInterval(this.handleTokens);
   }
 
-  public handleMenu = () => {
-   
-    const menu = store.getState().menu
-    menu.user = this.state.user
-    menu.admin = this.state.admin
-    menu.isLoggedIn = true
-    menu.followUpCounter = this.state.followUp.length
-    menu.logoutButton = true 
-    store.dispatch({type : ActionType.updateMenu, payload : menu})
-  }
-
+  // update tokens every 10 min
   public handleTokens = setInterval(async () => {
     const tokens = JSON.parse(sessionStorage.getItem("tokens"));
     if (!tokens) {
-      console.log("a");
       return;
     }
-    await refreshToken(tokens.dbToken);
+    await getAccessToken(tokens);
+    console.log(store.getState().tokens.accessToken);
   }, 600000);
 
   public handleResponse = response => {
-    // validate response
+    // verify response in case token has expired
     switch (typeof response) {
       case "string":
-        console.log(response);
-        // this.props.history.push("/");
+        this.props.history.push("/logout");
         break;
       case "object":
         return response;
@@ -149,9 +144,22 @@ export class Vacations extends Component<any, VacationsState> {
       store.dispatch({ type: ActionType.updateBackground, payload: "" });
       return true;
     }
-    store.dispatch({type : ActionType.updateBackground, payload : "user"})
+    store.dispatch({ type: ActionType.updateBackground, payload: "user" });
     return false;
+  }; 
+
+  // update menu according to role
+  public handleMenu = () => {
+    const menu = store.getState().menu;
+    menu.user = this.state.user;
+    menu.admin = this.state.admin;
+    menu.isLoggedIn = true;
+    menu.followUpCounter = this.state.followUp.length;
+    menu.logoutButton = true;
+    store.dispatch({ type: ActionType.updateMenu, payload: menu });
   };
+
+
 
   render() {
     const { followUp, unFollowUp, admin, tokens } = this.state;

@@ -20,7 +20,6 @@ router.get("/", async (request, response, next) => {
 router.get("/user", auth.authorize(), async (request, response, next) => {
   try {
     const userName = request.user.sub;
-    console.log(userName);
 
     // get user id from db
     const user = await usersLogic.isUserIdExist(userName);
@@ -82,11 +81,13 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
 
 // update vacation (admin only)
 router.put("/:id", auth.authorize(1), async (request, response) => {
+
+
   const vacationID = request.params.id;
   const vacation = request.body;
   const file = request.files;
 
-  // verify file
+  // verify file 
   if (file) {
     const fileName = imageLogic.saveImageLocally(file.image);
     vacation.image = fileName;

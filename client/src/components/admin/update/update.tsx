@@ -17,6 +17,9 @@ import { ActionType } from "../../../redux/action-type/action-type";
 import { Grid } from "@material-ui/core";
 import { MenuModel, AdminMenu } from "../../../models/menu-model";
 import "./update.scss";
+import { getAccessToken } from "../../../services/tokensService";
+import { setFormData } from "../../../services/vacationsService";
+import { adminStyle } from "../../../services/styleService";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -24,7 +27,6 @@ interface UpdateState {
   tokens: TokensModel;
   updated: boolean;
   preview: string;
-  menu: MenuModel;
 }
 
 export class Update extends Component<any, UpdateState> {
@@ -36,8 +38,7 @@ export class Update extends Component<any, UpdateState> {
       errors: null,
       tokens: new TokensModel(),
       updated: true,
-      preview: "",
-      menu: AdminMenu
+      preview: ""
     };
   }
 
@@ -50,17 +51,10 @@ export class Update extends Component<any, UpdateState> {
       return;
     }
 
-    // update style
-    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
-    store.dispatch({ type: ActionType.updateBackground, payload: "" });
-    store.dispatch({
-      type: ActionType.refreshVacation,
-      payload: new VacationModel()
-    });
+    store.dispatch({type: ActionType.refreshVacation,payload: new VacationModel()});
 
     try {
       
-      const tokens = store.getState().tokens;
       const vacationID = this.props.match.params.id;
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
       const vacation = await getRequest(url);
@@ -73,6 +67,24 @@ export class Update extends Component<any, UpdateState> {
       console.log(err);
     }
   };
+
+  public componentWillUnmount(): void {
+    clearInterval(this.handleTokens);
+  }
+
+
+  public handleTokens = setInterval(async () => {
+    const tokens = JSON.parse(sessionStorage.getItem("tokens"));
+    if (!tokens) {
+      return;
+    }
+    await getAccessToken(tokens);
+    console.log(store.getState().tokens.accessToken)
+  }, 600000);
+
+
+
+
 
   public updateVacation = async () => {
     if (this.state.updated) {
@@ -96,18 +108,7 @@ export class Update extends Component<any, UpdateState> {
       const vacationID = this.props.match.params.id;
 
       // create formatDate file
-      const myFormData = new FormData();
-      myFormData.append("description", vacation.description);
-      myFormData.append("destination", vacation.destination);
-      myFormData.append("startDate", vacation.startDate);
-      myFormData.append("endDate", vacation.endDate);
-      myFormData.append("price", vacation.price.toString());
-
-      if (typeof vacation.image === "string") {
-        myFormData.append("image", vacation.image);
-      } else {
-        myFormData.append("image", vacation.image, vacation.image.name);
-      }
+      const myFormData = setFormData(vacation);
 
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
 

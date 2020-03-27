@@ -13,7 +13,8 @@ import IconButton from "@material-ui/core/IconButton";
 import {
   handleServerResponse,
   loginLegal,
-  logInRequest
+  logInRequest,
+  handleRouting
 } from "../../services/loginService";
 import { LoginErrors } from "../../models/error-model";
 import Grid from "@material-ui/core/Grid";
@@ -44,15 +45,18 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
+
+    // set style
     store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
     store.dispatch({ type: ActionType.updateBackground, payload: "home" });
 
+    // check if user is logged
     try {
       if (store.getState().user === null) {
         console.log("Login");
         return;
       } else {
-        this.handleRouting(this.props.history);
+        handleRouting(this.props.history);
       }
     } catch (err) {
       console.log(err);
@@ -60,9 +64,8 @@ export class Login extends Component<any, LoginState> {
   };
 
   public handleLogIn = async () => {
-    const user = { ...this.state.user };
-    console.log(user);
-    const errors = { ...this.state.errors };
+
+    const {user, errors } = this.state
 
     // disabled request if form is not legal
     if (loginLegal(user, errors)) {
@@ -77,24 +80,17 @@ export class Login extends Component<any, LoginState> {
         this.setState({ serverError: serverResponse });
         return;
       } else {
+
         // serverResponse is the user
         store.dispatch({ type: ActionType.Login, payload: serverResponse });
-        this.handleRouting(this.props.history);
+        handleRouting(this.props.history);
       }
-
+ 
     } catch (err) {
       console.log(err);
     }
   };
 
-  public handleRouting = history => {
-    const user = store.getState().user;
-    if (user.isAdmin === 1) {
-      history.push(`/admin`);
-      return;
-    }
-    history.push(`/user/${user.userName}`);
-  };
 
   render() {
     const { user, serverError, showPassword } = this.state;

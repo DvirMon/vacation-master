@@ -1,18 +1,23 @@
 import { VacationModel } from "../models/vacations-model";
 import { getRequest, postRequest, deleteRequest } from "./serverService";
- 
-export const getVacations = async (accessToken): Promise<VacationModel[]> => {
 
+export const getVacations = async (accessToken) => {
+
+    console.log(accessToken)
+    
+  // get user followed and un followed vacations
   const url = `http://localhost:3000/api/vacations/user`;
   try {
     const response = await getRequest(url, accessToken);
     return response
   } catch (err) {
-    console.log(err);
+    return err
   }
 }
+//end of functions
 
 
+// get all the users following a vacation
 export const getFollowersByVacation = async (vacationID) => {
   const url = `http://localhost:3000/api/followup/${vacationID}`;
   try {
@@ -20,10 +25,12 @@ export const getFollowersByVacation = async (vacationID) => {
     return response
   }
   catch (err) {
-    // console.log(err)
+    console.log(err)
   }
 }
+//end of function
 
+// add new followup vacation
 export const addFollowUp = async (vacationID, accessToken) => {
   const url = `http://localhost:3000/api/followup`;
   try {
@@ -32,7 +39,9 @@ export const addFollowUp = async (vacationID, accessToken) => {
     console.log(err);
   }
 };
+//end of function
 
+// delete followup vacation
 export const deleteFollowUp = async (id, accessToken) => {
   const url = `http://localhost:3000/api/followup/${id}`;
   try {
@@ -40,5 +49,25 @@ export const deleteFollowUp = async (id, accessToken) => {
   } catch (err) {
     console.log(err);
   }
-}; 
+};
+//end of function
+
+// set FormData object for post and put request
+export const setFormData = (vacation) => {
+  const myFormData = new FormData();
+  myFormData.append("description", vacation.description);
+  myFormData.append("destination", vacation.destination);
+  myFormData.append("startDate", vacation.startDate);
+  myFormData.append("endDate", vacation.endDate);
+  myFormData.append("price", vacation.price.toString());
+
+  if (typeof vacation.image === "string") {
+    myFormData.append("image", vacation.image);
+  } else {
+    myFormData.append("image", vacation.image, vacation.image.name);
+  }
+  return myFormData
+}
+// end of function
+
 
