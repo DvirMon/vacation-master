@@ -1,25 +1,29 @@
 import React, { Component } from "react";
+
+// import my como
 import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
+import Loader from "../../loader/loader";
+
+// import material-ui
+import Grid  from "@material-ui/core/Grid";
+
+// import models
 import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
-import {
-  formLegalValues,
-  formLegalErrors,
-  formLegal
-} from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
-import { putRequest, getRequest } from "../../../services/serverService";
-import { store } from "../../../redux/store/store";
-import { updateVacation } from "../../../services/serverService";
-import Loader from "../../loader/loader";
-import { ActionType } from "../../../redux/action-type/action-type";
-import { Grid } from "@material-ui/core";
-import { MenuModel, AdminMenu } from "../../../models/menu-model";
-import "./update.scss";
+
+// import services
+import { getRequest } from "../../../services/serverService";
 import { getAccessToken } from "../../../services/tokensService";
-import { setFormData } from "../../../services/vacationsService";
-import { adminStyle } from "../../../services/styleService";
+import { setFormData, updateVacation } from "../../../services/vacationsService";
+import { formLegalValues, formLegalErrors, formLegal } from "../../../services/validationService";
+
+// import redux
+import { store } from "../../../redux/store/store";
+import { ActionType } from "../../../redux/action-type/action-type";
+
+import "./update.scss";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -83,10 +87,8 @@ export class Update extends Component<any, UpdateState> {
   }, 600000);
 
 
-
-
-
   public updateVacation = async () => {
+    
     if (this.state.updated) {
       const answer = window.confirm(
         "No change has been notice, do you wish to continue?"
@@ -99,7 +101,7 @@ export class Update extends Component<any, UpdateState> {
     const { vacation } = this.state;
 
     // validate form
-    if (formLegal(vacation)) {
+    if (formLegal(vacation, VacationModel.validVacation)) {
       return;
     }
 

@@ -1,6 +1,7 @@
 
+// template of fetch get request
 export const getData = async (url: string, options?: {}) => {
-
+  
   try {
     const response = await fetch(url, options)
     const data = await response.json()
@@ -14,26 +15,30 @@ export const getData = async (url: string, options?: {}) => {
     return err
   }
 }
+// end of function
 
+// template of get request with authorization
 export const getRequest = async (url: string, accessToken?: string) => {
-
+  
   const options = {
     headers: {
       "Authorization": accessToken,
     }
   };
-
+  
   try {
     const response = await getData(url, options);
     return response
   } catch (err) {
     return err
   }
-
+  
 }
+// end of function
 
+// template of post request with authorization
 export const postRequest = async (url: string, body?: any, accessToken?: string) => {
-
+  
   const options = {
     method: "POST",
     headers: {
@@ -50,59 +55,10 @@ export const postRequest = async (url: string, body?: any, accessToken?: string)
     return err
   }
 }
+// end of function
 
-export const putRequest = async (url: string, body?: any, accessToken?: string) => {
-  const options = {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": accessToken
 
-    },
-    body: JSON.stringify(body)
-  };
-
-  try {
-    const response = await getData(url, options);
-    return response
-  } catch (err) {
-    return err
-  }
-} 
- 
-export const updateVacation = async (url: string, vacation?: FormData, accessToken?: string) => {
-  const options = {
-    method: "PUT",
-    headers: {
-      "Authorization": accessToken
-    },
-    body: vacation
-  };
-
-  try {
-    const response = await getData(url, options);
-    return response
-  } catch (err) {
-    return err
-  }
-}
-export const addVacation = async (url: string, vacation?: FormData, accessToken?: string) => {
-  const options = {
-    method: "POST",
-    headers: {
-      "Authorization": accessToken
-    },
-    body: vacation
-  };
-
-  try {
-    const response = await getData(url, options);
-    return response
-  } catch (err) {
-    return err
-  }
-}
-
+// template for delete request
 export const deleteRequest = async (url: string, accessToken?: string) => {
   const options = {
     method: "DELETE",
@@ -115,8 +71,19 @@ export const deleteRequest = async (url: string, accessToken?: string) => {
   } catch (err) {
     return err
   }
-
 }
+// end of function
+
+// function to handle server response
+export const handleServerResponse = response => {
+  if (typeof response === "string") {
+    return true
+  } else if(typeof response === "object" && response.message !== "success") {
+    return true
+  }
+  return false;
+};
+// end of function
 
 
 

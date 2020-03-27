@@ -134,12 +134,10 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   public validInput = (input: string, prop: string) => {
     
     const schema = {};
-      
     const validSchema = setObjectForSchema(schema, prop, input);
-
     const error = this.props.validInput(validSchema);
-
     this.handleErrors(error, prop);
+    
   };
 
   public handleErrors = (errorMessage: string, prop: string) => {

@@ -7,16 +7,12 @@ import Button from "@material-ui/core/Button";
 import { RegistrationErrors } from "../../models/error-model";
 import { RegisterModel } from "../../models/user-model";
 import generator from "generate-password";
-import { postRequest } from "../../services/serverService";
-import { handleServerResponse } from "../../services/loginService";
-import {
-  formLegalValues,
-  formLegalErrors
-} from "../../services/validationService";
-import "./register.scss";
+import { postRequest, handleServerResponse } from "../../services/serverService";
+import { formLegalValues, formLegalErrors, formLegal } from "../../services/validationService";
 import { store } from "../../redux/store/store";
 import { ActionType } from "../../redux/action-type/action-type";
-import { MenuModel } from "../../models/menu-model";
+import { MenuModel, RegisterMenu } from "../../models/menu-model";
+import "./register.scss";
 
 interface RegisterState {
   user: RegisterModel;
@@ -36,11 +32,12 @@ export class Register extends Component<any, RegisterState> {
       password: "",
       serverError: "",
       serverErrorStyle: false,
-      menu: new MenuModel({}, false, true, false, false, 0)
+      menu: RegisterMenu
     };
   }
 
   public componentDidMount = () => {
+    // set style
     store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
     store.dispatch({ type: ActionType.updateBackground, payload: "home" });
   };
@@ -63,11 +60,12 @@ export class Register extends Component<any, RegisterState> {
   };
 
   public addUser = async () => {
-    if (this.registrationFormLegal()) {
+    const { user } = this.state;
+
+    if (formLegal(user, RegisterModel.validRegistration)) {
       return;
     }
 
-    const user = this.state.user;
     try {
       const url = `http://localhost:3000/api/user`;
       const serverResponse = await postRequest(url, user);
@@ -82,7 +80,6 @@ export class Register extends Component<any, RegisterState> {
         this.props.history.push("/login");
         return;
       }
-
     } catch (err) {
       console.log(err);
     }
@@ -172,11 +169,11 @@ export class Register extends Component<any, RegisterState> {
   }
 
   public handleChange = (prop: string, input: string) => {
-    const user = { ...this.state.user };
+    const { user, serverError } = this.state;
     user[prop] = input;
     this.setState({ user });
 
-    if (prop === "userName" && this.state.serverError.length > 0) {
+    if (prop === "userName" && serverError.length > 0) {
       this.setState({ serverError: "", serverErrorStyle: false });
     }
   };

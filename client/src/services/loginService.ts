@@ -1,23 +1,28 @@
 import { postRequest, deleteRequest } from "./serverService";
 import { store } from "../redux/store/store";
 import { ActionType } from "../redux/action-type/action-type";
+// import { history } from "./historyService";
 
-
-export const verifyAdminPath= (history) => {
-  if(history.location.pathname == "/admin") {
-    return 
-  } 
+// admin path cant switch to user path
+export const verifyAdminPath = (history) => {
+  if (history.location.pathname == "/admin") {
+    return
+  }
   history.push("/admin")
 }
- 
-export const verifyUserPath= (user, history) => {
+// end of function
+
+// user cant route to other users route
+export const verifyUserPath = (user, history) => {
   const userName = history.location.pathname.substring(6)
-  if(userName === user.userName) {
-    return 
-  }  
+  if (userName === user.userName) {
+    return
+  }
   history.push("/")
 }
+// end of function
 
+// function for login
 export const logInRequest = async user => {
   try {
     const url = `http://localhost:3000/api/user/login`;
@@ -27,7 +32,9 @@ export const logInRequest = async user => {
     console.log(err);
   }
 };
+// enf of function for login
 
+// function for legal login form
 export const loginLegal = (user, errors) => {
   if (
     user.userName === undefined ||
@@ -39,41 +46,11 @@ export const loginLegal = (user, errors) => {
   }
   return false;
 };
+// end function for legal login form
 
-export const registrationLegal = (user, errors) => {
-  if (
-    user.userName === undefined ||
-    user.password === undefined ||
-    errors.userName.length > 0 ||
-    errors.password.length > 0
-  ) {
-    return true;
-  }
-  return false;
-};
-
-export const handleServerResponse = response => {
-  switch (typeof response) {
-    case "string":
-      return true
-    case "object":
-      return false;
-  }
-};
-
-export const handleResponse = (response, history) => {
-  // verify response in case token has expired
-  switch (typeof response) {
-    case "string":
-      history.push("/logout");
-      break;
-    case "object":
-      return response;
-  }
-}; 
-
-
-export const  handleRouting = history => {
+ 
+// function to handle rout according to role
+export const handleRouting = (history) => {
   const user = store.getState().user;
   if (user.isAdmin === 1) {
     history.push(`/admin`);
@@ -81,8 +58,10 @@ export const  handleRouting = history => {
   }
   history.push(`/user/${user.userName}`);
 };
+// end of function
 
-export const  handelRole = () => {
+// handle style according to role
+export const handelStyle = () => {
   const user = store.getState().user;
   if (user.isAdmin === 1) {
     store.dispatch({ type: ActionType.updateBackground, payload: "" });
@@ -90,7 +69,8 @@ export const  handelRole = () => {
   }
   store.dispatch({ type: ActionType.updateBackground, payload: "user" });
   return false;
-}; 
+};
+// end of function
 
 
 

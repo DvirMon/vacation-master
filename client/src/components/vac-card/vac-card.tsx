@@ -27,7 +27,7 @@ interface VacCardProps {
   follow?: boolean;
   followIcon: boolean;
   admin?: boolean;
-  hover? : boolean
+  hover?: boolean;
   preview?: string;
   update?(): void;
   handleDelete?(vacationID?: number): void;
@@ -121,17 +121,19 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
               />
             }
             title={vacation.destination}
-            subheader={this.formatDate(vacation.startDate, vacation.endDate)}
           />
           <CardMedia
             className="media"
             image={
               preview
-                ? preview 
+                ? preview
                 : `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`
             }
             title=""
           ></CardMedia>
+          <CardHeader
+            subheader={this.formatDate(vacation.startDate, vacation.endDate)}
+          />
           <CardActions disableSpacing>
             <IconButton aria-label="share">
               {vacation.price}

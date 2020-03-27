@@ -1,18 +1,26 @@
 import React, { Component } from "react";
-import { UserVacationModel } from "../../models/vacations-model";
-import { UserModel } from "../../models/user-model";
-import { TokensModel } from "../../models/tokens.model";
+
+// import components
 import VacCard from "../vac-card/vac-card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { deleteRequest } from "../../services/serverService";
-import { getVacations } from "../../services/vacationsService";
-import { verifyAdminPath, verifyUserPath, handleServerResponse } from "../../services/loginService";
 import Loader from "../loader/loader";
+
+// import services
+import { deleteRequest, handleServerResponse } from "../../services/serverService";
+import { getVacations } from "../../services/vacationsService";
+import { verifyAdminPath, verifyUserPath, handelStyle} from "../../services/loginService";
 import { getTokens, getAccessToken } from "../../services/tokensService";
+
+// import models
+import { UserVacationModel } from "../../models/vacations-model";
+import { UserModel } from "../../models/user-model";
+import { TokensModel } from "../../models/tokens.model";
+import { MenuModel ,UserMenu, AdminMenu} from "../../models/menu-model";
+
+// import redux
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store/store";
-import { MenuModel } from "../../models/menu-model";
 import { ActionType } from "../../redux/action-type/action-type";
 import "./vacations.scss";
 
@@ -23,14 +31,12 @@ interface VacationsProps {
 interface VacationsState {
   user: UserModel;
   admin: boolean;
-  followUpCounter: number;
   followUp?: UserVacationModel[];
   unFollowUp?: UserVacationModel[];
   followIcon: boolean;
   tokens: TokensModel;
   scrolled: boolean;
   scrollPixelsY: number;
-  menu: MenuModel;
 }
 
 export class Vacations extends Component<any, VacationsState> {
@@ -45,11 +51,9 @@ export class Vacations extends Component<any, VacationsState> {
       tokens: store.getState().tokens,
       followUp: [],
       unFollowUp: [],
-      followUpCounter: 0,
       followIcon: true,
       scrolled: true,
-      scrollPixelsY: 0,
-      menu: null
+      scrollPixelsY: 0
     };
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
@@ -83,26 +87,26 @@ export class Vacations extends Component<any, VacationsState> {
       // send request for vacations
       const tokens = store.getState().tokens;
       const response = await getVacations(tokens.accessToken);
+      console.log(response);
 
       // handle response - if true there is an error
- 
-      if(handleServerResponse(response)) {
-        alert(response)
+
+      if (handleServerResponse(response)) {
+        alert(response);
         this.props.history.push("/logout");
-        return
-      } 
- 
-      // const vacations = this.handleResponse(response);
+        return;
+      }
+
+      const vacations = response.body;
 
       // update page according to client role
-      const admin = this.handelRole();
+      const admin = handelStyle();
 
       // update state
       this.setState({
-        admin, 
-        followUpCounter: response.followUp.length,
-        followUp: response.followUp,
-        unFollowUp: response.unFollowUp
+        admin,
+        followUp: vacations.followUp,
+        unFollowUp: vacations.unFollowUp
       });
 
       // update menu according to client role
@@ -125,41 +129,22 @@ export class Vacations extends Component<any, VacationsState> {
     }
     await getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
-  }, 600000);
-
-  public handleResponse = response => {
-    // verify response in case token has expired
-    switch (typeof response) {
-      case "string":
-        this.props.history.push("/logout");
-        break;
-      case "object":
-        return response;
-    }
-  };
-
-  public handelRole = () => {
-    const user = store.getState().user;
-    if (user.isAdmin === 1) {
-      store.dispatch({ type: ActionType.updateBackground, payload: "" });
-      return true;
-    }
-    store.dispatch({ type: ActionType.updateBackground, payload: "user" });
-    return false;
-  }; 
+  }, 60000);
 
   // update menu according to role
   public handleMenu = () => {
-    const menu = store.getState().menu;
-    menu.user = this.state.user;
-    menu.admin = this.state.admin;
-    menu.isLoggedIn = true;
-    menu.followUpCounter = this.state.followUp.length;
-    menu.logoutButton = true;
+    const { user } = this.state;
+    
+    let menu : MenuModel; 
+    if(user.isAdmin === 0) {
+      menu = {...UserMenu}
+      menu.user = user;
+      menu.followUpCounter = this.state.followUp.length;
+    } else {
+      menu = {...AdminMenu}
+    }
     store.dispatch({ type: ActionType.updateMenu, payload: menu });
   };
-
-
 
   render() {
     const { followUp, unFollowUp, admin, tokens } = this.state;
@@ -189,10 +174,7 @@ export class Vacations extends Component<any, VacationsState> {
               ))}
             </Row>
             <Row>
-              {unFollowUp.length > 0 ||
-                (admin && (
-                  <h1 className="card-title">Explore Our Vacations</h1>
-                ))}
+              {!admin && <h1 className="card-title">Explore Our Vacations</h1>}
             </Row>
             <Row className="row-unFollowed">
               {unFollowUp.map(vacation => (

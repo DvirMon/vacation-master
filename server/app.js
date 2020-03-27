@@ -27,14 +27,12 @@ server.use("/api/vacations", vacationsController);
 server.use("/api/followup", followupController);
 
 // create upload directory
-
 if (!fs.existsSync("./uploads")) {
   fs.mkdirSync("./uploads");
 }
 
 // middleware for errors
 server.use(errorHandler);
-
 
 
 server.listen(3000, () => console.log("Listening To http://localhost:3000"));

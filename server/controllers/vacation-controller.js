@@ -29,7 +29,7 @@ router.get("/user", auth.authorize(), async (request, response, next) => {
     }
 
     const vacations = await vacationsLogic.getUserVacations(user.id);
-    response.json(vacations);
+    response.json({ message: "success", body: vacations });
   } catch (err) {
     next(err);
   }
@@ -81,13 +81,11 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
 
 // update vacation (admin only)
 router.put("/:id", auth.authorize(1), async (request, response) => {
-
-
   const vacationID = request.params.id;
   const vacation = request.body;
   const file = request.files;
 
-  // verify file 
+  // verify file
   if (file) {
     const fileName = imageLogic.saveImageLocally(file.image);
     vacation.image = fileName;
@@ -95,7 +93,7 @@ router.put("/:id", auth.authorize(1), async (request, response) => {
     response.status(400).json("No image Sent!");
   }
 
-  console.log(vacation)
+  console.log(vacation);
 
   //verify schema
   const error = VacationModel.validation(vacation);
@@ -109,8 +107,8 @@ router.put("/:id", auth.authorize(1), async (request, response) => {
   try {
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
     if (updatedVacation === null) {
-      response.sendStatus(404); 
-      return; 
+      response.sendStatus(404);
+      return;
     }
     response.json({ body: updatedVacation, message: "success" });
   } catch (err) {

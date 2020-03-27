@@ -21,6 +21,7 @@ class VacationModel {
     this.price = price;
   }
 
+  // vacation validation schema with Joi
   static validation = vacation => {
     const schema = Joi.object().keys({
       vacationID : Joi.number(),

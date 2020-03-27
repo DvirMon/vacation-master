@@ -1,10 +1,9 @@
-import { VacationModel } from "../models/vacations-model";
-import { getRequest, postRequest, deleteRequest } from "./serverService";
+import { getRequest, postRequest, deleteRequest, getData } from "./serverService";
 
 export const getVacations = async (accessToken) => {
 
     console.log(accessToken)
-    
+
   // get user followed and un followed vacations
   const url = `http://localhost:3000/api/vacations/user`;
   try {
@@ -15,7 +14,6 @@ export const getVacations = async (accessToken) => {
   }
 }
 //end of functions
-
 
 // get all the users following a vacation
 export const getFollowersByVacation = async (vacationID) => {
@@ -69,5 +67,44 @@ export const setFormData = (vacation) => {
   return myFormData
 }
 // end of function
+
+// function to update vacation
+export const updateVacation = async (url: string, vacation?: FormData, accessToken?: string) => {
+  const options = {
+    method: "PUT",
+    headers: {
+      "Authorization": accessToken
+    },
+    body: vacation
+  };
+  
+  try {
+    const response = await getData(url, options);
+    return response
+  } catch (err) {
+    return err
+  }
+}
+// end of function
+
+// function for add new vacation
+export const addVacation = async (url: string, vacation?: FormData, accessToken?: string) => {
+  const options = {
+    method: "POST",
+    headers: {
+      "Authorization": accessToken
+    },
+    body: vacation
+  };
+
+  try {
+    const response = await getData(url, options);
+    return response
+  } catch (err) {
+    return err
+  }
+}
+// end of function
+
 
 

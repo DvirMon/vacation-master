@@ -1,23 +1,26 @@
 import React, { Component } from "react";
+
+// import my como
 import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
+
+// import material-ui
+import Grid  from "@material-ui/core/Grid";
+
+// import models
 import { VacationModel } from "../../../models/vacations-model";
 import { VacationErrors } from "../../../models/error-model";
-import {
-  formLegalValues,
-  formLegalErrors,
-  formLegal
-} from "../../../services/validationService";
 import { TokensModel } from "../../../models/tokens.model";
-import { addVacation } from "../../../services/serverService";
+
+// import services
+import { formLegal } from "../../../services/validationService";
+import { getAccessToken } from "../../../services/tokensService";
+import { setFormData, addVacation } from "../../../services/vacationsService";
+
+// import redux
 import { store } from "../../../redux/store/store";
 import { ActionType } from "../../../redux/action-type/action-type";
-import { Grid } from "@material-ui/core";
-import { MenuModel, AdminMenu } from "../../../models/menu-model";
 import "./insert.scss";
-import { getAccessToken } from "../../../services/tokensService";
-import { setFormData } from "../../../services/vacationsService";
-import { adminStyle } from "../../../services/styleService";
 
 interface InsertState {
   vacation: VacationModel;
@@ -59,7 +62,7 @@ export class Insert extends Component<any, InsertState> {
   public addVacation = async () => {
     const { vacation } = this.state;
 
-    if (formLegal(vacation)) {
+    if (formLegal(vacation, VacationModel.validVacation)) {
       return;
     }
 

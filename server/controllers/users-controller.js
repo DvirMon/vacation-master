@@ -67,7 +67,7 @@ router.post("/", async (request, response, next) => {
     // return user without password
     const newUser = await usersLogic.isUserExist(addedUser.userName)
 
-    response.status(201).json(newUser);
+    response.status(201).json({message : "success", body : newUser});
   } catch (err) {
     next(err);
   }
@@ -98,7 +98,7 @@ router.post("/login", async (request, response, next) => {
     }
 
     // return user info
-    response.json(dbUser);
+    response.json({message : "success", body : dbUser});
   } catch (err) {
     next(err);
   }

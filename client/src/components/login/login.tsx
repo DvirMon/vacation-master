@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
-import { UserModel } from "../../models/user-model";
-import MyInput from "../my-input/my-input";
 import PersonIcon from "@material-ui/icons/Person";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import Visibility from "@material-ui/icons/Visibility";
@@ -10,18 +8,20 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import {
-  handleServerResponse,
-  loginLegal,
-  logInRequest,
-  handleRouting
-} from "../../services/loginService";
-import { LoginErrors } from "../../models/error-model";
 import Grid from "@material-ui/core/Grid";
-import "./login.scss";
-import { store } from "../../redux/store/store";
+import MyInput from "../my-input/my-input";
+
+import { LoginErrors } from "../../models/error-model";
+import { UserModel } from "../../models/user-model";
 import { MenuModel } from "../../models/menu-model";
+
+import { store } from "../../redux/store/store";
 import { ActionType } from "../../redux/action-type/action-type";
+
+import { loginLegal, logInRequest, handleRouting } from "../../services/loginService";
+import { handleServerResponse } from "../../services/serverService";
+
+import "./login.scss";
 
 interface LoginState {
   user: UserModel;
@@ -45,8 +45,7 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
-
-    // set style
+    // set style 
     store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
     store.dispatch({ type: ActionType.updateBackground, payload: "home" });
 
@@ -64,33 +63,29 @@ export class Login extends Component<any, LoginState> {
   };
 
   public handleLogIn = async () => {
-
-    const {user, errors } = this.state
+    const { user, errors } = this.state;
 
     // disabled request if form is not legal
     if (loginLegal(user, errors)) {
       return;
     }
-
+ 
     try {
       const serverResponse = await logInRequest(user);
-
+      
       // if true server returned error
       if (handleServerResponse(serverResponse)) {
         this.setState({ serverError: serverResponse });
         return;
       } else {
-
         // serverResponse is the user
-        store.dispatch({ type: ActionType.Login, payload: serverResponse });
+        store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
         handleRouting(this.props.history);
       }
- 
     } catch (err) {
       console.log(err);
     }
   };
-
 
   render() {
     const { user, serverError, showPassword } = this.state;

@@ -52,7 +52,7 @@ export class RegisterModel {
   static validRegistration = (user: UserModel) => {
 
     const name = /^[a-zA-Z]{3,25}$/;
-    var password = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
+    const password = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
 
     const schema = Joi.object()
       .keys({

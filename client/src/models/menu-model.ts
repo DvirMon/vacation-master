@@ -1,5 +1,4 @@
 import { UserModel } from "./user-model";
-import { store } from "../redux/store/store";
 
 export class MenuModel {
 
@@ -17,3 +16,6 @@ export class MenuModel {
 }
 
 export const AdminMenu = new MenuModel({}, true, false, true, true, 0)
+export const UserMenu = new MenuModel({}, true, false, false, true, 0)
+export const LoginMenu =  new MenuModel({}, false, false, false, false, 0)
+export const RegisterMenu = new MenuModel({}, false, true, false, false, 0)

@@ -7,13 +7,10 @@ export class Loader extends Component {
     return (
       <div className="loader page">
         <div className="circular-progress">
-          <CircularProgress 
-          size={150}
-          thickness={2.5}
-          color="inherit" 
-          />
+       
+          <CircularProgress size={150} color="inherit" />
         </div>
-      </div> 
+      </div>
     );
   }
 }

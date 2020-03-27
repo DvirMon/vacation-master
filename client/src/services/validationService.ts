@@ -1,7 +1,7 @@
 
 import Joi from "joi"
-import { VacationModel } from "../models/vacations-model"
 
+// function for required input validation
 export const isRequired = (prop: string) => {
   const error = Joi.validate(prop, Joi.required()).error
   if (error) {
@@ -9,7 +9,9 @@ export const isRequired = (prop: string) => {
   }
   return null
 }
+// end of function
 
+// function for customized joi error message
 export const handleMassage = (err) => {
   switch (err.type) {
     case "string.regex.base":
@@ -44,15 +46,19 @@ export const handleMassage = (err) => {
       break
   }
 }
+// end of function
 
+// function to generate an object for joi
 export const setObjectForSchema = (schema: {}, prop: string, input: string) => {
   schema[prop] = input;
   return schema;
 };
+// end of function
 
 
+// function to check if error object contained errors
 export const formLegalErrors = (errors) => {
-
+  
   for (const error in errors) {
     if (errors[error].length > 0) {
       return errors[error]
@@ -62,7 +68,9 @@ export const formLegalErrors = (errors) => {
   }
   return null
 }
+// end of function
 
+// function to check if form's object contain all his values
 export const formLegalValues = (obj) => {
   for (const value in obj) {
     if (obj[value] === undefined) {
@@ -74,31 +82,26 @@ export const formLegalValues = (obj) => {
   };
   return null
 }
+// end of function
 
-export const formLegal = (vacation, errors?) => {
-
-  const value = formLegalValues(vacation);
+// function for legal form
+export const formLegal = (obj, callback) => {
+  
+  const value = formLegalValues(obj);
   if (value) {
     alert(`Filed ${value} is required`);
     return true;
   }
 
-  // const error = formLegalErrors(errors);
-  // if (error) {
-  //   alert(error);
-  //   return true;
-  // }
-
-  // validate again for date
-  const schemeError = VacationModel.validVacation(vacation)
+  const schemeError = callback(obj)
   if (schemeError) {
     alert(schemeError)
     return true
   }
-
+  
   return false;
-
 }
+// end of  function for legal form
 
 
 
