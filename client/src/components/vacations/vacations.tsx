@@ -55,21 +55,26 @@ export class Vacations extends Component<any, VacationsState> {
       scrolled: true,
       scrollPixelsY: 0
     };
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({
-        user: store.getState().user,
-        tokens: store.getState().tokens
-      });
-    });
+    
   }
 
   public componentDidMount = async () => {
+   
     try {
       // verify login
       if (store.getState().isLoggedIn === false) {
         this.props.history.push("/");
         return;
       }
+
+      
+      // subscribe to store
+      this.unsubscribeStore = store.subscribe(() => {
+        this.setState({
+          user: store.getState().user,
+          tokens: store.getState().tokens
+        });
+      });
 
       // unable for client to change routes
       const user = store.getState().user;
@@ -78,19 +83,15 @@ export class Vacations extends Component<any, VacationsState> {
       } else {
         verifyUserPath(user, this.props.history);
       }
-
-      // get tokens
-      if (store.getState().tokens === null) {
-        await getTokens(store.getState().user);
-      }
-
-      // send request for vacations
+      
+      // get tokens from store
       const tokens = store.getState().tokens;
+      
+      // send request for vacations
       const response = await getVacations(tokens.accessToken);
-      console.log(response);
+      console.log("1")
 
       // handle response - if true there is an error
-
       if (handleServerResponse(response)) {
         alert(response);
         this.props.history.push("/logout");
@@ -123,13 +124,13 @@ export class Vacations extends Component<any, VacationsState> {
 
   // update tokens every 10 min
   public handleTokens = setInterval(async () => {
-    const tokens = JSON.parse(sessionStorage.getItem("tokens"));
+    const tokens = store.getState().tokens; 
     if (!tokens) {
       return;
     }
     await getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
-  }, 60000);
+  }, 600000);
 
   // update menu according to role
   public handleMenu = () => {
@@ -187,7 +188,6 @@ export class Vacations extends Component<any, VacationsState> {
                     hover={!admin}
                     admin={admin}
                     handleDelete={this.handleDelete}
-                    handleEdit={this.handleEdit}
                     update={this.componentDidMount}
                   ></VacCard>
                 </Col>
@@ -199,7 +199,8 @@ export class Vacations extends Component<any, VacationsState> {
     );
   }
 
-  public handleDelete = async (vacationID: number) => {
+  public handleDelete = async () => {
+    const vacationID = store.getState().deleteID
     const tokens = { ...this.state.tokens };
     const answer = window.confirm("Are You Sure yoe?");
 
@@ -212,9 +213,6 @@ export class Vacations extends Component<any, VacationsState> {
     this.componentDidMount();
   };
 
-  public handleEdit = (vacationID: number) => {
-    this.props.history.push(`/admin/vacation/${vacationID}`);
-  };
 
   public handleScroll = () => {
     const isTop = window.scrollY < 100;

@@ -5,7 +5,7 @@ import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
 
 // import material-ui
-import Grid  from "@material-ui/core/Grid";
+import Grid from "@material-ui/core/Grid";
 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
@@ -13,49 +13,57 @@ import { VacationErrors } from "../../../models/error-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 // import services
-import { formLegal } from "../../../services/validationService";
+import { formLegal, verifyAdmin } from "../../../services/validationService";
 import { getAccessToken } from "../../../services/tokensService";
 import { setFormData, addVacation } from "../../../services/vacationsService";
 
 // import redux
 import { store } from "../../../redux/store/store";
 import { ActionType } from "../../../redux/action-type/action-type";
+import { Unsubscribe } from "redux";
+
 import "./insert.scss";
+import { handleServerResponse } from "../../../services/serverService";
 
 interface InsertState {
   vacation: VacationModel;
-  errors: VacationErrors;
   tokens: TokensModel;
   preview: string;
 }
 
 export class Insert extends Component<any, InsertState> {
+  private unsubscribeStore: Unsubscribe;
+
   constructor(props: any) {
     super(props);
 
     this.state = {
       vacation: new VacationModel(),
-      errors: null,
       tokens: store.getState().tokens,
       preview: ""
     };
   }
 
   public componentDidMount = async () => {
-    // verify admin
-    const user = store.getState().user;
-    if (!user || user.isAdmin === 0) {
-      this.props.history.push("/login");
-      console.log("Not Admin");
-      return;
-    }
+     // verify admin
+     verifyAdmin(this.props.history);
+
+    // subscribe to store
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({
+        tokens: store.getState().tokens
+      });
+    });
 
     // refresh store vacation
-    store.dispatch({type: ActionType.refreshVacation,payload: new VacationModel()});
-
+    store.dispatch({
+      type: ActionType.refreshVacation,
+      payload: new VacationModel()
+    });
   };
 
   public componentWillUnmount(): void {
+    this.unsubscribeStore();
     clearInterval(this.handleTokens);
   }
 
@@ -68,20 +76,28 @@ export class Insert extends Component<any, InsertState> {
 
     try {
       const tokens = store.getState().tokens;
-
       const url = `http://localhost:3000/api/vacations`;
 
       // create formatDate file
       const myFormData = setFormData(vacation);
 
+      // send a request
       const response = await addVacation(url, myFormData, tokens.accessToken);
 
-      if (response.message === "success") {
-        alert("New Vacation has been added!");
-        this.props.history.push("/admin");
-      } else {
+      // if true server returned an error
+      if (handleServerResponse(response)) {
         alert(response.body);
+        return;
       }
+      alert("New Vacation has been added!");
+      this.props.history.push("/admin");
+
+      // if (response.message === "success") {
+      //   this.props.history.push("/admin");
+      // } else {
+      //   alert(response.body);
+      // }
+
     } catch (err) {
       console.log(err);
     }
@@ -94,7 +110,7 @@ export class Insert extends Component<any, InsertState> {
     }
     await getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
-  }, 600000);
+  }, 5000);
 
   render() {
     const { vacation, preview } = this.state;
@@ -104,7 +120,6 @@ export class Insert extends Component<any, InsertState> {
           <MyForm
             vacation={vacation}
             handleChange={this.handleChange}
-            handleErrors={this.handleErrors}
             handleVacation={this.addVacation}
             handleImage={this.handleImage}
           />
@@ -130,17 +145,6 @@ export class Insert extends Component<any, InsertState> {
     const vacation = { ...this.state.vacation };
     vacation[prop] = input;
     this.setState({ vacation });
-  };
-
-  public handleErrors = (prop: string, error: string) => {
-    const errors = { ...this.state.errors };
-    errors[prop] = error;
-
-    if (error.length > 0) {
-      this.setState({ errors });
-      return;
-    }
-    this.setState({ errors });
   };
 }
 

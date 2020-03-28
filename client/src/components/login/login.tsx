@@ -22,6 +22,7 @@ import { loginLegal, logInRequest, handleRouting } from "../../services/loginSer
 import { handleServerResponse } from "../../services/serverService";
 
 import "./login.scss";
+import { getTokens } from "../../services/tokensService";
 
 interface LoginState {
   user: UserModel;
@@ -76,10 +77,13 @@ export class Login extends Component<any, LoginState> {
       // if true server returned error
       if (handleServerResponse(serverResponse)) {
         this.setState({ serverError: serverResponse });
-        return;
+        return; 
       } else {
-        // serverResponse is the user
+        // save user is store 
         store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
+        // get tokens  
+        await getTokens(user);
+        // navigate according t role 
         handleRouting(this.props.history);
       }
     } catch (err) {

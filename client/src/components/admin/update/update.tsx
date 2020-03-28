@@ -5,42 +5,42 @@ import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
 import Loader from "../../loader/loader";
 
-// import material-ui
-import Grid  from "@material-ui/core/Grid";
+// import materiel-ui
+import Grid from "@material-ui/core/Grid";
 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
-import { VacationErrors } from "../../../models/error-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 // import services
-import { getRequest } from "../../../services/serverService";
+import { getRequest, handleServerResponse } from "../../../services/serverService";
 import { getAccessToken } from "../../../services/tokensService";
 import { setFormData, updateVacation } from "../../../services/vacationsService";
-import { formLegalValues, formLegalErrors, formLegal } from "../../../services/validationService";
+import { formLegal, verifyAdmin } from "../../../services/validationService";
 
 // import redux
 import { store } from "../../../redux/store/store";
 import { ActionType } from "../../../redux/action-type/action-type";
+import { Unsubscribe } from "redux";
 
 import "./update.scss";
 
 interface UpdateState {
   vacation: VacationModel;
-  errors: VacationErrors;
   tokens: TokensModel;
   updated: boolean;
   preview: string;
 }
 
 export class Update extends Component<any, UpdateState> {
+  private unsubscribeStore: Unsubscribe;
+
   constructor(props: any) {
     super(props);
 
     this.state = {
       vacation: new VacationModel(),
-      errors: null,
-      tokens: new TokensModel(),
+      tokens: store.getState().tokens,
       updated: true,
       preview: ""
     };
@@ -48,17 +48,22 @@ export class Update extends Component<any, UpdateState> {
 
   public componentDidMount = async () => {
     // verify admin
-    const user = store.getState().user;
-    if (!user || user.isAdmin === 0) {
-      this.props.history.push("/login");
-      console.log("Not Admin");
-      return;
-    }
+    verifyAdmin(this.props.history);
 
-    store.dispatch({type: ActionType.refreshVacation,payload: new VacationModel()});
+    // subscribe to store
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({
+        tokens: store.getState().tokens
+      });
+    });
+
+    //
+    store.dispatch({
+      type: ActionType.refreshVacation,
+      payload: new VacationModel()
+    });
 
     try {
-      
       const vacationID = this.props.match.params.id;
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
       const vacation = await getRequest(url);
@@ -73,9 +78,9 @@ export class Update extends Component<any, UpdateState> {
   };
 
   public componentWillUnmount(): void {
+    this.unsubscribeStore();
     clearInterval(this.handleTokens);
   }
-
 
   public handleTokens = setInterval(async () => {
     const tokens = JSON.parse(sessionStorage.getItem("tokens"));
@@ -83,13 +88,14 @@ export class Update extends Component<any, UpdateState> {
       return;
     }
     await getAccessToken(tokens);
-    console.log(store.getState().tokens.accessToken)
+    console.log(store.getState().tokens.accessToken);
   }, 600000);
-
 
   public updateVacation = async () => {
     
-    if (this.state.updated) {
+    const { vacation, updated } = this.state;
+    
+    if (updated) {
       const answer = window.confirm(
         "No change has been notice, do you wish to continue?"
       );
@@ -97,8 +103,6 @@ export class Update extends Component<any, UpdateState> {
         return;
       }
     }
-
-    const { vacation } = this.state;
 
     // validate form
     if (formLegal(vacation, VacationModel.validVacation)) {
@@ -120,12 +124,17 @@ export class Update extends Component<any, UpdateState> {
         tokens.accessToken
       );
 
-      if (response.message === "success") {
-        alert("Vacation has been updated successfully!");
-        this.props.history.push("/admin");
-      } else {
+      // if true server returned an error
+      if (handleServerResponse(response)) {
         alert(response.body);
+        return;
       }
+      alert("Vacation has been updated successfully!");
+      this.props.history.push("/admin");
+
+      // if (response.message === "success") {
+      // } else {
+      // }
     } catch (err) {
       console.log(err);
     }
@@ -145,7 +154,6 @@ export class Update extends Component<any, UpdateState> {
                 <MyForm
                   vacation={vacation}
                   handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
                   handleVacation={this.updateVacation}
                   handleImage={this.handleImage}
                 />
@@ -175,35 +183,6 @@ export class Update extends Component<any, UpdateState> {
     const vacation = { ...this.state.vacation };
     vacation[prop] = input;
     this.setState({ vacation, updated: false });
-  };
-
-  public handleErrors = (prop: string, error: string) => {
-    const errors = { ...this.state.errors };
-    errors[prop] = error;
-
-    if (error.length > 0) {
-      this.setState({ errors });
-      return;
-    }
-    this.setState({ errors });
-  };
-
-  public vacationFormLegal = (): boolean => {
-    const vacation = { ...this.state.vacation };
-    const errors = { ...this.state.errors };
-
-    const value = formLegalValues(vacation);
-    if (value) {
-      alert(`Filed ${value} is required`);
-      return true;
-    }
-
-    const error = formLegalErrors(errors);
-    if (error) {
-      alert(error);
-      return true;
-    }
-    return false;
   };
 }
 

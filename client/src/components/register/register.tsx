@@ -13,6 +13,7 @@ import { store } from "../../redux/store/store";
 import { ActionType } from "../../redux/action-type/action-type";
 import { MenuModel, RegisterMenu } from "../../models/menu-model";
 import "./register.scss";
+import { getTokens } from "../../services/tokensService";
 
 interface RegisterState {
   user: RegisterModel;
@@ -71,13 +72,14 @@ export class Register extends Component<any, RegisterState> {
       const serverResponse = await postRequest(url, user);
 
       console.log(serverResponse);
-
+ 
       if (handleServerResponse(serverResponse)) {
         this.setState({ serverError: serverResponse, serverErrorStyle: true });
         return;
       } else {
-        store.dispatch({ type: ActionType.Login, payload: serverResponse });
-        this.props.history.push("/login");
+        store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
+        await getTokens(user);
+        this.props.history.push(`/user/${user.userName}`);
         return;
       }
     } catch (err) {

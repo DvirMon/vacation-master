@@ -11,6 +11,7 @@ export class AppState {
   public backgroundImage: string
   public filter: boolean 
   public newVacation : VacationModel =  new VacationModel()
+  public deleteID : number
 
   public constructor() {
 

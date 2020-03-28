@@ -30,8 +30,7 @@ interface VacCardProps {
   hover?: boolean;
   preview?: string;
   update?(): void;
-  handleDelete?(vacationID?: number): void;
-  handleEdit?(vacationID?: number): void;
+  handleDelete?(): void;
 }
 
 interface VacCardState {
@@ -112,12 +111,11 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             action={
               <CardTopIcons
                 vacation={vacation}
-                handleIconClick={this.handleIconClick}
                 color={color}
                 followIcon={followIcon}
                 admin={admin}
+                handleIconClick={this.handleIconClick}
                 handleDelete={this.handleDelete}
-                handleEdit={this.handleEdit}
               />
             }
             title={vacation.destination}
@@ -188,17 +186,12 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     );
   };
 
-  public handleDelete = (vacationID: number) => {
+  public handleDelete = () => {
     if (this.props.handleDelete) {
-      this.props.handleDelete(vacationID);
+      this.props.handleDelete();
     }
   };
 
-  public handleEdit = (vacationID: number) => {
-    if (this.props.handleEdit) {
-      this.props.handleEdit(vacationID);
-    }
-  };
 }
 
 export default VacCard;

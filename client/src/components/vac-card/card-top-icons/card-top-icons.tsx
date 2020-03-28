@@ -6,22 +6,22 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { UserVacationModel } from "../../../models/vacations-model";
 import "./card-top-icons.scss";
- 
+import { NavLink } from "react-router-dom";
+import { store } from "../../../redux/store/store";
+import { ActionType } from "../../../redux/action-type/action-type";
+
 interface CardTopIconsProps {
   vacation: UserVacationModel;
   color: boolean;
   followIcon: boolean;
   admin?: boolean;
   handleIconClick?(vacationID: number): void;
-  handleDelete?(vacationID?: number): void;
-  handleEdit?(vacationID?: number): void;
+  handleDelete?(): void;
 }
 
 export class CardTopIcons extends Component<CardTopIconsProps, any> {
-
-
   render() {
-    const { color, followIcon, admin } = this.props;
+    const { color, followIcon, admin, vacation } = this.props;
     return (
       <div className="top-icons">
         {followIcon ? (
@@ -41,8 +41,10 @@ export class CardTopIcons extends Component<CardTopIconsProps, any> {
               <IconButton onClick={this.handleDelete}>
                 <DeleteIcon fontSize="large" />
               </IconButton>
-              <IconButton onClick={this.handleEdit}> 
+              <IconButton>
+                <NavLink to={`admin/vacation/${vacation.vacationID}`}>
                   <EditIcon fontSize="large" />
+                </NavLink>
               </IconButton>
             </React.Fragment>
           )
@@ -61,18 +63,13 @@ export class CardTopIcons extends Component<CardTopIconsProps, any> {
   };
 
   public handleDelete = () => {
-    const vacationID = this.props.vacation.vacationID
+    const vacationID = this.props.vacation.vacationID;
+    store.dispatch({type : ActionType.deleteVacation, payload :vacationID })
     if (this.props.handleDelete) {
-      this.props.handleDelete(vacationID);
+      this.props.handleDelete();
     }
   };
 
-  public handleEdit = () => { 
-    const vacationID = this.props.vacation.vacationID;
-    if (this.props.handleEdit) { 
-      this.props.handleEdit(vacationID)
-    }
-  };
 }
 
 export default CardTopIcons;

@@ -14,7 +14,7 @@ const setToken = user => {
     jwt.sign(
       { sub: user.userName, role: user.isAdmin },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" },
+      { expiresIn: "20m" },
       (err, result) => {
         if (err) {
           reject(err);

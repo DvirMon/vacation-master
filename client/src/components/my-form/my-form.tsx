@@ -4,19 +4,14 @@ import { VacationModel } from "../../models/vacations-model";
 import { VacationErrors } from "../../models/error-model";
 import DatePicker from "../date-picker/date-picker";
 import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import "./my-form.scss";
-import { store } from "../../redux/store/store";
-import { ActionType } from "../../redux/action-type/action-type";
 
 interface MyFormProps {
   vacation: VacationModel;
   handleChange(prop: string, input: any): void;
-  handleErrors(prop: string, error?: string): void;
+  handleErrors?(prop: string, error?: string): void;
   handleVacation(): any;
   handleImage(preview: string): void;
 }
@@ -91,7 +86,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               prop="price"
               label="Price"
               handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
               validInput={VacationModel.validVacation}
               helperText={"Enter vacation price"}
             />
@@ -103,7 +97,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                 prop="startDate"
                 label="Departing"
                 handleChange={this.handleChange}
-                handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
                 helperText={"Enter departing date"}
               />
@@ -115,7 +108,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                 label="Returning"
                 schema={date}
                 handleChange={this.handleChange}
-                handleErrors={this.handleErrors}
                 validInput={VacationModel.validVacation}
                 helperText={"Enter returning date"}
               />
@@ -158,7 +150,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               multiline={true}
               rows={5}
               handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
               validInput={VacationModel.validVacation}
               helperText={"Enter vacation description"}
             ></MyInput>

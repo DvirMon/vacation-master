@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import { isRequired, setObjectForSchema } from "../../services/validationService";
+import {
+  isRequired,
+  setObjectForSchema
+} from "../../services/validationService";
 import "./my-input.scss";
 
 export interface MyInputProps {
@@ -15,12 +18,12 @@ export interface MyInputProps {
   autoFocus?: boolean;
   fullWidth?: boolean;
   passwordIcon?: any;
-  serverError?: string; 
+  serverError?: string;
   serverErrorStyle?: boolean;
-  required? : boolean
-  helperText? : string
+  required?: boolean;
+  helperText?: string;
   rows?: number;
-  multiline? : boolean  
+  multiline?: boolean;
 
   handleChange?(prop: string, input: string): void;
   handleErrors?(prop: string, error?: string): void;
@@ -68,27 +71,31 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     } = this.props;
     const { error, errorMessage } = this.state;
 
-    return ( 
-        <Grid item xs={width}>
-          <TextField
-            value={value}
-            type={type} 
-            autoFocus={autoFocus}
-            fullWidth={fullWidth}
-            label={label}
-            placeholder={placeholder}
-            error={error ? error : serverErrorStyle}
-            required={required}
-            multiline={multiline} 
-            rows={rows}
-            onChange={this.handleChange(prop)}
-            onBlur={this.handleBlur(prop)}
-            onFocus={this.handleFocus(prop)}
-            InputProps={{
-              endAdornment: passwordIcon
-            }} 
-            helperText={errorMessage || serverError ? errorMessage || serverError : helperText}
-          />
+    return (
+      <Grid item xs={width}>
+        <TextField
+          value={value}
+          type={type}
+          autoFocus={autoFocus}
+          fullWidth={fullWidth}
+          label={label}
+          placeholder={placeholder}
+          error={error ? error : serverErrorStyle}
+          required={required}
+          multiline={multiline}
+          rows={rows}
+          onChange={this.handleChange(prop)}
+          onBlur={this.handleBlur(prop)}
+          onFocus={this.handleFocus(prop)}
+          InputProps={{
+            endAdornment: passwordIcon
+          }}
+          helperText={
+            errorMessage || serverError
+              ? errorMessage || serverError
+              : helperText
+          }
+        />
       </Grid>
     );
   }
@@ -111,7 +118,6 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     }
   };
 
-
   public handleChange = (prop: string) => event => {
     const on = this.state.on;
     const input = event.target.value;
@@ -132,16 +138,13 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   };
 
   public validInput = (input: string, prop: string) => {
-    
     const schema = {};
     const validSchema = setObjectForSchema(schema, prop, input);
     const error = this.props.validInput(validSchema);
     this.handleErrors(error, prop);
-    
   };
 
   public handleErrors = (errorMessage: string, prop: string) => {
-    
     const serverError = this.props.serverError;
 
     // joi errors
@@ -152,16 +155,20 @@ class MyInput extends Component<MyInputProps, MyInputState> {
         success: false,
         danger: true
       });
-      this.props.handleErrors(prop, errorMessage);
+
+      if (this.props.handleErrors) {
+        this.props.handleErrors(prop, errorMessage);
+      }
+
       return;
     }
-    
+
     // server errors
     if (serverError) {
       this.setState({ error: true, success: false, danger: true });
       return;
     }
-    
+
     // no errors
     this.setState({
       errorMessage: "",
@@ -169,8 +176,10 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       success: true,
       danger: false
     });
-    
-    this.props.handleErrors(prop, "");
+
+    if (this.props.handleErrors) {
+      this.props.handleErrors(prop, "");
+    }
   };
 }
 

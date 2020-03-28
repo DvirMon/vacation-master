@@ -1,5 +1,6 @@
 
 import Joi from "joi"
+import { store } from "../redux/store/store"
 
 // function for required input validation
 export const isRequired = (prop: string) => {
@@ -58,7 +59,7 @@ export const setObjectForSchema = (schema: {}, prop: string, input: string) => {
 
 // function to check if error object contained errors
 export const formLegalErrors = (errors) => {
-  
+
   for (const error in errors) {
     if (errors[error].length > 0) {
       return errors[error]
@@ -86,7 +87,7 @@ export const formLegalValues = (obj) => {
 
 // function for legal form
 export const formLegal = (obj, callback) => {
-  
+
   const value = formLegalValues(obj);
   if (value) {
     alert(`Filed ${value} is required`);
@@ -98,10 +99,21 @@ export const formLegal = (obj, callback) => {
     alert(schemeError)
     return true
   }
-  
+
   return false;
 }
 // end of  function for legal form
+
+//verify admin
+
+export const verifyAdmin = (history) => {
+  const user = store.getState().user;
+  if (!user || user.isAdmin === 0) {
+    alert("Not Admin");
+    history.push("/login");
+    return;
+  }
+}
 
 
 

@@ -1,16 +1,19 @@
 import React, { Component } from "react";
+
+import Loader from "../../loader/loader";
 import CanvasJSReact from "../../../assets/canvasjs.react";
-import "./charts.scss";
+
 import { ChartModel } from "../../../models/charts-model";
 import { TokensModel } from "../../../models/tokens.model";
-import { getRequest } from "../../../services/serverService";
-import { store } from "../../../redux/store/store";
 
-import { Unsubscribe } from "redux";
-import Loader from "../../loader/loader";
-import { ActionType } from "../../../redux/action-type/action-type";
-import { MenuModel, AdminMenu } from "../../../models/menu-model";
+import { getRequest } from "../../../services/serverService";
 import { getAccessToken } from "../../../services/tokensService";
+
+import { store } from "../../../redux/store/store";
+import { Unsubscribe } from "redux";
+
+import "./charts.scss";
+import { verifyAdmin } from "../../../services/validationService";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -20,28 +23,29 @@ interface ChartsState {
 }
 
 export class Charts extends Component<any, ChartsState> {
+  
   private unsubscribeStore: Unsubscribe;
+  
   constructor(props: any) {
     super(props);
 
     this.state = {
       tokens: store.getState().tokens,
-      dataPoints: [],
+      dataPoints: []
     };
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({ tokens: store.getState().tokens });
-    });
   }
 
   public componentDidMount = async () => {
-    // verify admin
-    const user = store.getState().user;
 
-    if (!user || user.isAdmin === 0) {
-      this.props.history.push("/login");
-      console.log("Not Admin");
-      return;
-    }
+    // verify admin
+    verifyAdmin(this.props.history);
+
+    // subscribe to store
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({
+        tokens: store.getState().tokens
+      });
+    });
 
     try {
       const tokens = store.getState().tokens;
@@ -59,9 +63,9 @@ export class Charts extends Component<any, ChartsState> {
   }
 
   public getChartsData = async accessToken => {
-      const url = `http://localhost:3000/api/followup`;
-      const dataPoints = await getRequest(url, accessToken);
-      return dataPoints;
+    const url = `http://localhost:3000/api/followup`;
+    const dataPoints = await getRequest(url, accessToken);
+    return dataPoints;
   };
 
   render() {
@@ -108,7 +112,7 @@ export class Charts extends Component<any, ChartsState> {
       return;
     }
     await getAccessToken(tokens);
-    console.log(store.getState().tokens.accessToken)
+    console.log(store.getState().tokens.accessToken);
   }, 600000);
 }
 

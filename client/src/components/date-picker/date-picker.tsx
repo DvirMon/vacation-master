@@ -28,7 +28,7 @@ interface DatePickerProps {
   prop: string;
   helperText?: string;
   handleChange(prop: string, input: string): void;
-  handleErrors(prop: string, error?: string): void;
+  handleErrors?(prop: string, error?: string): void;
   validInput?(schema: {}): string;
 }
 
@@ -129,7 +129,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
         success: false,
         danger: true
       });
-      this.props.handleErrors(prop, errorMessage);
+      // this.props.handleErrors(prop, errorMessage);
       return;
     }
 
@@ -140,7 +140,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
       danger: false
     });
 
-    this.props.handleErrors(prop, "");
+    // this.props.handleErrors(prop, "");
   };
 }
 

@@ -34,6 +34,9 @@ export const rootReducer = (oldAppState: AppState, action: Action): AppState => 
     case ActionType.refreshVacation:
       newAppState.newVacation = action.payload
       break
+    case ActionType.deleteVacation:
+      newAppState.deleteID = action.payload
+      break
   }
   return newAppState
 }

@@ -50,7 +50,7 @@ router.post("/", async (request, response, next) => {
       response.status(404).json(error);
       return;
     }
-
+ 
     // valid userName in db
     const dbUser = await usersLogic.isUserExist(user.userName);
     if (dbUser) {

@@ -5,5 +5,6 @@ export enum ActionType {
   updateMenu,
   updateBackground,
   updatedVacation,
-  refreshVacation
+  refreshVacation,
+  deleteVacation
 } 
