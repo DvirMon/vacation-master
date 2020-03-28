@@ -9,14 +9,18 @@ import Loader from "../loader/loader";
 // import services
 import { deleteRequest, handleServerResponse } from "../../services/serverService";
 import { getVacations } from "../../services/vacationsService";
-import { verifyAdminPath, verifyUserPath, handelStyle} from "../../services/loginService";
+import {
+  verifyAdminPath,
+  verifyUserPath,
+  handelStyle
+} from "../../services/loginService";
 import { getTokens, getAccessToken } from "../../services/tokensService";
 
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
 import { UserModel } from "../../models/user-model";
 import { TokensModel } from "../../models/tokens.model";
-import { MenuModel ,UserMenu, AdminMenu} from "../../models/menu-model";
+import { MenuModel, UserMenu, AdminMenu } from "../../models/menu-model";
 
 // import redux
 import { Unsubscribe } from "redux";
@@ -55,11 +59,9 @@ export class Vacations extends Component<any, VacationsState> {
       scrolled: true,
       scrollPixelsY: 0
     };
-    
   }
 
   public componentDidMount = async () => {
-   
     try {
       // verify login
       if (store.getState().isLoggedIn === false) {
@@ -67,7 +69,6 @@ export class Vacations extends Component<any, VacationsState> {
         return;
       }
 
-      
       // subscribe to store
       this.unsubscribeStore = store.subscribe(() => {
         this.setState({
@@ -83,13 +84,13 @@ export class Vacations extends Component<any, VacationsState> {
       } else {
         verifyUserPath(user, this.props.history);
       }
-      
+
       // get tokens from store
-      const tokens = store.getState().tokens;
-      
+      const tokens = JSON.parse(sessionStorage.getItem("tokens"));
+      console.log(tokens); 
+
       // send request for vacations
       const response = await getVacations(tokens.accessToken);
-      console.log("1")
 
       // handle response - if true there is an error
       if (handleServerResponse(response)) {
@@ -124,7 +125,7 @@ export class Vacations extends Component<any, VacationsState> {
 
   // update tokens every 10 min
   public handleTokens = setInterval(async () => {
-    const tokens = store.getState().tokens; 
+    const tokens = store.getState().tokens;
     if (!tokens) {
       return;
     }
@@ -135,14 +136,14 @@ export class Vacations extends Component<any, VacationsState> {
   // update menu according to role
   public handleMenu = () => {
     const { user } = this.state;
-    
-    let menu : MenuModel; 
-    if(user.isAdmin === 0) {
-      menu = {...UserMenu}
+
+    let menu: MenuModel;
+    if (user.isAdmin === 0) {
+      menu = { ...UserMenu };
       menu.user = user;
       menu.followUpCounter = this.state.followUp.length;
     } else {
-      menu = {...AdminMenu}
+      menu = { ...AdminMenu };
     }
     store.dispatch({ type: ActionType.updateMenu, payload: menu });
   };
@@ -200,7 +201,7 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   public handleDelete = async () => {
-    const vacationID = store.getState().deleteID
+    const vacationID = store.getState().deleteID;
     const tokens = { ...this.state.tokens };
     const answer = window.confirm("Are You Sure yoe?");
 
@@ -212,7 +213,6 @@ export class Vacations extends Component<any, VacationsState> {
     await deleteRequest(url, tokens.accessToken);
     this.componentDidMount();
   };
-
 
   public handleScroll = () => {
     const isTop = window.scrollY < 100;

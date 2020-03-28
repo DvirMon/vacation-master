@@ -13,7 +13,7 @@ class UserModel {
 
   // validation schema for registration
   static validateRegistration = user => {
-    const pattern = /^[a-zA-Z]{3,25}$/;
+    const pattern = /^[a-zA-Z ]{3,25}$/;
     const password = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
 
     const schema = Joi.object().keys({

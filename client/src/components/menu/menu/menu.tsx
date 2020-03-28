@@ -1,16 +1,24 @@
 import React, { Component } from "react";
+
 import clsx from "clsx";
+
+import NavLink from "react-router-dom/NavLink";
+
+import Grid from "@material-ui/core/Grid";
+import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
+import MenuOutlinedIcon from "@material-ui/icons/MenuOutlined";
+import IconButton from "@material-ui/core/IconButton";
+
 import MenuUser from "../menu-user/menu-user";
 import MenuAdmin from "../menu-admin/menu-admin";
-import MenuOutlinedIcon from "@material-ui/icons/MenuOutlined";
-import { IconButton, Grid, MenuList } from "@material-ui/core";
 
-import { Unsubscribe } from "redux";
-import { store } from "../../../redux/store/store";
-import { NavLink } from "react-router-dom";
 import { MenuModel } from "../../../models/menu-model";
+
+import { Unsubscribe } from "redux/";
+import { store } from "../../../redux/store/store";
+
 import "./menu.scss";
 
 interface MenuProps {

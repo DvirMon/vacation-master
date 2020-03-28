@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import clsx from "clsx";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -11,14 +12,14 @@ import Typography from "@material-ui/core/Typography";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { UserVacationModel } from "../../models/vacations-model";
-import Moment from "react-moment";
-import {
-  deleteFollowUp,
-  addFollowUp,
-  getFollowersByVacation
-} from "../../services/vacationsService";
 import CardTopIcons from "./card-top-icons/card-top-icons";
+
+import { UserVacationModel } from "../../models/vacations-model";
+
+import { deleteFollowUp, addFollowUp, getFollowersByVacation } from "../../services/vacationsService";
+
+import Moment from "react-moment";
+
 import "./vac-card.scss";
 
 interface VacCardProps {
@@ -106,20 +107,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             "root-hover": hover
           })}
         >
-          <CardHeader
-            className={"card-header"}
-            action={
-              <CardTopIcons
-                vacation={vacation}
-                color={color}
-                followIcon={followIcon}
-                admin={admin}
-                handleIconClick={this.handleIconClick}
-                handleDelete={this.handleDelete}
-              />
-            }
-            title={vacation.destination}
-          />
           <CardMedia
             className="media"
             image={
@@ -130,6 +117,18 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             title=""
           ></CardMedia>
           <CardHeader
+          className={"card-header"}
+          action={
+            <CardTopIcons
+              vacation={vacation}
+              color={color}
+              followIcon={followIcon}
+              admin={admin}
+              handleIconClick={this.handleIconClick}
+              handleDelete={this.handleDelete}
+            />
+          }
+          title={vacation.destination}
             subheader={this.formatDate(vacation.startDate, vacation.endDate)}
           />
           <CardActions disableSpacing>

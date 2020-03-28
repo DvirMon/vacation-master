@@ -1,19 +1,28 @@
 import React, { Component } from "react";
-import Form from "react-bootstrap/Form";
-import { Grid, Tooltip, IconButton } from "@material-ui/core";
-import MyInput from "../my-input/my-input";
+
+// import material-ui
+import { Grid, Tooltip, IconButton, FormControl } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Button from "@material-ui/core/Button";
+import MyInput from "../my-input/my-input";
+
+// import models
 import { RegistrationErrors } from "../../models/error-model";
 import { RegisterModel } from "../../models/user-model";
-import generator from "generate-password";
+import { MenuModel, RegisterMenu } from "../../models/menu-model";
+
+// import services
 import { postRequest, handleServerResponse } from "../../services/serverService";
 import { formLegalValues, formLegalErrors, formLegal } from "../../services/validationService";
+import { getTokens } from "../../services/tokensService";
+
+// import redux
 import { store } from "../../redux/store/store";
 import { ActionType } from "../../redux/action-type/action-type";
-import { MenuModel, RegisterMenu } from "../../models/menu-model";
+
+import generator from "generate-password";
+
 import "./register.scss";
-import { getTokens } from "../../services/tokensService";
 
 interface RegisterState {
   user: RegisterModel;
@@ -92,7 +101,7 @@ export class Register extends Component<any, RegisterState> {
 
     return (
       <div className="register">
-        <Form className="register-form">
+        <FormControl className="register-form">
           <Grid container spacing={3} className="justify-content-center">
             <MyInput
               width={10}
@@ -165,7 +174,7 @@ export class Register extends Component<any, RegisterState> {
               </Button>
             </Grid>
           </Grid>
-        </Form>
+        </FormControl>
       </div>
     );
   }

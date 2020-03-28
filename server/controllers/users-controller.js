@@ -85,7 +85,7 @@ router.post("/login", async (request, response, next) => {
       response.status(404).json(error);
       return;
     }
-    
+     
     // validate username and password from database
     const dbUser = await usersLogic.isUserExist(user.userName);
     const password = await usersLogic.getUserPassword(dbUser.userName)

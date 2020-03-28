@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-// import my como
+// import my components
 import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
 
@@ -45,8 +45,8 @@ export class Insert extends Component<any, InsertState> {
   }
 
   public componentDidMount = async () => {
-     // verify admin
-     verifyAdmin(this.props.history);
+    // verify admin
+    verifyAdmin(this.props.history);
 
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
@@ -91,13 +91,6 @@ export class Insert extends Component<any, InsertState> {
       }
       alert("New Vacation has been added!");
       this.props.history.push("/admin");
-
-      // if (response.message === "success") {
-      //   this.props.history.push("/admin");
-      // } else {
-      //   alert(response.body);
-      // }
-
     } catch (err) {
       console.log(err);
     }
