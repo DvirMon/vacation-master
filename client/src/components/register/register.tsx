@@ -14,7 +14,7 @@ import { MenuModel, RegisterMenu } from "../../models/menu-model";
 // import services
 import { postRequest, handleServerResponse } from "../../services/serverService";
 import { formLegalValues, formLegalErrors, formLegal } from "../../services/validationService";
-import { getTokens } from "../../services/tokensService";
+import { TokensServices } from "../../services/tokensService";
 
 // import redux
 import { store } from "../../redux/store/store";
@@ -87,7 +87,7 @@ export class Register extends Component<any, RegisterState> {
         return;
       } else {
         store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
-        await getTokens(user);
+        await TokensServices.getTokens(user);
         this.props.history.push(`/user/${user.userName}`);
         return;
       }

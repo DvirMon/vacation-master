@@ -7,7 +7,7 @@ import { ChartModel } from "../../../models/charts-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 import { getRequest } from "../../../services/serverService";
-import { getAccessToken } from "../../../services/tokensService";
+import { TokensServices } from "../../../services/tokensService";
 
 import { store } from "../../../redux/store/store";
 import { Unsubscribe } from "redux";
@@ -111,7 +111,7 @@ export class Charts extends Component<any, ChartsState> {
     if (!tokens) {
       return;
     }
-    await getAccessToken(tokens);
+    await TokensServices.getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
   }, 600000);
 }

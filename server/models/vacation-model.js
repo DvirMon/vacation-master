@@ -24,7 +24,6 @@ class VacationModel {
   // vacation validation schema with Joi
   static validation = vacation => {
     const schema = Joi.object().keys({
-      vacationID : Joi.number(),
       description: Joi.string().max(1000).required(),
       destination: Joi.string().max(50).required(),
       image: Joi.required(),

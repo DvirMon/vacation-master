@@ -14,7 +14,7 @@ import { TokensModel } from "../../../models/tokens.model";
 
 // import services
 import { getRequest, handleServerResponse } from "../../../services/serverService";
-import { getAccessToken } from "../../../services/tokensService";
+import { TokensServices } from "../../../services/tokensService";
 import { setFormData, updateVacation } from "../../../services/vacationsService";
 import { formLegal, verifyAdmin } from "../../../services/validationService";
 
@@ -87,8 +87,7 @@ export class Update extends Component<any, UpdateState> {
     if (!tokens) {
       return;
     }
-    await getAccessToken(tokens);
-    console.log(store.getState().tokens.accessToken);
+    await TokensServices.getAccessToken(tokens);
   }, 600000);
 
   public updateVacation = async () => {

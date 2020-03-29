@@ -9,12 +9,8 @@ import Loader from "../loader/loader";
 // import services
 import { deleteRequest, handleServerResponse } from "../../services/serverService";
 import { getVacations } from "../../services/vacationsService";
-import {
-  verifyAdminPath,
-  verifyUserPath,
-  handelStyle
-} from "../../services/loginService";
-import { getTokens, getAccessToken } from "../../services/tokensService";
+import { LoginServices } from "../../services/loginService";
+import { TokensServices } from "../../services/tokensService";
 
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
@@ -80,9 +76,11 @@ export class Vacations extends Component<any, VacationsState> {
       // unable for client to change routes
       const user = store.getState().user;
       if (user.isAdmin === 1) {
-        verifyAdminPath(this.props.history);
-      } else {
-        verifyUserPath(user, this.props.history);
+        LoginServices.verifyAdminPath(this.props.history)
+        // verifyAdminPath(this.props.history);
+      } else { 
+        LoginServices.verifyUserPath(user, this.props.history)
+        // verifyUserPath(user, this.props.history);
       }
 
       // get tokens from store
@@ -100,9 +98,9 @@ export class Vacations extends Component<any, VacationsState> {
       }
 
       const vacations = response.body;
-
+ 
       // update page according to client role
-      const admin = handelStyle();
+      const admin = LoginServices.handelStyle();
 
       // update state
       this.setState({
@@ -129,7 +127,7 @@ export class Vacations extends Component<any, VacationsState> {
     if (!tokens) {
       return;
     }
-    await getAccessToken(tokens);
+    await TokensServices.getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
   }, 600000);
 

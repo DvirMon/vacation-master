@@ -9,13 +9,13 @@ import Grid from "@material-ui/core/Grid";
 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
-import { VacationErrors } from "../../../models/error-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 // import services
 import { formLegal, verifyAdmin } from "../../../services/validationService";
-import { getAccessToken } from "../../../services/tokensService";
+import { TokensServices } from "../../../services/tokensService";
 import { setFormData, addVacation } from "../../../services/vacationsService";
+import { handleServerResponse } from "../../../services/serverService";
 
 // import redux
 import { store } from "../../../redux/store/store";
@@ -23,7 +23,6 @@ import { ActionType } from "../../../redux/action-type/action-type";
 import { Unsubscribe } from "redux";
 
 import "./insert.scss";
-import { handleServerResponse } from "../../../services/serverService";
 
 interface InsertState {
   vacation: VacationModel;
@@ -101,7 +100,7 @@ export class Insert extends Component<any, InsertState> {
     if (!tokens) {
       return;
     }
-    await getAccessToken(tokens);
+    await TokensServices.getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
   }, 5000);
 

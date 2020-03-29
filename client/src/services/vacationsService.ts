@@ -1,8 +1,7 @@
 import { getRequest, postRequest, deleteRequest, getData } from "./serverService";
 
-export const getVacations = async (accessToken) => {
 
-    console.log(accessToken)
+export const getVacations = async (accessToken) => {
 
   // get user followed and un followed vacations
   const url = `http://localhost:3000/api/vacations/user`;

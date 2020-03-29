@@ -22,9 +22,9 @@ import { LoginErrors } from "../../models/error-model";
 import { UserModel } from "../../models/user-model";
 import { MenuModel } from "../../models/menu-model";
 
-// import services
-import { loginLegal, logInRequest, handleRouting } from "../../services/loginService";
-import { getTokens } from "../../services/tokensService";
+// import services 
+import { LoginServices } from "../../services/loginService";
+import { TokensServices } from "../../services/tokensService";
 import { handleServerResponse } from "../../services/serverService";
 
 // import redux
@@ -65,7 +65,7 @@ export class Login extends Component<any, LoginState> {
         console.log("Login");
         return;
       } else {
-        handleRouting(this.props.history);
+        LoginServices.handleRouting(this.props.history);
       }
     } catch (err) {
       console.log(err);
@@ -76,12 +76,12 @@ export class Login extends Component<any, LoginState> {
     const { user, errors } = this.state;
 
     // disabled request if form is not legal
-    if (loginLegal(user, errors)) {
+    if (LoginServices.loginLegal(user, errors)) {
       return;
     }
  
-    try {
-      const serverResponse = await logInRequest(user);
+    try { 
+      const serverResponse = await LoginServices.logInRequest(user);
       
       // if true server returned error
       if (handleServerResponse(serverResponse)) {
@@ -91,9 +91,9 @@ export class Login extends Component<any, LoginState> {
         // save user in store 
         store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
         // get tokens  
-        await getTokens(user);
+        await TokensServices.getTokens(user);
         // navigate according t role 
-        handleRouting(this.props.history);
+        LoginServices.handleRouting(this.props.history);
       }
     } catch (err) {
       console.log(err);
