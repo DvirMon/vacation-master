@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import clsx from "clsx";
 
-import NavLink from "react-router-dom/NavLink";
+import {NavLink} from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import MenuList from "@material-ui/core/MenuList";

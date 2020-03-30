@@ -22,7 +22,7 @@ import { LoginErrors } from "../../models/error-model";
 import { UserModel } from "../../models/user-model";
 import { MenuModel } from "../../models/menu-model";
 
-// import services 
+// import services
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
 import { handleServerResponse } from "../../services/serverService";
@@ -55,7 +55,7 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
-    // set style 
+    // set style
     store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
     store.dispatch({ type: ActionType.updateBackground, payload: "home" });
 
@@ -79,22 +79,22 @@ export class Login extends Component<any, LoginState> {
     if (LoginServices.loginLegal(user, errors)) {
       return;
     }
- 
-    try { 
+
+    try {
       const serverResponse = await LoginServices.logInRequest(user);
-      
+
       // if true server returned error
       if (handleServerResponse(serverResponse)) {
         this.setState({ serverError: serverResponse });
-        return;  
-      } else {
-        // save user in store 
-        store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
-        // get tokens  
-        await TokensServices.getTokens(user);
-        // navigate according t role 
-        LoginServices.handleRouting(this.props.history);
+        return;
       }
+
+      // save user in store
+      store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
+      // get tokens
+      await TokensServices.getTokens(user);
+      // navigate according to role
+      LoginServices.handleRouting(this.props.history);
     } catch (err) {
       console.log(err);
     }
@@ -104,13 +104,13 @@ export class Login extends Component<any, LoginState> {
     const { user, serverError, showPassword } = this.state;
 
     return (
-      <div className="login"> 
+      <div className="login">
         <Grid className="login-main">
           <Grid className="header-login fade-up">
             <h2>Explore destinations around the world!</h2>
             <h4>Open an account for more information</h4>
-          </Grid> 
-        </Grid> 
+          </Grid>
+        </Grid>
         <Grid className="login-aside">
           <FormControl className="login-aside my-form">
             <Grid className="row-header" spacing={2} container>
@@ -229,7 +229,6 @@ export class Login extends Component<any, LoginState> {
 
   public handleClickShowPassword = () => {
     const showPassword = this.state.showPassword;
-    console.log(showPassword);
     this.setState({ showPassword: !showPassword });
   };
 

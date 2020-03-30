@@ -1,12 +1,9 @@
 import React, { Component } from "react";
-import NavLink from "react-router-dom/NavLink";
+import { NavLink } from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
 import BarChartIcon from "@material-ui/icons/BarChart";
 
-
-
 export class MenuAdmin extends Component {
-
   render() {
     return (
       <React.Fragment>
@@ -26,12 +23,14 @@ export class MenuAdmin extends Component {
             to={{
               pathname: "/admin/vacation/new"
             }}
+            exact
+            
           >
             Add Vacation
           </NavLink>
         </MenuItem>
         <MenuItem>
-          <NavLink to="/admin">Home</NavLink>
+          <NavLink to="/admin" exact>Home</NavLink>
         </MenuItem>
       </React.Fragment>
     );

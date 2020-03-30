@@ -7,7 +7,10 @@ import Col from "react-bootstrap/Col";
 import Loader from "../loader/loader";
 
 // import services
-import { deleteRequest, handleServerResponse } from "../../services/serverService";
+import {
+  deleteRequest,
+  handleServerResponse
+} from "../../services/serverService";
 import { getVacations } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
@@ -59,12 +62,6 @@ export class Vacations extends Component<any, VacationsState> {
 
   public componentDidMount = async () => {
     try {
-      // verify login
-      if (store.getState().isLoggedIn === false) {
-        this.props.history.push("/");
-        return;
-      }
-
       // subscribe to store
       this.unsubscribeStore = store.subscribe(() => {
         this.setState({
@@ -73,19 +70,23 @@ export class Vacations extends Component<any, VacationsState> {
         });
       });
 
+      // verify login
+      console.log(store.getState().isLoggedIn);
+      if (store.getState().isLoggedIn === false) {
+        this.props.history.push("/");
+        return;
+      }
+       
       // unable for client to change routes
       const user = store.getState().user;
       if (user.isAdmin === 1) {
-        LoginServices.verifyAdminPath(this.props.history)
-        // verifyAdminPath(this.props.history);
-      } else { 
-        LoginServices.verifyUserPath(user, this.props.history)
-        // verifyUserPath(user, this.props.history);
+        LoginServices.verifyAdminPath(this.props.history);
+      } else {
+        LoginServices.verifyUserPath(user, this.props.history);
       }
 
       // get tokens from store
       const tokens = JSON.parse(sessionStorage.getItem("tokens"));
-      console.log(tokens); 
 
       // send request for vacations
       const response = await getVacations(tokens.accessToken);
@@ -98,7 +99,7 @@ export class Vacations extends Component<any, VacationsState> {
       }
 
       const vacations = response.body;
- 
+
       // update page according to client role
       const admin = LoginServices.handelStyle();
 
@@ -134,7 +135,6 @@ export class Vacations extends Component<any, VacationsState> {
   // update menu according to role
   public handleMenu = () => {
     const { user } = this.state;
-
     let menu: MenuModel;
     if (user.isAdmin === 0) {
       menu = { ...UserMenu };

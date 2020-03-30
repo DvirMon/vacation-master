@@ -47,15 +47,16 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public componentDidMount = async () => {
-    // verify admin
-    verifyAdmin(this.props.history);
-
+    
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
         tokens: store.getState().tokens
       });
     });
+    
+    // verify admin
+    verifyAdmin(this.props.history);
 
     //
     store.dispatch({
@@ -122,6 +123,8 @@ export class Update extends Component<any, UpdateState> {
         myFormData,
         tokens.accessToken
       );
+
+      console.log(tokens.accessToken)
 
       // if true server returned an error
       if (handleServerResponse(response)) {

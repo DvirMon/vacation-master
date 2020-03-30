@@ -37,15 +37,15 @@ export class Charts extends Component<any, ChartsState> {
 
   public componentDidMount = async () => {
 
-    // verify admin
-    verifyAdmin(this.props.history);
-
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
         tokens: store.getState().tokens
       });
     });
+
+    // verify admin
+    verifyAdmin(this.props.history);
 
     try {
       const tokens = store.getState().tokens;

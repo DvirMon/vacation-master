@@ -39,20 +39,21 @@ export class Insert extends Component<any, InsertState> {
     this.state = {
       vacation: new VacationModel(),
       tokens: store.getState().tokens,
-      preview: ""
+      preview: "aaa"
     };
   }
 
   public componentDidMount = async () => {
-    // verify admin
-    verifyAdmin(this.props.history);
-
+    
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
         tokens: store.getState().tokens
       });
     });
+    
+    // verify admin
+    verifyAdmin(this.props.history);
 
     // refresh store vacation
     store.dispatch({
@@ -102,7 +103,7 @@ export class Insert extends Component<any, InsertState> {
     }
     await TokensServices.getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
-  }, 5000);
+  }, 60000);
 
   render() {
     const { vacation, preview } = this.state;

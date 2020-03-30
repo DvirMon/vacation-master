@@ -20,7 +20,6 @@
   background-image: url("/assets/img/backgrounds/transition.jpg");
 }
 
-
 .user {
   background-image: url("/assets/img/backgrounds/user.jpg");
 }
@@ -31,9 +30,9 @@
   grid-template-rows: 20% 80%;
   grid-template-columns: repeat(12, 1fr);
 
-  nav,
+  nav, 
   main {
-    grid-column: 12 span;
+    grid-column: span 12 ;
   }
 
   .page {
@@ -44,31 +43,4 @@
     overflow-x: hidden;
   }
 
-  .slide-appear,
-  .slide-enter {
-    transform: translateX(-100%);
-    opacity: 0;
-    position: absolute;
-    // overflow-x: hidden;
-  }
-  .slide-appear-active,
-  .slide-enter.slide-enter-active {
-    transform: translateX(0);
-    opacity: 1;
-    transition: all 5000;
-    // overflow-x: hidden;
-  }
-
-  .slide-exit {
-    transform: translateX(0);
-    opacity: 1;
-    // overflow-x: hidden;
-  }
-
-  .slide-exit.slide-exit-active {
-    transform: translateX(100%);
-    opacity: 0;
-    transition: all 5000;
-    // overflow-x: hidden;
-  }
 }

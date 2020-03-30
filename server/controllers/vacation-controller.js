@@ -93,21 +93,20 @@ router.put("/:id", auth.authorize(1), async (request, response) => {
     response.status(400).json("No image Sent!");
   }
 
-  console.log(vacation);
-
   //verify schema
   const error = VacationModel.validation(vacation);
   if (error) {
     response.status(400).send({ body: error, message: "error" });
     return;
   }
-
+  
   vacation.vacationID = vacationID;
-
+  
   try {
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
     if (updatedVacation === null) {
-      response.sendStatus(404);
+      console.log(1)
+      response.status(404).json({body: "Item is not in database", message: "error"});
       return;
     }
     response.json({ body: updatedVacation, message: "success" });

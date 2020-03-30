@@ -36,7 +36,6 @@ export class Layout extends Component<any, LayoutState> {
   }
 
   public componentDidMount = () => {
-
     this.unsubscribeStore = store.subscribe(() =>
       this.setState({
         backgroundImage: store.getState().backgroundImage,
@@ -52,13 +51,7 @@ export class Layout extends Component<any, LayoutState> {
   render() {
     const { backgroundImage, filter } = this.state;
     return (
-      <div
-        className={clsx(
-          "layout",
-          "bg",
-          `${backgroundImage}`
-        )}
-      >
+      <div className={clsx("layout", "bg", `${backgroundImage}`)}>
         <BrowserRouter>
           <nav>
             <Menu />
@@ -68,11 +61,11 @@ export class Layout extends Component<any, LayoutState> {
               <Route path="/login" component={Login} exact></Route>
               <Route path="/register" component={Register} exact></Route>
               <Route path="/logout" component={Logout} exact></Route>
+              <Route path="/user/:id" component={Vacations} exact></Route>
               <Route path="/admin" component={Vacations} exact></Route>
-              <Route path="/user/:id" component={Vacations} exact></Route> 
               <Route path="/admin/charts" component={Charts} exact></Route>
               <Route path="/admin/vacation/new" component={Insert} exact></Route>
-              <Route path="/admin/vacation/:id" component={Update} exact ></Route>
+              <Route path="/admin/vacation/:id" component={Update} exact></Route>
               <Redirect from="/" to="/login" exact></Redirect>
               <Route component={PageNotFound} exact />
             </Switch>
