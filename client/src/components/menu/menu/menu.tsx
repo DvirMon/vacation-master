@@ -13,12 +13,12 @@ import IconButton from "@material-ui/core/IconButton";
 
 import MenuUser from "../menu-user/menu-user";
 import MenuAdmin from "../menu-admin/menu-admin";
-
-import { MenuModel } from "../../../models/menu-model";
+ 
+import { MenuModel, LoginMenu } from "../../../models/menu-model";
 
 import { Unsubscribe } from "redux/";
-import { store } from "../../../redux/store/store";
-
+import { store } from "../../../redux/store";
+ 
 import "./menu.scss";
 
 interface MenuProps {
@@ -34,20 +34,23 @@ export class Menu extends Component<MenuProps, MenuState> {
 
   constructor(props: MenuProps) {
     super(props);
-
-    this.state = { menu: store.getState().menu };
-  }
+ 
+    this.state = { menu: store.getState().style.menu };
+  }  
 
   public componentDidMount = () => {
+
+    
     this.unsubscribeStore = store.subscribe(() =>
-      this.setState({ menu: store.getState().menu })
+      this.setState({ menu: store.getState().style.menu })
     );
+
   };
 
   public componentWillUnmount(): void {
-    this.unsubscribeStore();
+    this.unsubscribeStore(); 
   }
-
+ 
   render() {
     const { menu } = this.state;
     return (

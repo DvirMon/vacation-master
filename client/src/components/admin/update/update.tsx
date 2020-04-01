@@ -23,8 +23,8 @@ import { VacationService } from "../../../services/vacationsService";
 import { formLegal, verifyAdmin } from "../../../services/validationService";
 
 // import redux
-import { store } from "../../../redux/store/store";
-import { ActionType } from "../../../redux/action-type/action-type";
+import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
 import "./update.scss";
@@ -46,7 +46,7 @@ export class Update extends Component<any, UpdateState> {
 
     this.state = {
       vacation: new VacationModel(),
-      tokens: store.getState().tokens,
+      tokens: store.getState().auth.tokens,
       updated: true,
       preview: ""
     };
@@ -56,7 +56,7 @@ export class Update extends Component<any, UpdateState> {
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
-        tokens: store.getState().tokens
+        tokens: store.getState().auth.tokens
       });
     });
 
@@ -89,11 +89,11 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public handleTokens = setInterval(async () => {
-    const tokens = store.getState().tokens;
+    const tokens = store.getState().auth.tokens;
     console.log(tokens);
     console.log("-------");
     await TokensServices.getAccessToken(tokens);
-    console.log(store.getState().tokens.accessToken);
+    console.log(store.getState().auth.tokens.accessToken);
   }, 60000);
 
   public updateVacation = async () => {
@@ -114,8 +114,8 @@ export class Update extends Component<any, UpdateState> {
     }
 
     try {
-      const tokens = store.getState().tokens;
-      const vacationID = this.props.match.params.id;
+      const tokens = store.getState().auth.tokens;
+      const vacationID = +this.props.match.params.id;
 
       // create formatDate file
       const myFormData = VacationService.setFormData(vacation);
@@ -128,18 +128,26 @@ export class Update extends Component<any, UpdateState> {
         tokens.accessToken
       );
 
-      console.log(tokens.accessToken);
-
       // if true server returned an error
       if (handleServerResponse(response)) {
         alert(response.body);
         return;
       }
-      alert("Vacation has been updated successfully!");
-      this.props.history.push("/admin");
+
+      this.handleSuccess(response.body);
     } catch (err) {
       console.log(err);
     }
+  };
+
+  public handleSuccess = updateVacation => {
+    const action = {
+      type: ActionType.updatedVacation,
+      payload: updateVacation
+    };
+    store.dispatch(action);
+    alert("Vacation has been updated successfully!");
+    this.props.history.push("/admin");
   };
 
   render() {

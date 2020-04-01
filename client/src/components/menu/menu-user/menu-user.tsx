@@ -10,13 +10,16 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 
 import { UserModel } from "../../../models/user-model";
 
+
 interface MenuUserProps {
   userInfo?: UserModel;
   followUpCounter?: number;
 }
 
+
 export class MenuUser extends Component<MenuUserProps, any> {
-  render() {
+
+  render() { 
     const { userInfo, followUpCounter } = this.props;
 
     return (
@@ -32,7 +35,7 @@ export class MenuUser extends Component<MenuUserProps, any> {
             <FavoriteIcon />
           </Badge>
         </IconButton>
-     
+
         <IconButton color="inherit">
           <Badge color="secondary">
             <NotificationsIcon />

@@ -1,11 +1,15 @@
 import React, { Component } from "react";
+
+import Grid from "@material-ui/core/Grid";
+import DatePicker from "../date-picker/date-picker";
+import Button from "@material-ui/core/Button";
+import Form from "react-bootstrap/Form";
+
 import MyInput from "../my-input/my-input";
+
 import { VacationModel } from "../../models/vacations-model";
 import { VacationErrors } from "../../models/error-model";
-import DatePicker from "../date-picker/date-picker";
-import Form from "react-bootstrap/Form";
-import Button from "@material-ui/core/Button";
-import { Grid } from "@material-ui/core";
+
 import "./my-form.scss";
 
 interface MyFormProps {
@@ -179,7 +183,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
   };
 
   public handleChange = (prop: string, input: any) => {
-    
     if (prop === "startDate") {
       const date = { ...this.state.date };
       date.startDate = input;

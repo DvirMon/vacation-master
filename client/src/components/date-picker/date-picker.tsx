@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import "date-fns";
 import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
@@ -6,9 +7,9 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from "@material-ui/pickers";
+
 import { setObjectForSchema } from "../../services/validationService";
-import { ActionType } from "../../redux/action-type/action-type";
-import { store } from "../../redux/store/store";
+
 
 interface DatePickerState {
   selectedDate: Date;
@@ -96,11 +97,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
     if (value) {
       this.validInput(input, this.props.prop);
     }
-
-    store.dispatch({
-      type: ActionType.updatedVacation,
-      payload: { prop: this.props.prop, input: input }
-    });
+   
 
     if (this.props.handleChange) {
       this.props.handleChange(this.props.prop, input);

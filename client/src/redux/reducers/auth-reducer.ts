@@ -1,9 +1,9 @@
 
-import { AppState } from "../app-state/app-state";
-import { Action } from "../action/action";
-import { ActionType } from "../action-type/action-type";
+import { AppState } from "../app-state";
+import { Action } from "../action";
+import { ActionType } from "../action-type";
 
-export const authReducer = (oldAppState: AppState, action: Action): AppState => {
+export const authReducer = (oldAppState = new AppState(), action: Action): AppState => {
 
   const newAppState = { ...oldAppState }
 
@@ -24,6 +24,8 @@ export const authReducer = (oldAppState: AppState, action: Action): AppState => 
       newAppState.isLoggedIn = false
       newAppState.user = null
       newAppState.tokens = null
+      newAppState.followUp = []
+      newAppState.unFollowUp = []
       sessionStorage.clear();
   }
   return newAppState

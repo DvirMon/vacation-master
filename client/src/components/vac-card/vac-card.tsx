@@ -19,6 +19,9 @@ import { UserVacationModel } from "../../models/vacations-model";
 import { VacationService } from "../../services/vacationsService";
 
 import Moment from "react-moment";
+ 
+import { store } from "../../redux/store"; 
+import { ActionType } from "../../redux/action-type";
 
 import "./vac-card.scss";
 
@@ -31,7 +34,6 @@ interface VacCardProps {
   hover?: boolean;
   preview?: string;
   update?(): void;
-  handleDelete?(): void;
 }
 
 interface VacCardState {
@@ -77,15 +79,20 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       // get accessToken
       const accessToken = this.props.accessToken;
 
+
       const clickEvent = this.state.clickEvent;
       switch (clickEvent) {
         case true: {
           await VacationService.deleteFollowUpAsync(vacationID, accessToken);
+          const action = { type : ActionType.deleteFollowUp, payload : this.props.vacation}
+          store.dispatch(action)
           this.props.update();
           break;
         }
         case false: {
           await VacationService.addFollowUpAsync(vacationID, accessToken);
+          const action = { type : ActionType.addFollowUp, payload : this.props.vacation}
+          store.dispatch(action)
           this.props.update();
           break;
         }
@@ -125,7 +132,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
               followIcon={followIcon}
               admin={admin}
               handleIconClick={this.handleIconClick}
-              handleDelete={this.handleDelete}
             />
           }
           title={vacation.destination}
@@ -183,12 +189,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
         </div>
       </React.Fragment>
     );
-  };
-
-  public handleDelete = () => {
-    if (this.props.handleDelete) {
-      this.props.handleDelete();
-    }
   };
 
 }

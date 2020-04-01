@@ -5,6 +5,7 @@ import { Grid, Tooltip, IconButton, FormControl } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Button from "@material-ui/core/Button";
 import MyInput from "../my-input/my-input";
+import Form from "react-bootstrap/Form";
 
 // import models
 import { RegistrationErrors } from "../../models/error-model";
@@ -16,14 +17,13 @@ import { postRequest, handleServerResponse } from "../../services/serverService"
 import { formLegalValues, formLegalErrors, formLegal } from "../../services/validationService";
 import { TokensServices } from "../../services/tokensService";
 
-// import redux
-import { store } from "../../redux/store/store";
-import { ActionType } from "../../redux/action-type/action-type";
-
+// import redux 
+import { ActionType } from "../../redux/action-type";
+import { store } from "../../redux/store";
+ 
 import generator from "generate-password";
 
 import "./register.scss";
-import Form from "react-bootstrap/Form";
 
 interface RegisterState {
   user: RegisterModel;
@@ -35,7 +35,7 @@ interface RegisterState {
 }
 export class Register extends Component<any, RegisterState> {
   constructor(props: any) {
-    super(props);
+    super(props); 
 
     this.state = {
       user: new RegisterModel(),

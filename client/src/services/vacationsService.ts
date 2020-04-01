@@ -6,7 +6,7 @@ export class VacationService {
 
   static getVacationsAsync = async (accessToken) => {
 
-    // get user followed and un followed vacations
+    // get user followed and un-followed vacations
     const url = `http://localhost:3000/api/vacations/user`;
     try {
       const response = await getRequest(url, accessToken);

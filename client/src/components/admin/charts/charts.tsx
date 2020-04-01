@@ -8,15 +8,15 @@ import { TokensModel } from "../../../models/tokens.model";
 
 import { getRequest } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
-
-import { store } from "../../../redux/store/store";
-import { Unsubscribe } from "redux";
-
-import "./charts.scss";
 import { verifyAdmin } from "../../../services/validationService";
+ 
+import { store } from "../../../redux/store";
+import { Unsubscribe } from "redux";
+ 
+import "./charts.scss";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
+ 
 interface ChartsState {
   tokens: TokensModel;
   dataPoints: ChartModel[];
@@ -30,7 +30,7 @@ export class Charts extends Component<any, ChartsState> {
     super(props);
 
     this.state = {
-      tokens: store.getState().tokens,
+      tokens: store.getState().auth.tokens,
       dataPoints: []
     };
   }
@@ -40,7 +40,7 @@ export class Charts extends Component<any, ChartsState> {
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
-        tokens: store.getState().tokens
+        tokens: store.getState().auth.tokens
       });
     });
 
@@ -48,7 +48,7 @@ export class Charts extends Component<any, ChartsState> {
     verifyAdmin(this.props.history);
 
     try {
-      const tokens = store.getState().tokens;
+      const tokens = store.getState().auth.tokens;
       const dataPoints = await this.getChartsData(tokens.accessToken);
       this.setState({ dataPoints });
     } catch (err) {
@@ -107,11 +107,11 @@ export class Charts extends Component<any, ChartsState> {
   }
 
   public handleTokens = setInterval(async () => {
-    const tokens = store.getState().tokens;
+    const tokens = store.getState().auth.tokens;
     console.log(tokens);
     console.log("-------");
     await TokensServices.getAccessToken(tokens);
-    console.log(store.getState().tokens.accessToken);
+    console.log(store.getState().auth.tokens.accessToken);
   }, 60000);
 }
 

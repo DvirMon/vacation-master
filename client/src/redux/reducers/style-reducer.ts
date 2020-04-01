@@ -1,11 +1,11 @@
-import { AppState } from "../app-state/app-state";
-import { Action } from "../action/action";
-import { ActionType } from "../action-type/action-type";
+import { AppState } from "../app-state";
+import { Action } from "../action";
+import { ActionType } from "../action-type";
 
-export const styleReducer = (oldAppState: AppState, action: Action): AppState => {
-
+export const styleReducer = (oldAppState = new AppState(), action: Action): AppState => {
+  
   const newAppState = { ...oldAppState }
-
+ 
   switch (action.type) {
     case ActionType.updateMenu:
       newAppState.menu = action.payload
@@ -16,3 +16,4 @@ export const styleReducer = (oldAppState: AppState, action: Action): AppState =>
   }
   return newAppState
 }
+ 

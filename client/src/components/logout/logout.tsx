@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
-import { store } from '../../redux/store/store';
-import { ActionType } from '../../redux/action-type/action-type';
+
 import { deleteRequest } from '../../services/serverService';
+ 
+// import redux
+import { store } from '../../redux/store';
+import { ActionType } from '../../redux/action-type';
 
 export class Logout extends Component <any, any> {
 
 
   public componentDidMount = async () => {
-
+ 
       try {
     
-        const tokens = store.getState().tokens
+        const tokens = store.getState().auth.tokens
      
         // clear refreshToken from db
         const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;

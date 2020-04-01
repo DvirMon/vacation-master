@@ -1,7 +1,7 @@
 import { postRequest } from "./serverService";
-import { store } from "../redux/store/store";
-import { ActionType } from "../redux/action-type/action-type";
-
+import { store } from "../redux/store";
+import { ActionType } from "../redux/action-type";
+ 
 export class LoginServices {
 
   // prevent admin to navigate to users route

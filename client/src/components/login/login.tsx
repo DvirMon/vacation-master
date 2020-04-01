@@ -20,7 +20,7 @@ import MyInput from "../my-input/my-input";
 // import models
 import { LoginErrors } from "../../models/error-model";
 import { UserModel } from "../../models/user-model";
-import { MenuModel } from "../../models/menu-model";
+import { MenuModel, LoginMenu } from "../../models/menu-model";
 
 // import services
 import { LoginServices } from "../../services/loginService";
@@ -28,12 +28,12 @@ import { TokensServices } from "../../services/tokensService";
 import { handleServerResponse } from "../../services/serverService";
 
 // import redux
-import { store } from "../../redux/store/store";
-import { ActionType } from "../../redux/action-type/action-type";
+import { ActionType } from "../../redux/action-type";
+import { store } from "../../redux/store";
 
-import "./login.scss";
+import "./login.scss"; 
 
-interface LoginState {
+interface LoginState {  
   user: UserModel;
   errors: LoginErrors;
   showPassword: boolean;
@@ -56,19 +56,19 @@ export class Login extends Component<any, LoginState> {
     };
   }
 
-  public componentDidMount = async () => {
-    // set style
-    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
+  public componentDidMount = async () => {  
+    // set style 
+    store.dispatch({ type: ActionType.updateMenu, payload: LoginMenu });
     store.dispatch({ type: ActionType.updateBackground, payload: "home" });
 
     // check if user is logged
     try {
-      if (store.getState().user === null) {
+      if (store.getState().auth.user === null) {
         return;
       }
-      LoginServices.handleRouting(store.getState().user, this.props.history);
+      LoginServices.handleRouting(store.getState().auth.user, this.props.history);
     } catch (err) {
-      console.log(err);
+      console.log(err); 
     }
   };
 

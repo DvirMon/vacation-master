@@ -1,6 +1,6 @@
-import { postRequest, getData } from "./serverService";
-import { ActionType } from "../redux/action-type/action-type";
-import { store } from "../redux/store/store";
+import { postRequest } from "./serverService";
+import { ActionType } from "../redux/action-type";
+import { store } from "../redux/store";
 
 export class TokensServices {
 

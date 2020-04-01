@@ -120,6 +120,10 @@ router.put("/:id", auth.authorize(1), async (request, response, next) => {
       response.status(404).json({body: "Item is not in database", message: "error"});
       return;
     }
+    
+    updatedVacation.vacationID = +vacationID
+
+    console.log(updatedVacation)
     response.json({ body: updatedVacation, message: "success" });
   } catch (err) {
     next()

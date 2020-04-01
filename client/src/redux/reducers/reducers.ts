@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import { adminReducer } from "./admin-reducer";
+import { vacationReducer } from "./vacation-reducer";
 import { authReducer } from "./auth-reducer";
 import { styleReducer } from "./style-reducer";
-
-export const rootReducer = combineReducers({
-  admin : adminReducer,
+ 
+export const reducers = combineReducers({
+  vacation : vacationReducer,
   auth : authReducer,
   style : styleReducer
 })

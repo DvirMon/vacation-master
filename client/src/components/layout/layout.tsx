@@ -12,8 +12,8 @@ import Menu from "../menu/menu/menu";
 
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
-import { store } from "../../redux/store/store";
 import { Unsubscribe } from "redux";
+import { store } from "../../redux/store";
 
 import clsx from "clsx";
 import "./layout.scss";
@@ -30,16 +30,16 @@ export class Layout extends Component<any, LayoutState> {
     super(props);
 
     this.state = {
-      backgroundImage: store.getState().backgroundImage,
-      filter: store.getState().filter
+      backgroundImage: store.getState().style.backgroundImage,
+      filter: store.getState().style.filter
     };
-  }
+  } 
 
   public componentDidMount = () => {
     this.unsubscribeStore = store.subscribe(() =>
       this.setState({
-        backgroundImage: store.getState().backgroundImage,
-        filter: store.getState().filter
+        backgroundImage: store.getState().style.backgroundImage,
+        filter: store.getState().style.filter
       })
     );
   };

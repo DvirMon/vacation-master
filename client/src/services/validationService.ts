@@ -1,6 +1,6 @@
 
 import Joi from "joi"
-import { store } from "../redux/store/store"
+import { store } from "../redux/store"
 
 // function for required input validation
 export const isRequired = (prop: string) => {
@@ -103,11 +103,11 @@ export const formLegal = (obj, callback) => {
   return false;
 }
 // end of  function for legal form
-
-//verify admin
+ 
+//verify admin 
 
 export const verifyAdmin = (history) => {
-  const user = store.getState().user;
+  const user = store.getState().auth.user;
   if (!user || user.isAdmin === 0) {
     alert("Not Admin");
     history.push("/login");

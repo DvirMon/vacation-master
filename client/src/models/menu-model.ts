@@ -1,8 +1,8 @@
 import { UserModel } from "./user-model";
-import { store } from "../redux/store/store";
-import { ActionType } from "../redux/action-type/action-type";
-
-export class MenuModel {
+import { store } from "../redux/store"; 
+import { ActionType } from "../redux/action-type";
+  
+export class MenuModel { 
 
   public constructor(
     public user?: UserModel,
@@ -15,8 +15,7 @@ export class MenuModel {
   ) { }
 
   static setMenu = (user: UserModel, followUpCounter: number) => {
-
-    
+   
     const menu = { ...AdminMenu }
 
     if (user.isAdmin === 0) {
@@ -28,7 +27,7 @@ export class MenuModel {
   };
 
 
-}
+} 
 
 export const AdminMenu = new MenuModel({}, true, false, true, true, 0)
 export const LoginMenu = new MenuModel({}, false, false, false, false, 0)

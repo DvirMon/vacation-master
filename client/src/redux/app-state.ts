@@ -1,9 +1,10 @@
-import { UserModel } from "../../models/user-model";
-import { TokensModel } from "../../models/tokens.model";
-import { MenuModel, AdminMenu } from "../../models/menu-model";
-import { VacationModel } from "../../models/vacations-model";
+import { UserModel } from "../models/user-model";
+import { TokensModel } from "../models/tokens.model";
+import { MenuModel, AdminMenu } from "../models/menu-model";
+import { VacationModel, UserVacationModel } from "../models/vacations-model";
+ 
+export class AppState { 
 
-export class AppState {
   public isLoggedIn: boolean
   public user: UserModel = new UserModel();
   public tokens: TokensModel = new TokensModel();
@@ -11,15 +12,16 @@ export class AppState {
   public backgroundImage: string
   public filter: boolean 
   public newVacation : VacationModel =  new VacationModel()
-  public deleteID : number
+  public followUp : UserVacationModel[] = []
+  public unFollowUp : UserVacationModel[] = []
 
   public constructor() {
 
     this.user = JSON.parse(sessionStorage.getItem("user"))
     this.isLoggedIn = this.user !== null;
     this.tokens = JSON.parse(sessionStorage.getItem("tokens"))
-
-    if (this.isLoggedIn == false) {
+ 
+    if (this.isLoggedIn === false) {
       this.backgroundImage = "home"
     }
     else if (this.user.isAdmin === 0) {

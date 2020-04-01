@@ -18,14 +18,14 @@ import { VacationService } from "../../../services/vacationsService";
 import { handleServerResponse } from "../../../services/serverService";
 
 // import redux
-import { store } from "../../../redux/store/store";
-import { ActionType } from "../../../redux/action-type/action-type";
+import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
-
-import "./insert.scss";
+ 
+import "./insert.scss"; 
 
 interface InsertState {
-  vacation: VacationModel;
+  vacation: VacationModel; 
   tokens: TokensModel;
   preview: string;
 }
@@ -38,20 +38,19 @@ export class Insert extends Component<any, InsertState> {
 
     this.state = {
       vacation: new VacationModel(),
-      tokens: store.getState().tokens,
+      tokens: store.getState().auth.tokens,
       preview: "aaa"
     };
   }
 
   public componentDidMount = async () => {
-    
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
-        tokens: store.getState().tokens
+        tokens: store.getState().style.tokens
       });
     });
-    
+
     // verify admin
     verifyAdmin(this.props.history);
 
@@ -75,33 +74,42 @@ export class Insert extends Component<any, InsertState> {
     }
 
     try {
-      const tokens = store.getState().tokens;
+      const tokens = store.getState().auth.tokens;
       const url = `http://localhost:3000/api/vacations`;
 
       // create formatDate file
       const myFormData = VacationService.setFormData(vacation);
 
       // send a request
-      const response = await VacationService.addVacationAsync(url, myFormData, tokens.accessToken);
+      const response = await VacationService.addVacationAsync(
+        url,
+        myFormData,
+        tokens.accessToken
+      );
 
       // if true server returned an error
       if (handleServerResponse(response)) {
         alert(response.body);
         return;
       }
-      alert("New Vacation has been added!");
-      this.props.history.push("/admin");
+
+      this.handleSuccess(response.body)
+
     } catch (err) {
       console.log(err);
     }
   };
 
+  public handleSuccess = (addedVacation) => {
+    const action = { type: ActionType.addVacation, payload: addedVacation };
+    store.dispatch(action);
+    alert("New Vacation has been added!");
+    this.props.history.push("/admin");
+  };
+
   public handleTokens = setInterval(async () => {
-    const tokens = store.getState().tokens;
-    console.log(tokens);
-    console.log("-------");
+    const tokens = store.getState().auth.tokens;
     await TokensServices.getAccessToken(tokens);
-    console.log(store.getState().tokens.accessToken);
   }, 60000);
 
   render() {
