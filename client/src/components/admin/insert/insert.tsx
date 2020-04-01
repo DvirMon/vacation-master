@@ -14,7 +14,7 @@ import { TokensModel } from "../../../models/tokens.model";
 // import services
 import { formLegal, verifyAdmin } from "../../../services/validationService";
 import { TokensServices } from "../../../services/tokensService";
-import { setFormData, addVacation } from "../../../services/vacationsService";
+import { VacationService } from "../../../services/vacationsService";
 import { handleServerResponse } from "../../../services/serverService";
 
 // import redux
@@ -79,10 +79,10 @@ export class Insert extends Component<any, InsertState> {
       const url = `http://localhost:3000/api/vacations`;
 
       // create formatDate file
-      const myFormData = setFormData(vacation);
+      const myFormData = VacationService.setFormData(vacation);
 
       // send a request
-      const response = await addVacation(url, myFormData, tokens.accessToken);
+      const response = await VacationService.addVacationAsync(url, myFormData, tokens.accessToken);
 
       // if true server returned an error
       if (handleServerResponse(response)) {
@@ -97,10 +97,9 @@ export class Insert extends Component<any, InsertState> {
   };
 
   public handleTokens = setInterval(async () => {
-    const tokens = JSON.parse(sessionStorage.getItem("tokens"));
-    if (!tokens) {
-      return;
-    }
+    const tokens = store.getState().tokens;
+    console.log(tokens);
+    console.log("-------");
     await TokensServices.getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
   }, 60000);

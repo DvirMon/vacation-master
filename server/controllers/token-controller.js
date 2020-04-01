@@ -18,7 +18,7 @@ router.post("/", async (request, response, next) => {
     const accessToken = await auth.setToken(user);
 
     // create refreshToken for user
-    const refreshToken = await auth.refreshToken(user);
+    const refreshToken = await auth.setRefreshToken(user);
 
     const token = {
       refreshToken: refreshToken
@@ -35,7 +35,6 @@ router.post("/", async (request, response, next) => {
 
 // get new token
 router.post("/new", auth.authorize(), async (request, response, next) => {
-
   try {
     // get refreshToken from client
     const dbToken = request.body;
@@ -48,7 +47,10 @@ router.post("/new", auth.authorize(), async (request, response, next) => {
     }
 
     // verify token
-    const verify = jwt.verify(refreshToken.refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const verify = jwt.verify(
+      refreshToken.refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
     if (!verify) {
       response.sendStatus(403);
       return;
@@ -60,7 +62,9 @@ router.post("/new", auth.authorize(), async (request, response, next) => {
       isAdmin: verify.role
     });
 
-    response.status(201).json(accessToken);
+    response
+      .status(201)
+      .json({ message: "success", body: { dbToken, accessToken } });
   } catch (err) {
     next(err);
   }

@@ -76,10 +76,10 @@ export const deleteRequest = async (url: string, accessToken?: string) => {
 
 // function to handle server response
 export const handleServerResponse = response => {
-  if (typeof response === "string") {
-    return true
-  } else if(typeof response === "object" && response.message !== "success") {
-    return true
+  if (typeof response === "string" || response.message !== "success") {
+    return true 
+  // } else if(typeof response === "object" && response.message !== "success") {
+  //   return true
   }
   return false;
 };

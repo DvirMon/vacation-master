@@ -23,6 +23,7 @@ import { ActionType } from "../../redux/action-type/action-type";
 import generator from "generate-password";
 
 import "./register.scss";
+import Form from "react-bootstrap/Form";
 
 interface RegisterState {
   user: RegisterModel;
@@ -80,10 +81,8 @@ export class Register extends Component<any, RegisterState> {
       const url = `http://localhost:3000/api/user`;
       const serverResponse = await postRequest(url, user);
 
-      console.log(serverResponse);
- 
       if (handleServerResponse(serverResponse)) {
-        this.setState({ serverError: serverResponse, serverErrorStyle: true });
+        this.setState({ serverError: serverResponse.body, serverErrorStyle: true });
         return;
       } else {
         store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
@@ -101,7 +100,7 @@ export class Register extends Component<any, RegisterState> {
 
     return (
       <div className="register">
-        <FormControl className="register-form">
+        <Form className="register-form">
           <Grid container spacing={3} className="justify-content-center">
             <MyInput
               width={10}
@@ -174,7 +173,7 @@ export class Register extends Component<any, RegisterState> {
               </Button>
             </Grid>
           </Grid>
-        </FormControl>
+        </Form>
       </div>
     );
   }

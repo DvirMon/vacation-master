@@ -15,44 +15,48 @@ router.get("/", async (request, response, next) => {
     next(err);
   }
 });
+// end of function
 
 //get users vacation
 router.get("/user", auth.authorize(), async (request, response, next) => {
   try {
     const userName = request.user.sub;
-
+    
     // get user id from db
     const user = await usersLogic.isUserIdExist(userName);
     if (user.length > 0) {
       next("user is not exist in db");
       return;
     }
-
+    
     const vacations = await vacationsLogic.getUserVacations(user.id);
     response.json({ message: "success", body: vacations });
   } catch (err) {
     next(err);
   }
 });
+// end of function
 
 // get  vacations
 router.get("/:id", async (request, response, next) => {
   try {
     const vacationID = request.params.id;
     const vacation = await vacationsLogic.getVacation(vacationID);
-
+    
     if (!vacation) {
       response.sendStatus(404);
     }
-
+    
     response.json(vacation);
   } catch (err) {
     next(err);
   }
 });
+// end of function
 
 // add vacation (admin)
 router.post("/", auth.authorize(1), async (request, response, next) => {
+  
   const vacation = request.body;
   const file = request.files.image;
 
@@ -60,8 +64,11 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
   if (!file) {
     response.status(400).json("No Files Sent!");
     return;
-  }
+  } 
+
+  // save file locally 
   const fileName = imageLogic.saveImageLocally(file);
+  
   vacation.image = fileName;
 
   // verify vacation schema
@@ -80,7 +87,8 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
 });
 
 // update vacation (admin only)
-router.put("/:id", auth.authorize(1), async (request, response) => {
+router.put("/:id", auth.authorize(1), async (request, response, next) => {
+ 
   const vacationID = request.params.id;
   const vacation = request.body;
   const file = request.files;
@@ -89,8 +97,8 @@ router.put("/:id", auth.authorize(1), async (request, response) => {
   if (file) {
     const fileName = imageLogic.saveImageLocally(file.image);
     vacation.image = fileName;
-  } else if (!file && vacation.image === undefined) {
-    response.status(400).json("No image Sent!");
+  } else if (vacation.image === undefined) {
+    response.status(400).json({body : "No image was sent!", message : "error"});
   }
 
   //verify schema
@@ -103,15 +111,18 @@ router.put("/:id", auth.authorize(1), async (request, response) => {
   vacation.vacationID = vacationID;
   
   try {
+    
+    // request for update
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
+
+    // verify update
     if (updatedVacation === null) {
-      console.log(1)
       response.status(404).json({body: "Item is not in database", message: "error"});
       return;
     }
     response.json({ body: updatedVacation, message: "success" });
   } catch (err) {
-    response.status(500).json({ body: err, message: "error" });
+    next()
   }
 });
 

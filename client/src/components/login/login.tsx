@@ -37,6 +37,7 @@ interface LoginState {
   user: UserModel;
   errors: LoginErrors;
   showPassword: boolean;
+  error: boolean;
   serverError: string;
   menu: MenuModel;
 }
@@ -49,6 +50,7 @@ export class Login extends Component<any, LoginState> {
       user: new UserModel(),
       errors: new LoginErrors(),
       showPassword: false,
+      error: false,
       serverError: "",
       menu: new MenuModel({}, false, false, false, false, 0)
     };
@@ -62,11 +64,9 @@ export class Login extends Component<any, LoginState> {
     // check if user is logged
     try {
       if (store.getState().user === null) {
-        console.log("Login");
         return;
-      } else {
-        LoginServices.handleRouting(this.props.history);
       }
+      LoginServices.handleRouting(store.getState().user, this.props.history);
     } catch (err) {
       console.log(err);
     }
@@ -81,27 +81,31 @@ export class Login extends Component<any, LoginState> {
     }
 
     try {
+
+      //send login request
       const serverResponse = await LoginServices.logInRequest(user);
 
       // if true server returned error
       if (handleServerResponse(serverResponse)) {
-        this.setState({ serverError: serverResponse });
+        console.log(serverResponse.body)
+        this.setState({ serverError: "username or password are incorrect", error : true });
         return;
       }
 
-      // save user in store
+      // if false - save user in store
       store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
       // get tokens
       await TokensServices.getTokens(user);
       // navigate according to role
-      LoginServices.handleRouting(this.props.history);
+      LoginServices.handleRouting(user, this.props.history);
     } catch (err) {
       console.log(err);
     }
   };
 
   render() {
-    const { user, serverError, showPassword } = this.state;
+
+    const { user, serverError, showPassword, error } = this.state;
 
     return (
       <div className="login">
@@ -139,21 +143,22 @@ export class Login extends Component<any, LoginState> {
                   value={user.userName || ""}
                   type="text"
                   label="Username"
-                  prop={"userName"}
+                  prop={"userName"} 
+                  serverErrorStyle={error}
                   serverError={serverError}
                   fullWidth={true}
                   handleChange={this.handleChange}
                   handleErrors={this.handleErrors}
                   validInput={UserModel.validLogin}
                   helperText={"Please enter your username"}
-                />
+                  />
               </Grid>
               <Grid
                 container
                 spacing={3}
                 alignItems="flex-end"
                 className="d-flex justify-content-center p-3"
-              >
+                >
                 <Grid item className="icon-start">
                   <LockOpenIcon />
                 </Grid>
@@ -161,8 +166,9 @@ export class Login extends Component<any, LoginState> {
                   width={8}
                   value={user.password || ""}
                   type={showPassword ? "text" : "password"}
-                  label="Password"
+                  label="Password" 
                   prop={"password"}
+                  serverErrorStyle={error}
                   serverError={serverError}
                   fullWidth={true}
                   helperText={"Please enter your password"}
@@ -214,7 +220,7 @@ export class Login extends Component<any, LoginState> {
   public handleChange = (prop: string, input: string): void => {
     const user = { ...this.state.user };
     user[prop] = input;
-    this.setState({ user, serverError: "" });
+    this.setState({ user, serverError: "" , error : false});
   };
 
   public handleErrors = (prop: string, error: string) => {

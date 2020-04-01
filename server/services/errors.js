@@ -1,15 +1,13 @@
-
 //global error handler
 const errorHandler = (err, req, response, next) => {
-  
   if (typeof err === "object") {
     // custom application error
-    return response.status(404).json({body: error.message, message: "error"});
+    return response.status(404).json({ body: "no content ", message: "error" });
   }
 
   // default to 500 server error
-  return response.status(500).json(err);
-}
+  return response.status(500).json({ body: err, message: "error" });
+};
 // enf of function
 
-module.exports = errorHandler
+module.exports = errorHandler;

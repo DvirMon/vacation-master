@@ -1,7 +1,11 @@
 export enum ActionType {
   Login,
-  addToken,
   Logout,
+  GetAllVacation,
+  GeFollowUp,
+  GeUnFollowUp,
+  UpdateUserVacations,
+  addToken,
   updateMenu,
   updateBackground,
   updatedVacation,

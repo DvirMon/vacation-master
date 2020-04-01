@@ -3,7 +3,7 @@ import { store } from "../redux/store/store";
 import { ActionType } from "../redux/action-type/action-type";
 
 export class LoginServices {
-  
+
   // prevent admin to navigate to users route
   static verifyAdminPath = (history) => {
     if (history.location.pathname == "/admin") {
@@ -51,8 +51,7 @@ export class LoginServices {
 
 
   // function to handle rout according to role
-  static handleRouting = (history) => {
-    const user = store.getState().user;
+  static handleRouting = (user, history) => {
     if (user.isAdmin === 1) {
       history.push(`/admin`);
       return;
@@ -62,13 +61,20 @@ export class LoginServices {
   // end of function
 
   // handle style according to role
-  static handelStyle = () => {
-    const user = store.getState().user;
-    if (user.isAdmin === 1) {
+  static handelBackground = (bool: boolean) => {
+    if (bool) {
       store.dispatch({ type: ActionType.updateBackground, payload: "" });
-      return true;
+      return
     }
     store.dispatch({ type: ActionType.updateBackground, payload: "user" });
+  };
+  // end of function
+
+  // handle style according to role
+  static handelRole = (user) => {
+    if (user.isAdmin === 1) {
+      return true;
+    }
     return false;
   };
   // end of function

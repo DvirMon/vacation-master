@@ -107,13 +107,12 @@ export class Charts extends Component<any, ChartsState> {
   }
 
   public handleTokens = setInterval(async () => {
-    const tokens = JSON.parse(sessionStorage.getItem("tokens"));
-    if (!tokens) {
-      return;
-    }
+    const tokens = store.getState().tokens;
+    console.log(tokens);
+    console.log("-------");
     await TokensServices.getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
-  }, 600000);
+  }, 60000);
 }
 
 export default Charts;

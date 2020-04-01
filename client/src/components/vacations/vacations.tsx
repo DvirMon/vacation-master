@@ -11,7 +11,7 @@ import {
   deleteRequest,
   handleServerResponse
 } from "../../services/serverService";
-import { getVacations } from "../../services/vacationsService";
+import { VacationService } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
 
@@ -19,12 +19,11 @@ import { TokensServices } from "../../services/tokensService";
 import { UserVacationModel } from "../../models/vacations-model";
 import { UserModel } from "../../models/user-model";
 import { TokensModel } from "../../models/tokens.model";
-import { MenuModel, UserMenu, AdminMenu } from "../../models/menu-model";
+import { MenuModel, AdminMenu  } from "../../models/menu-model";
 
 // import redux
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store/store";
-import { ActionType } from "../../redux/action-type/action-type";
 import "./vacations.scss";
 
 interface VacationsProps {
@@ -34,6 +33,7 @@ interface VacationsProps {
 interface VacationsState {
   user: UserModel;
   admin: boolean;
+  menu : MenuModel;
   followUp?: UserVacationModel[];
   unFollowUp?: UserVacationModel[];
   followIcon: boolean;
@@ -51,6 +51,7 @@ export class Vacations extends Component<any, VacationsState> {
     this.state = {
       user: store.getState().user,
       admin: false,
+      menu : AdminMenu,
       tokens: store.getState().tokens,
       followUp: [],
       unFollowUp: [],
@@ -71,47 +72,47 @@ export class Vacations extends Component<any, VacationsState> {
       });
 
       // verify login
-      console.log(store.getState().isLoggedIn);
       if (store.getState().isLoggedIn === false) {
         this.props.history.push("/");
         return;
       }
-       
-      // unable for client to change routes
+
       const user = store.getState().user;
-      if (user.isAdmin === 1) {
+      const tokens = store.getState().tokens;
+      const admin = LoginServices.handelRole(user)
+      
+      // unable for client to navigate to other route
+      if (admin) {
         LoginServices.verifyAdminPath(this.props.history);
       } else {
         LoginServices.verifyUserPath(user, this.props.history);
       }
-
-      // get tokens from store
-      const tokens = JSON.parse(sessionStorage.getItem("tokens"));
-
+      
       // send request for vacations
-      const response = await getVacations(tokens.accessToken);
-
+      const response = await VacationService.getVacationsAsync(tokens.accessToken);
+      
       // handle response - if true there is an error
       if (handleServerResponse(response)) {
         alert(response);
         this.props.history.push("/logout");
         return;
       }
-
+      
+      // if false response.body is vacation object
       const vacations = response.body;
 
-      // update page according to client role
-      const admin = LoginServices.handelStyle();
-
+      
       // update state
       this.setState({
         admin,
         followUp: vacations.followUp,
         unFollowUp: vacations.unFollowUp
       });
+      
+      // update background and menu according to client role
+      MenuModel.setMenu(user,  vacations.followUp.length);
+      LoginServices.handelBackground(admin);
 
-      // update menu according to client role
-      this.handleMenu();
     } catch (err) {
       console.log(err);
     }
@@ -125,26 +126,12 @@ export class Vacations extends Component<any, VacationsState> {
   // update tokens every 10 min
   public handleTokens = setInterval(async () => {
     const tokens = store.getState().tokens;
-    if (!tokens) {
-      return;
-    }
+    console.log(tokens);
+    console.log("-------");
     await TokensServices.getAccessToken(tokens);
     console.log(store.getState().tokens.accessToken);
   }, 600000);
 
-  // update menu according to role
-  public handleMenu = () => {
-    const { user } = this.state;
-    let menu: MenuModel;
-    if (user.isAdmin === 0) {
-      menu = { ...UserMenu };
-      menu.user = user;
-      menu.followUpCounter = this.state.followUp.length;
-    } else {
-      menu = { ...AdminMenu };
-    }
-    store.dispatch({ type: ActionType.updateMenu, payload: menu });
-  };
 
   render() {
     const { followUp, unFollowUp, admin, tokens } = this.state;

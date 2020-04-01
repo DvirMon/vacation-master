@@ -4,7 +4,6 @@ import { store } from "../redux/store/store";
 
 export class TokensServices {
 
-  
   // function for getting first accessToken and refreshToken
 static getTokens = async user => {
   const url = `http://localhost:3000/api/tokens`;
@@ -25,11 +24,11 @@ static getAccessToken = async storageTokens => {
 
   try {
     const url = `http://localhost:3000/api/tokens/new`;
-    const newAccessToken = await postRequest(url, dbToken, accessToken)
-    
-    const tokens = store.getState().tokens
-    tokens.accessToken = newAccessToken
-    store.dispatch({ type: ActionType.addToken, payload: tokens })
+    const response = await postRequest(url, dbToken, accessToken)
+
+    console.log(response.body)
+
+    store.dispatch({ type: ActionType.addToken, payload: response.body })
   } catch (err) {
     console.log(err);
   }

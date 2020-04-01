@@ -17,6 +17,7 @@ const helpers = require("../services/auth");
 router.get("/followup", helpers.authorize(),async (request, response, next) => {
    
   try { 
+
       const userName = request.user.sub
 
       // validate id against db in case id is not exist
@@ -25,7 +26,6 @@ router.get("/followup", helpers.authorize(),async (request, response, next) => {
         next("user is not exist in db");
         return;
       }
-      console.log(id.id)
 
       const followups = await followUpLogic.getAllFollowUpByUser(id.id);
 
@@ -35,6 +35,7 @@ router.get("/followup", helpers.authorize(),async (request, response, next) => {
     }
   }
 );
+// enf od function
 
 //---------------------------------------------- ---------------------------------------//
 
@@ -54,10 +55,9 @@ router.post("/", async (request, response, next) => {
     // valid userName in db
     const dbUser = await usersLogic.isUserExist(user.userName);
     if (dbUser) {
-      response.status(409).json("username is already taken");
+      response.status(409).json({message : "error", body : "username or password are incorrect"});
       return;
     }
-
     // hush password
     user.password = await bcrypt.hash(user.password, 10);
 
@@ -78,6 +78,7 @@ router.post("/", async (request, response, next) => {
 // user login
 router.post("/login", async (request, response, next) => {
   try {
+   
     const user = request.body;
     // valid user schema
     const error = UserModel.validateLogin(user);
@@ -85,15 +86,16 @@ router.post("/login", async (request, response, next) => {
       response.status(404).json(error);
       return;
     }
-     
-    // validate username and password from database
+      
+    // get username and password from database
     const dbUser = await usersLogic.isUserExist(user.userName);
     const password = await usersLogic.getUserPassword(dbUser.userName)
     
+    // validate username and password from database
     const validPassword = await bcrypt.compare(user.password, password.password);
     
     if (!dbUser || !validPassword) {
-      response.status(409).json("username or password are incorrect");
+      response.status(409).json({message : "error", body : "username or password are incorrect"});
       return;
     }
 

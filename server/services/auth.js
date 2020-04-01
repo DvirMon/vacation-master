@@ -7,7 +7,7 @@ const hushPassword = async password => {
   return hushPassword;
 };
 // end of function
- 
+
 // function to create first access token
 const setToken = user => {
   return new Promise((resolve, reject) => {
@@ -27,7 +27,7 @@ const setToken = user => {
 // end of function
 
 // function to create the refresh token
-const refreshToken = user => {
+const setRefreshToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
       { sub: user.userName, role: user.isAdmin },
@@ -49,23 +49,24 @@ const authorize = role => (request, response, next) => {
   // verify if token exist
   const token = request.headers["authorization"];
   if (!token) {
-    return response.status(401).send("you are not login");
+    return response
+      .status(401)
+      .json({ message: "error", body: "You are not login" });
   }
-  console.log(token)
-  
+
   try {
     // verify token
     const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    
+
     request.user = verified;
     // verify admin
     if (role === 1 && request.user.role === 0) {
-      return response.status(403).send("not admin");
+      return response.status(403).json({ message: "error", body: "not admin" });
     }
 
     next();
   } catch (err) {
-    response.status(401).send("Token has expired");
+    response.status(401).json({ message: "error", body: "Token has expired" });
   }
 };
 // end of function
@@ -73,6 +74,6 @@ const authorize = role => (request, response, next) => {
 module.exports = {
   hushPassword,
   setToken,
-  refreshToken,
-  authorize 
+  setRefreshToken,
+  authorize
 };

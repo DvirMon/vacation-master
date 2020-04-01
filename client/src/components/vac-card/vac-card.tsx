@@ -16,7 +16,7 @@ import CardTopIcons from "./card-top-icons/card-top-icons";
 
 import { UserVacationModel } from "../../models/vacations-model";
 
-import { deleteFollowUp, addFollowUp, getFollowersByVacation } from "../../services/vacationsService";
+import { VacationService } from "../../services/vacationsService";
 
 import Moment from "react-moment";
 
@@ -67,7 +67,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   public componentDidMount = async () => {
     const vacationID = this.props.vacation.vacationID;
     if (vacationID) {
-      const followers = await getFollowersByVacation(vacationID);
+      const followers = await VacationService.getFollowersByVacationAsync(vacationID);
       this.setState({ followers: followers.followers });
     }
   };
@@ -80,12 +80,12 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       const clickEvent = this.state.clickEvent;
       switch (clickEvent) {
         case true: {
-          await deleteFollowUp(vacationID, accessToken);
+          await VacationService.deleteFollowUpAsync(vacationID, accessToken);
           this.props.update();
           break;
         }
         case false: {
-          await addFollowUp(vacationID, accessToken);
+          await VacationService.addFollowUpAsync(vacationID, accessToken);
           this.props.update();
           break;
         }

@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, lazy, Suspense } from "react";
 
 // import my como
-import VacCard from "../../vac-card/vac-card";
+// import VacCard from "../../vac-card/vac-card";
+
 import MyForm from "../../my-form/my-form";
 import Loader from "../../loader/loader";
 
@@ -13,9 +14,12 @@ import { VacationModel } from "../../../models/vacations-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 // import services
-import { getRequest, handleServerResponse } from "../../../services/serverService";
+import {
+  getRequest,
+  handleServerResponse
+} from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
-import { setFormData, updateVacation } from "../../../services/vacationsService";
+import { VacationService } from "../../../services/vacationsService";
 import { formLegal, verifyAdmin } from "../../../services/validationService";
 
 // import redux
@@ -24,6 +28,8 @@ import { ActionType } from "../../../redux/action-type/action-type";
 import { Unsubscribe } from "redux";
 
 import "./update.scss";
+
+const VacCard = lazy(() => import("../../vac-card/vac-card"));
 
 interface UpdateState {
   vacation: VacationModel;
@@ -47,14 +53,13 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public componentDidMount = async () => {
-    
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
         tokens: store.getState().tokens
       });
     });
-    
+
     // verify admin
     verifyAdmin(this.props.history);
 
@@ -84,17 +89,16 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public handleTokens = setInterval(async () => {
-    const tokens = JSON.parse(sessionStorage.getItem("tokens"));
-    if (!tokens) {
-      return;
-    }
+    const tokens = store.getState().tokens;
+    console.log(tokens);
+    console.log("-------");
     await TokensServices.getAccessToken(tokens);
-  }, 600000);
+    console.log(store.getState().tokens.accessToken);
+  }, 60000);
 
   public updateVacation = async () => {
-    
     const { vacation, updated } = this.state;
-    
+
     if (updated) {
       const answer = window.confirm(
         "No change has been notice, do you wish to continue?"
@@ -114,17 +118,17 @@ export class Update extends Component<any, UpdateState> {
       const vacationID = this.props.match.params.id;
 
       // create formatDate file
-      const myFormData = setFormData(vacation);
+      const myFormData = VacationService.setFormData(vacation);
 
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
 
-      const response = await updateVacation(
+      const response = await VacationService.updateVacationAsync(
         url,
         myFormData,
         tokens.accessToken
       );
 
-      console.log(tokens.accessToken)
+      console.log(tokens.accessToken);
 
       // if true server returned an error
       if (handleServerResponse(response)) {
@@ -133,10 +137,6 @@ export class Update extends Component<any, UpdateState> {
       }
       alert("Vacation has been updated successfully!");
       this.props.history.push("/admin");
-
-      // if (response.message === "success") {
-      // } else {
-      // }
     } catch (err) {
       console.log(err);
     }
@@ -161,16 +161,18 @@ export class Update extends Component<any, UpdateState> {
                 />
               )}
             </Grid>
-            <Grid item xs={4}>
-              <VacCard
-                vacation={vacation}
-                followIcon={false}
-                admin={false}
-                hover={false}
-                accessToken={""}
-                preview={preview}
-              />
-            </Grid>
+            <Suspense fallback={<div>Loading.....</div>}>
+              <Grid item xs={4}>
+                <VacCard
+                  vacation={vacation}
+                  followIcon={false}
+                  admin={false}
+                  hover={false}
+                  accessToken={""}
+                  preview={preview}
+                />
+              </Grid>
+            </Suspense>
           </Grid>
         )}
       </React.Fragment>
