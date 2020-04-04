@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest, getData } from "./serverService";
+import { ServerServices} from "./serverService";
 
 
 export class VacationService {
@@ -9,7 +9,7 @@ export class VacationService {
     // get user followed and un-followed vacations
     const url = `http://localhost:3000/api/vacations/user`;
     try {
-      const response = await getRequest(url, accessToken);
+      const response = await ServerServices.getRequest(url, accessToken);
       return response
     } catch (err) {
       return err
@@ -21,7 +21,7 @@ export class VacationService {
   static getFollowersByVacationAsync = async (vacationID) => {
     const url = `http://localhost:3000/api/followup/${vacationID}`;
     try {
-      const response = await getRequest(url)
+      const response = await ServerServices.getRequest(url)
       return response
     }
     catch (err) {
@@ -34,7 +34,7 @@ export class VacationService {
   static addFollowUpAsync = async (vacationID, accessToken) => {
     const url = `http://localhost:3000/api/followup`;
     try {
-      await postRequest(url, { vacationID }, accessToken);
+      await ServerServices.postRequest(url, { vacationID }, accessToken);
     } catch (err) {
       console.log(err);
     }
@@ -45,7 +45,7 @@ export class VacationService {
   static deleteFollowUpAsync = async (id, accessToken) => {
     const url = `http://localhost:3000/api/followup/${id}`;
     try {
-      await deleteRequest(url, accessToken);
+      await ServerServices.deleteRequest(url, accessToken);
     } catch (err) {
       console.log(err);
     }
@@ -81,7 +81,7 @@ export class VacationService {
     };
 
     try {
-      const response = await getData(url, options);
+      const response = await ServerServices.getData(url, options);
       return response
     } catch (err) {
       return err
@@ -100,7 +100,7 @@ export class VacationService {
     };
 
     try {
-      const response = await getData(url, options);
+      const response = await ServerServices.getData(url, options);
       return response
     } catch (err) {
       return err

@@ -1,6 +1,9 @@
 import React, { Component } from "react";
-import clsx from "clsx";
 
+import clsx from "clsx";
+import Moment from "react-moment";
+
+// import material-ui
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -12,26 +15,25 @@ import Typography from "@material-ui/core/Typography";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
 import CardTopIcons from "./card-top-icons/card-top-icons";
 
 import { UserVacationModel } from "../../models/vacations-model";
 
 import { VacationService } from "../../services/vacationsService";
 
-import Moment from "react-moment";
- 
+// import redux
 import { store } from "../../redux/store"; 
 import { ActionType } from "../../redux/action-type";
 
 import "./vac-card.scss";
 
 interface VacCardProps {
-  vacation: UserVacationModel;
-  accessToken: string;
-  follow?: boolean;
   followIcon: boolean;
   admin?: boolean;
   hover?: boolean;
+  vacation: UserVacationModel;
+  follow?: boolean;
   preview?: string;
   update?(): void;
 }
@@ -76,11 +78,12 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
   public handleFollowUp = async (vacationID: number) => {
     try {
-      // get accessToken
-      const accessToken = this.props.accessToken;
 
+      // get accessToken
+      const accessToken = store.getState().auth.tokens.accessToken;
 
       const clickEvent = this.state.clickEvent;
+      
       switch (clickEvent) {
         case true: {
           await VacationService.deleteFollowUpAsync(vacationID, accessToken);
@@ -102,9 +105,9 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     }
   };
 
-  render() {
+  render() { 
     const { expanded, color, followers } = this.state;
-    const { vacation, followIcon, admin, preview, hover } = this.props;
+    const { vacation, followIcon, admin, hover, preview } = this.props;
 
     return (
       <div className="vac-card">

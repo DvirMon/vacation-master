@@ -48,6 +48,9 @@ const setRefreshToken = user => {
 const authorize = role => (request, response, next) => {
   // verify if token exist
   const token = request.headers["authorization"];
+
+  console.log(token)
+
   if (!token) {
     return response
       .status(401)
@@ -74,6 +77,7 @@ const authorize = role => (request, response, next) => {
 module.exports = {
   hushPassword,
   setToken,
-  setRefreshToken,
+  setRefreshToken, 
   authorize
 };
+ 

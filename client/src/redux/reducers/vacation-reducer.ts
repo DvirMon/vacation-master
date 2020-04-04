@@ -27,10 +27,8 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
       newAppState.followUp.splice(followUpDelete, 1)
       break
     case ActionType.updatedVacation:
-      console.log(+action.payload.vacationID)
       newAppState.unFollowUp.find(vacation => {
         if (vacation.vacationID === +action.payload.vacationID) {
-          console.log(vacation.vacationID)
           for (const prop in action.payload) {
             if (prop in vacation) {
               vacation[prop] = action.payload[prop]
@@ -44,9 +42,6 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
       newAppState.unFollowUp.splice(index, 1)
       break
     case ActionType.Logout:
-      newAppState.isLoggedIn = false
-      newAppState.user = null
-      newAppState.tokens = null
       newAppState.followUp = []
       newAppState.unFollowUp = []
   }

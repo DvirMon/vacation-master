@@ -20,7 +20,7 @@ export const handleMassage = (err) => {
         err.message = "password must contain at least one lowercase, uppercase and numeric character";
         break
       }
-      err.message = "This field should only include a-z/A-Z letters";
+      err.message = "This field should only include a-z/A-Z characters";
       break
     case "any.empty":
       console.log(err.path[0])
@@ -56,10 +56,8 @@ export const setObjectForSchema = (schema: {}, prop: string, input: string) => {
 };
 // end of function
 
-
 // function to check if error object contained errors
 export const formLegalErrors = (errors) => {
-
   for (const error in errors) {
     if (errors[error].length > 0) {
       return errors[error]

@@ -26,6 +26,7 @@ interface MyFormState {
     startDate: string;
     endDate: string;
   };
+  apostrophe  : string
 }
 
 export class MyForm extends Component<MyFormProps, MyFormState> {
@@ -39,7 +40,8 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
       date: {
         startDate: this.props.vacation.startDate,
         endDate: this.props.vacation.endDate
-      }
+      },
+      apostrophe :  `(pay attention! you cant use apostrophe mark)`
     };
   }
 
@@ -58,7 +60,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
 
   render() {
     const { vacation } = this.props;
-    const { date } = this.state;
+    const { date, apostrophe } = this.state;
 
     return (
       <div className="my-form">
@@ -78,10 +80,9 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               prop="destination"
               label="Destination"
               handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
               validInput={VacationModel.validVacation}
-              helperText={"Enter vacation destination"}
-            />
+              helperText={"Enter vacation destination " + apostrophe}
+            /> 
             <MyInput
               width={5}
               fullWidth={true}
@@ -119,7 +120,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
             <Grid
               item
               xs={3}
-              className="d-flex align-self-end justify-content-end"
+              className="d-flex align-self-end justify-content-end mb-3"
             >
               <label className="upload-button">
                 <input
@@ -137,12 +138,12 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                   disableRipple={true}
                   disableFocusRipple={true}
                 >
-                  Choose a file
+                  Choose an image
                 </Button>
               </label>
             </Grid>
           </Grid>
-          <Grid container spacing={2} className="pos">
+          <Grid container spacing={2} className="pos mb-3">
             <MyInput
               width={8}
               value={vacation.description || ""}
@@ -155,12 +156,12 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               rows={5}
               handleChange={this.handleChange}
               validInput={VacationModel.validVacation}
-              helperText={"Enter vacation description"}
+              helperText={"Enter vacation description " + apostrophe}
             ></MyInput>
             <Grid
               item
               xs={4}
-              className="d-flex align-self-end justify-content-center"
+              className="d-flex align-self-end justify-content-center mb-3"
             >
               <Button
                 variant="contained"
@@ -176,30 +177,30 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     );
   }
 
+  // function to ass vacation
   public addVacation = () => {
     if (this.props.handleVacation) {
       this.props.handleVacation();
     }
   };
-
+  // end of function
+  
+  // function to update vacation values
   public handleChange = (prop: string, input: any) => {
     if (prop === "startDate") {
       const date = { ...this.state.date };
       date.startDate = input;
       this.setState({ date });
     }
-
+    
     if (this.props.handleChange) {
       this.props.handleChange(prop, input);
     }
   };
-
-  public handleErrors = (prop: string, error: string) => {
-    if (this.props.handleErrors) {
-      this.props.handleErrors(prop, error);
-    }
-  };
-
+  // end of function
+  
+  // function to handle image file
+  
   public handleImage = async event => {
     const image = event.target.files[0];
     if (!image) {
@@ -224,5 +225,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     }
   };
 }
+// end of function
 
 export default MyForm;

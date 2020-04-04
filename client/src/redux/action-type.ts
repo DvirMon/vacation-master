@@ -3,9 +3,10 @@ export enum ActionType {
   // auth ActionType
   Login,
   Logout,
+  isAdmin,
   addToken,
   refreshVacation,
-
+ 
   // style ActionType
   updateMenu,
   updateBackground,
@@ -17,5 +18,5 @@ export enum ActionType {
   deleteVacation,
   addFollowUp,
   deleteFollowUp
-
+  
 } 

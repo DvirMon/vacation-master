@@ -45,11 +45,13 @@ router.post("/", auth.authorize(), async (request, response, next) => {
       next("user is not exist in db");
       return;
     }
-
+ 
     followup.userID = user.id;
+    
     const addedFollowup = await followUpLogic.addFollowUp(followup);
 
     addedFollowup.userID = userID;
+
     response.json(addedFollowup);
   } catch (err) {
     next(err);

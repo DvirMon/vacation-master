@@ -20,6 +20,7 @@ router.get("/", async (request, response, next) => {
 //get users vacation
 router.get("/user", auth.authorize(), async (request, response, next) => {
   try {
+
     const userName = request.user.sub;
     
     // get user id from db
@@ -62,7 +63,7 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
 
   // verify file
   if (!file) {
-    response.status(400).json("No Files Sent!");
+    response.status(400).json({body: "no file was sent", message: "error"});
     return;
   } 
 
@@ -92,7 +93,7 @@ router.put("/:id", auth.authorize(1), async (request, response, next) => {
   const vacationID = request.params.id;
   const vacation = request.body;
   const file = request.files;
-
+  
   // verify file
   if (file) {
     const fileName = imageLogic.saveImageLocally(file.image);
@@ -100,7 +101,7 @@ router.put("/:id", auth.authorize(1), async (request, response, next) => {
   } else if (vacation.image === undefined) {
     response.status(400).json({body : "No image was sent!", message : "error"});
   }
-
+  
   //verify schema
   const error = VacationModel.validation(vacation);
   if (error) {
@@ -114,23 +115,25 @@ router.put("/:id", auth.authorize(1), async (request, response, next) => {
     
     // request for update
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
+    console.log(updatedVacation)
 
     // verify update
     if (updatedVacation === null) {
-      response.status(404).json({body: "Item is not in database", message: "error"});
+      response.status(404).json({message: "error", body: "Item is not in database"});
       return;
     }
-    
+
+    // change id from string to number
     updatedVacation.vacationID = +vacationID
 
-    console.log(updatedVacation)
     response.json({ body: updatedVacation, message: "success" });
+    
   } catch (err) {
     next()
   }
 });
 
-// delete vacation (admin only)
+// delete vacation (only admin)
 router.delete("/:id", auth.authorize(1), async (request, response) => {
   try {
     const id = request.params.id;

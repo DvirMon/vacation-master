@@ -6,7 +6,7 @@ import CanvasJSReact from "../../../assets/canvasjs.react";
 import { ChartModel } from "../../../models/charts-model";
 import { TokensModel } from "../../../models/tokens.model";
 
-import { getRequest } from "../../../services/serverService";
+import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
 import { verifyAdmin } from "../../../services/validationService";
  
@@ -64,7 +64,7 @@ export class Charts extends Component<any, ChartsState> {
 
   public getChartsData = async accessToken => {
     const url = `http://localhost:3000/api/followup`;
-    const dataPoints = await getRequest(url, accessToken);
+    const dataPoints = await ServerServices.getRequest(url, accessToken);
     return dataPoints;
   };
 

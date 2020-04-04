@@ -1,26 +1,28 @@
 import React, { Component } from "react";
+import clsx from "clsx";
 
+// import components
 import Login from "../login/login";
 import Register from "../register/register";
+import Menu from "../menu/menu/menu";
 import Vacations from "../vacations/vacations";
 import Insert from "../admin/insert/insert";
 import Charts from "../admin/charts/charts";
 import Update from "../admin/update/update";
-import PageNotFound from "../page-not-found/page-not-found";
 import Logout from "../logout/logout";
-import Menu from "../menu/menu/menu";
+import PageNotFound from "../page-not-found/page-not-found";
 
+// import router
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
+// import redux
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
 
-import clsx from "clsx";
 import "./layout.scss";
 
 interface LayoutState {
   backgroundImage: string;
-  filter: boolean;
 }
 
 export class Layout extends Component<any, LayoutState> {
@@ -30,16 +32,14 @@ export class Layout extends Component<any, LayoutState> {
     super(props);
 
     this.state = {
-      backgroundImage: store.getState().style.backgroundImage,
-      filter: store.getState().style.filter
+      backgroundImage: store.getState().style.backgroundImage
     };
-  } 
+  }
 
   public componentDidMount = () => {
     this.unsubscribeStore = store.subscribe(() =>
       this.setState({
-        backgroundImage: store.getState().style.backgroundImage,
-        filter: store.getState().style.filter
+        backgroundImage: store.getState().style.backgroundImage
       })
     );
   };
@@ -49,7 +49,7 @@ export class Layout extends Component<any, LayoutState> {
   }
 
   render() {
-    const { backgroundImage, filter } = this.state;
+    const { backgroundImage } = this.state;
     return (
       <div className={clsx("layout", "bg", `${backgroundImage}`)}>
         <BrowserRouter>
@@ -64,8 +64,16 @@ export class Layout extends Component<any, LayoutState> {
               <Route path="/user/:id" component={Vacations} exact></Route>
               <Route path="/admin" component={Vacations} exact></Route>
               <Route path="/admin/charts" component={Charts} exact></Route>
-              <Route path="/admin/vacation/new" component={Insert} exact></Route>
-              <Route path="/admin/vacation/:id" component={Update} exact></Route>
+              <Route
+                path="/admin/vacation/new"
+                component={Insert}
+                exact
+              ></Route>
+              <Route
+                path="/admin/vacation/:id"
+                component={Update}
+                exact
+              ></Route>
               <Redirect from="/" to="/login" exact></Redirect>
               <Route component={PageNotFound} exact />
             </Switch>

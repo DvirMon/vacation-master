@@ -13,7 +13,7 @@ import { RegisterModel } from "../../models/user-model";
 import { MenuModel, RegisterMenu } from "../../models/menu-model";
 
 // import services
-import { postRequest, handleServerResponse } from "../../services/serverService";
+import { ServerServices } from "../../services/serverService";
 import { formLegalValues, formLegalErrors, formLegal } from "../../services/validationService";
 import { TokensServices } from "../../services/tokensService";
 
@@ -79,9 +79,9 @@ export class Register extends Component<any, RegisterState> {
 
     try {
       const url = `http://localhost:3000/api/user`;
-      const serverResponse = await postRequest(url, user);
+      const serverResponse = await ServerServices.postRequest(url, user);
 
-      if (handleServerResponse(serverResponse)) {
+      if (ServerServices.handleServerResponse(serverResponse)) {
         this.setState({ serverError: serverResponse.body, serverErrorStyle: true });
         return;
       } else {

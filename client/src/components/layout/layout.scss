@@ -4,10 +4,6 @@
   background-size: cover;
 }
 
-.bg-filter {
-  background-color: #fafafab9;
-}
-
 .admin {
   background-image: url("/assets/img/backgrounds/transition.jpg");
 }
@@ -30,9 +26,9 @@
   grid-template-rows: 20% 80%;
   grid-template-columns: repeat(12, 1fr);
 
-  nav, 
+  nav,
   main {
-    grid-column: span 12 ;
+    grid-column: span 12;
   }
 
   .page {
@@ -42,5 +38,4 @@
     right: 0;
     overflow-x: hidden;
   }
-
 }

@@ -1,38 +1,38 @@
-import { postRequest } from "./serverService";
+import { ServerServices } from "./serverService";
 import { ActionType } from "../redux/action-type";
 import { store } from "../redux/store";
 
 export class TokensServices {
 
   // function for getting first accessToken and refreshToken
-static getTokens = async user => {
-  const url = `http://localhost:3000/api/tokens`;
-  try {
-    const tokens = await postRequest(url, user);
-    store.dispatch({ type: ActionType.addToken, payload: tokens });
-  } catch (err) {
-    console.log(err);
-  }
-};
-//end of function
+  static getTokens = async user => {
+    const url = `http://localhost:3000/api/tokens`;
+    try {
+      const tokens = await ServerServices.postRequest(url, user);
+      store.dispatch({ type: ActionType.addToken, payload: tokens });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  //end of function
 
-// function for new accessToken
-static getAccessToken = async storageTokens => {
-  
-  const dbToken = storageTokens.dbToken
-  const accessToken = storageTokens.accessToken
+  // function for new accessToken
+  static getAccessToken = async storageTokens => {
 
-  try {
-    const url = `http://localhost:3000/api/tokens/new`;
-    const response = await postRequest(url, dbToken, accessToken)
+    const dbToken = storageTokens.dbToken
+    const accessToken = storageTokens.accessToken
 
-    console.log(response.body)
+    try {
+      const url = `http://localhost:3000/api/tokens/new`;
+      const response = await ServerServices.postRequest(url, dbToken, accessToken)
 
-    store.dispatch({ type: ActionType.addToken, payload: response.body })
-  } catch (err) {
-    console.log(err);
-  }
-};
+      console.log(response.body)
+
+      store.dispatch({ type: ActionType.addToken, payload: response.body })
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
 }
 

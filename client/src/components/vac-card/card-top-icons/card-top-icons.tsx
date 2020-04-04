@@ -10,12 +10,12 @@ import EditIcon from "@material-ui/icons/Edit";
 
 import { UserVacationModel } from "../../../models/vacations-model";
 
-import { deleteRequest } from "../../../services/serverService";
- 
+import { ServerServices } from "../../../services/serverService";
+
+// import redux
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
 
-import "./card-top-icons.scss";
 
 interface CardTopIconsProps {
   vacation: UserVacationModel;
@@ -44,7 +44,7 @@ export class CardTopIcons extends Component<CardTopIconsProps, CardTopIconsState
   render() {
     const { color, followIcon, admin, vacation } = this.props;
     return (
-      <div className="top-icons">
+      <div>
         {followIcon ? (
           <IconButton
             onClick={this.handleIconClick}
@@ -95,7 +95,7 @@ export class CardTopIcons extends Component<CardTopIconsProps, CardTopIconsState
     
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
-    await deleteRequest(url, tokens.accessToken);
+    await ServerServices.deleteRequest(url, tokens.accessToken);
     
     // delete from store 
     const action = { type: ActionType.deleteVacation, payload: vacationID };

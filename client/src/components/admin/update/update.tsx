@@ -14,10 +14,7 @@ import { VacationModel } from "../../../models/vacations-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 // import services
-import {
-  getRequest,
-  handleServerResponse
-} from "../../../services/serverService";
+import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
 import { VacationService } from "../../../services/vacationsService";
 import { formLegal, verifyAdmin } from "../../../services/validationService";
@@ -30,7 +27,7 @@ import { Unsubscribe } from "redux";
 import "./update.scss";
 
 const VacCard = lazy(() => import("../../vac-card/vac-card"));
-
+ 
 interface UpdateState {
   vacation: VacationModel;
   tokens: TokensModel;
@@ -72,7 +69,7 @@ export class Update extends Component<any, UpdateState> {
     try {
       const vacationID = this.props.match.params.id;
       const url = `http://localhost:3000/api/vacations/${vacationID}`;
-      const vacation = await getRequest(url);
+      const vacation = await ServerServices.getRequest(url);
       this.setState({ vacation });
 
       setTimeout(() => {
@@ -129,14 +126,15 @@ export class Update extends Component<any, UpdateState> {
       );
 
       // if true server returned an error
-      if (handleServerResponse(response)) {
+      if (ServerServices.handleServerResponse(response)) {
         alert(response.body);
         return;
       }
 
       this.handleSuccess(response.body);
+
     } catch (err) {
-      console.log(err);
+      alert(err);
     }
   };
 
@@ -176,7 +174,6 @@ export class Update extends Component<any, UpdateState> {
                   followIcon={false}
                   admin={false}
                   hover={false}
-                  accessToken={""}
                   preview={preview}
                 />
               </Grid>
@@ -197,5 +194,5 @@ export class Update extends Component<any, UpdateState> {
     this.setState({ vacation, updated: false });
   };
 }
-
+ 
 export default Update;

@@ -14,6 +14,7 @@ export const styleReducer = (oldAppState = new AppState(), action: Action): AppS
       newAppState.backgroundImage = action.payload
       break
   }
+  
   return newAppState
 }
  

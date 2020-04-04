@@ -1,7 +1,10 @@
 
-// template of fetch get request
-export const getData = async (url: string, options?: {}) => {
+export class ServerServices {
+
   
+  // template of fetch get request
+  static getData = async (url: string, options?: {}) => {
+    
   try {
     const response = await fetch(url, options)
     const data = await response.json()
@@ -18,7 +21,7 @@ export const getData = async (url: string, options?: {}) => {
 // end of function
 
 // template of get request with authorization
-export const getRequest = async (url: string, accessToken?: string) => {
+static getRequest = async (url: string, accessToken?: string) => {
   
   const options = {
     headers: {
@@ -27,7 +30,7 @@ export const getRequest = async (url: string, accessToken?: string) => {
   };
   
   try {
-    const response = await getData(url, options);
+    const response = await ServerServices.getData(url, options);
     return response
   } catch (err) {
     return err
@@ -37,7 +40,7 @@ export const getRequest = async (url: string, accessToken?: string) => {
 // end of function
 
 // template of post request with authorization
-export const postRequest = async (url: string, body?: any, accessToken?: string) => {
+static postRequest = async (url: string, body?: any, accessToken?: string) => {
   
   const options = {
     method: "POST",
@@ -49,7 +52,7 @@ export const postRequest = async (url: string, body?: any, accessToken?: string)
   };
 
   try {
-    const response = await getData(url, options);
+    const response = await ServerServices.getData(url, options);
     return response
   } catch (err) {
     return err
@@ -59,7 +62,7 @@ export const postRequest = async (url: string, body?: any, accessToken?: string)
 
 
 // template for delete request
-export const deleteRequest = async (url: string, accessToken?: string) => {
+static deleteRequest = async (url: string, accessToken?: string) => {
   const options = {
     method: "DELETE",
     headers: {
@@ -75,16 +78,15 @@ export const deleteRequest = async (url: string, accessToken?: string) => {
 // end of function
 
 // function to handle server response
-export const handleServerResponse = response => {
-  if (typeof response === "string" || response.message !== "success") {
+static handleServerResponse = response => {
+  if (response.message === "error") {
     return true 
-  // } else if(typeof response === "object" && response.message !== "success") {
-  //   return true
   }
   return false;
 };
 // end of function
 
 
+}
 
 

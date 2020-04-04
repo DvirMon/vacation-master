@@ -19,15 +19,11 @@
 
   .pos {
     padding: 2.5%;
+    padding-bottom: 1%;
   }
 
   .input-file {
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
+    display: none;
   }
 
   .upload-button {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { deleteRequest } from '../../services/serverService';
+import { ServerServices } from '../../services/serverService';
  
 // import redux
 import { store } from '../../redux/store';
@@ -17,7 +17,7 @@ export class Logout extends Component <any, any> {
      
         // clear refreshToken from db
         const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;
-        await deleteRequest(url);
+        await ServerServices.deleteRequest(url);
     
         // handle logic in store
         store.dispatch({ type: ActionType.Logout })

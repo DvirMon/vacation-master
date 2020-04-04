@@ -15,7 +15,7 @@ import { TokensModel } from "../../../models/tokens.model";
 import { formLegal, verifyAdmin } from "../../../services/validationService";
 import { TokensServices } from "../../../services/tokensService";
 import { VacationService } from "../../../services/vacationsService";
-import { handleServerResponse } from "../../../services/serverService";
+import { ServerServices } from "../../../services/serverService";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -44,6 +44,7 @@ export class Insert extends Component<any, InsertState> {
   }
 
   public componentDidMount = async () => {
+
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
@@ -53,12 +54,6 @@ export class Insert extends Component<any, InsertState> {
 
     // verify admin
     verifyAdmin(this.props.history);
-
-    // refresh store vacation
-    store.dispatch({
-      type: ActionType.refreshVacation,
-      payload: new VacationModel()
-    });
   };
 
   public componentWillUnmount(): void {
@@ -88,7 +83,7 @@ export class Insert extends Component<any, InsertState> {
       );
 
       // if true server returned an error
-      if (handleServerResponse(response)) {
+      if (ServerServices.handleServerResponse(response)) {
         alert(response.body);
         return;
       }
@@ -110,7 +105,7 @@ export class Insert extends Component<any, InsertState> {
   public handleTokens = setInterval(async () => {
     const tokens = store.getState().auth.tokens;
     await TokensServices.getAccessToken(tokens);
-  }, 60000);
+  }, 360000);
 
   render() {
     const { vacation, preview } = this.state;
@@ -129,7 +124,6 @@ export class Insert extends Component<any, InsertState> {
             vacation={vacation}
             followIcon={false}
             admin={false}
-            accessToken={""}
             preview={preview}
           />
         </Grid>

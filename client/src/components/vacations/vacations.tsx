@@ -7,10 +7,7 @@ import Col from "react-bootstrap/Col";
 import Loader from "../loader/loader";
 
 // import services
-import {
-  deleteRequest,
-  handleServerResponse
-} from "../../services/serverService";
+import { ServerServices } from "../../services/serverService";
 import { VacationService } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
@@ -22,23 +19,18 @@ import { TokensModel } from "../../models/tokens.model";
 import { MenuModel, AdminMenu } from "../../models/menu-model";
 
 // import redux
-import { Unsubscribe } from "redux"; 
-import { store } from "../../redux/store"; 
+import { Unsubscribe } from "redux";
+import { store } from "../../redux/store";
 import { ActionType } from "../../redux/action-type";
 import "./vacations.scss";
- 
-interface VacationsProps {
-  handleFollowUpCounter?(followUpCounter: number): void;
-}
 
 interface VacationsState {
-  admin: boolean;
-  followIcon: boolean;
   user: UserModel;
-  followUp?: UserVacationModel[];
+  admin: boolean;
   tokens: TokensModel;
+  followUp?: UserVacationModel[];
   unFollowUp?: UserVacationModel[];
-  menu: MenuModel; 
+  menu: MenuModel;
 }
 
 export class Vacations extends Component<any, VacationsState> {
@@ -46,15 +38,14 @@ export class Vacations extends Component<any, VacationsState> {
 
   constructor(props: any) {
     super(props);
- 
+
     this.state = {
-      admin: false,
-      followIcon: true,
       user: store.getState().auth.user,
+      admin: store.getState().auth.admin,
       tokens: store.getState().auth.tokens,
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
-      menu: AdminMenu,
+      menu: AdminMenu
     };
   }
 
@@ -64,6 +55,7 @@ export class Vacations extends Component<any, VacationsState> {
       this.unsubscribeStore = store.subscribe(() => {
         this.setState({
           user: store.getState().auth.user,
+          admin: store.getState().auth.admin,
           tokens: store.getState().auth.tokens,
           followUp: store.getState().vacation.followUp,
           unFollowUp: store.getState().vacation.unFollowUp
@@ -78,7 +70,8 @@ export class Vacations extends Component<any, VacationsState> {
 
       const user = store.getState().auth.user;
       const tokens = store.getState().auth.tokens;
-      const admin = LoginServices.handelRole(user);
+      const admin = store.getState().auth.admin
+ 
 
       // unable for client to navigate to other route
       if (admin) {
@@ -94,7 +87,7 @@ export class Vacations extends Component<any, VacationsState> {
         );
 
         // handle response - if true there is an error
-        if (handleServerResponse(response)) {
+        if (ServerServices.handleServerResponse(response)) {
           alert(response);
           this.props.history.push("/logout");
           return;
@@ -106,14 +99,12 @@ export class Vacations extends Component<any, VacationsState> {
           payload: response.body
         };
         store.dispatch(action);
+        
       }
+        // update background and menu according to client role
+        MenuModel.setMenu(user, store.getState().vacation.followUp.length);
+        LoginServices.handelBackground(admin);
 
-      // update state
-      this.setState({ admin });
-
-      // update background and menu according to client role
-      MenuModel.setMenu(user, store.getState().vacation.followUp.length);
-      LoginServices.handelBackground(admin);
     } catch (err) {
       console.log(err);
     }
@@ -128,10 +119,10 @@ export class Vacations extends Component<any, VacationsState> {
   public handleTokens = setInterval(async () => {
     const tokens = store.getState().auth.tokens;
     await TokensServices.getAccessToken(tokens);
-  }, 600000);
+  }, 360000);
 
   render() {
-    const { followUp, unFollowUp, admin, tokens } = this.state;
+    const { followUp, unFollowUp, admin } = this.state;
 
     return (
       <React.Fragment>
@@ -149,7 +140,6 @@ export class Vacations extends Component<any, VacationsState> {
                 <Col key={vacation.vacationID} sm={3}>
                   <VacCard
                     vacation={vacation}
-                    accessToken={tokens ? tokens.accessToken : ""}
                     follow={true}
                     update={this.updateMenu}
                     followIcon={true}
@@ -165,7 +155,6 @@ export class Vacations extends Component<any, VacationsState> {
                 <Col key={vacation.vacationID} sm={4}>
                   <VacCard
                     vacation={vacation}
-                    accessToken={tokens ? tokens.accessToken : ""}
                     follow={false}
                     followIcon={!admin}
                     hover={!admin}
@@ -181,12 +170,14 @@ export class Vacations extends Component<any, VacationsState> {
     );
   }
 
+  // function for update followup icon in menu
   public updateMenu = () => {
     const menu = store.getState().style.menu;
     menu.followUpCounter = store.getState().vacation.followUp.length;
     const action = { type: ActionType.updateMenu, payload: menu };
     store.dispatch(action);
   };
+  // end of function
 }
 
 export default Vacations;
