@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, lazy, Suspense } from "react";
 
 // import components
 import VacCard from "../vac-card/vac-card";
@@ -22,15 +22,29 @@ import { MenuModel, AdminMenu } from "../../models/menu-model";
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
 import { ActionType } from "../../redux/action-type";
+
 import "./vacations.scss";
+
+import Slider from "react-slick";
+
+const myCard = lazy(() => import("../vac-card/vac-card"));
 
 interface VacationsState {
   user: UserModel;
   admin: boolean;
   tokens: TokensModel;
-  followUp?: UserVacationModel[];
-  unFollowUp?: UserVacationModel[];
+  unFollowUp: UserVacationModel[];
+  followUp: UserVacationModel[];
+  followUpCarousel: UserVacationModel[];
   menu: MenuModel;
+  sliderSetting: {
+    dots: boolean;
+    infinite: boolean;
+    speed: number;
+    slidesToShow: number;
+    slidesToScroll: number;
+    className: string;
+  };
 }
 
 export class Vacations extends Component<any, VacationsState> {
@@ -45,7 +59,16 @@ export class Vacations extends Component<any, VacationsState> {
       tokens: store.getState().auth.tokens,
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
-      menu: AdminMenu
+      followUpCarousel: [],
+      menu: AdminMenu,
+      sliderSetting: {
+        dots: true,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        className: "follow-slider",
+      },
     };
   }
 
@@ -58,7 +81,7 @@ export class Vacations extends Component<any, VacationsState> {
           admin: store.getState().auth.admin,
           tokens: store.getState().auth.tokens,
           followUp: store.getState().vacation.followUp,
-          unFollowUp: store.getState().vacation.unFollowUp
+          unFollowUp: store.getState().vacation.unFollowUp,
         });
       });
 
@@ -70,8 +93,7 @@ export class Vacations extends Component<any, VacationsState> {
 
       const user = store.getState().auth.user;
       const tokens = store.getState().auth.tokens;
-      const admin = store.getState().auth.admin
- 
+      const admin = store.getState().auth.admin;
 
       // unable for client to navigate to other route
       if (admin) {
@@ -96,15 +118,16 @@ export class Vacations extends Component<any, VacationsState> {
         // if false response.body is the vacation object
         const action = {
           type: ActionType.getAllVacation,
-          payload: response.body
+          payload: response.body,
         };
         store.dispatch(action);
-        
       }
-        // update background and menu according to client role
-        MenuModel.setMenu(user, store.getState().vacation.followUp.length);
-        LoginServices.handelBackground(admin);
 
+      this.handleFollowUpSlider();
+
+      // update background and menu according to client role
+      MenuModel.setMenu(user, store.getState().vacation.followUp.length);
+      LoginServices.handelBackground(admin);
     } catch (err) {
       console.log(err);
     }
@@ -119,10 +142,23 @@ export class Vacations extends Component<any, VacationsState> {
   public handleTokens = setInterval(async () => {
     const tokens = store.getState().auth.tokens;
     await TokensServices.getAccessToken(tokens);
-  }, 360000);
+  }, 30000);
+
+  public handleFollowUpSlider = () => {
+    const sliderSetting = { ...this.state.sliderSetting };
+    const length = store.getState().vacation.followUp.length;
+
+    if (length > 1) {
+      sliderSetting.slidesToShow = length >= 4 ? 4 : length;
+      sliderSetting.slidesToScroll = Math.ceil(length / 4);
+      this.setState({ sliderSetting });
+      console.log(sliderSetting.slidesToShow);
+      console.log(sliderSetting.slidesToScroll);
+    }
+  };
 
   render() {
-    const { followUp, unFollowUp, admin } = this.state;
+    const { followUp, unFollowUp, sliderSetting, admin } = this.state;
 
     return (
       <React.Fragment>
@@ -135,23 +171,27 @@ export class Vacations extends Component<any, VacationsState> {
                 <h1 className="card-title">My Wish List</h1>
               )}
             </Row>
-            <Row className="row-followed">
-              {followUp.map(vacation => (
-                <Col key={vacation.vacationID} sm={3}>
-                  <VacCard
-                    vacation={vacation}
-                    follow={true}
-                    update={this.updateMenu}
-                    followIcon={true}
-                  ></VacCard>
+            <Row>
+              <Slider {...sliderSetting}> 
+              {followUp.map((vacation) => (
+                <Col key={vacation.vacationID}>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <VacCard
+                      vacation={vacation}
+                      follow={true}
+                      followIcon={true}
+                      update={this.handleFollowUpSlider}
+                    ></VacCard>
+                  </Suspense>
                 </Col>
               ))}
+              </Slider>
             </Row>
             <Row>
               {!admin && <h1 className="card-title">Explore Our Vacations</h1>}
             </Row>
             <Row className="row-unFollowed">
-              {unFollowUp.map(vacation => (
+              {unFollowUp.map((vacation) => (
                 <Col key={vacation.vacationID} sm={4}>
                   <VacCard
                     vacation={vacation}
@@ -159,7 +199,7 @@ export class Vacations extends Component<any, VacationsState> {
                     followIcon={!admin}
                     hover={!admin}
                     admin={admin}
-                    update={this.updateMenu}
+                    update={this.handleFollowUpSlider}
                   ></VacCard>
                 </Col>
               ))}
@@ -169,15 +209,6 @@ export class Vacations extends Component<any, VacationsState> {
       </React.Fragment>
     );
   }
-
-  // function for update followup icon in menu
-  public updateMenu = () => {
-    const menu = store.getState().style.menu;
-    menu.followUpCounter = store.getState().vacation.followUp.length;
-    const action = { type: ActionType.updateMenu, payload: menu };
-    store.dispatch(action);
-  };
-  // end of function
 }
 
 export default Vacations;

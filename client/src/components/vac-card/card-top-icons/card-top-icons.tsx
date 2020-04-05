@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 
 import clsx from "clsx";
+
 import { NavLink } from "react-router-dom";
- 
+
 import IconButton from "@material-ui/core/IconButton";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -16,30 +17,29 @@ import { ServerServices } from "../../../services/serverService";
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
 
-
 interface CardTopIconsProps {
   vacation: UserVacationModel;
   color: boolean;
   followIcon: boolean;
   admin?: boolean;
-  handleIconClick?(vacationID: number): void;
+  handleIconClick?(): void;
 }
-
+ 
 interface CardTopIconsState {
-  clickEvent: boolean,
+  clickEvent: boolean;
 }
 
-export class CardTopIcons extends Component<CardTopIconsProps, CardTopIconsState> {
+export class CardTopIcons extends Component<
+  CardTopIconsProps,
+  CardTopIconsState
+> {
+  constructor(props: CardTopIconsProps) {
+    super(props);
 
-
-  constructor(props : CardTopIconsProps) {
-    super(props)
-  
     this.state = {
       clickEvent: false,
-    }
+    };
   }
-  
 
   render() {
     const { color, followIcon, admin, vacation } = this.props;
@@ -51,7 +51,7 @@ export class CardTopIcons extends Component<CardTopIconsProps, CardTopIconsState
             className={clsx({
               icon: true,
               "showIcon-semi": true,
-              "rose-fix": color
+              "rose-fix": color,
             })}
           >
             <FavoriteIcon fontSize="large" />
@@ -75,12 +75,8 @@ export class CardTopIcons extends Component<CardTopIconsProps, CardTopIconsState
   }
 
   public handleIconClick = () => {
-
-    const vacation = this.props.vacation;
     if (this.props.handleIconClick) {
-      this.props.handleIconClick(
-        vacation.followUpID ? vacation.followUpID : vacation.vacationID
-      );
+      this.props.handleIconClick();
     }
   };
 
@@ -92,12 +88,12 @@ export class CardTopIcons extends Component<CardTopIconsProps, CardTopIconsState
 
     const vacationID = this.props.vacation.vacationID;
     const tokens = store.getState().auth.tokens;
-    
+
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
     await ServerServices.deleteRequest(url, tokens.accessToken);
-    
-    // delete from store 
+
+    // delete from store
     const action = { type: ActionType.deleteVacation, payload: vacationID };
     store.dispatch(action);
   };

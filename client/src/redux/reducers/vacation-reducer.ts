@@ -22,6 +22,7 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
 
       break
     case ActionType.deleteFollowUp:
+      delete action.payload.followUpID;
       newAppState.unFollowUp.push(action.payload)
       const followUpDelete = newAppState.followUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
       newAppState.followUp.splice(followUpDelete, 1)

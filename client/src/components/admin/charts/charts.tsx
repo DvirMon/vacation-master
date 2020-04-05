@@ -27,7 +27,7 @@ export class Charts extends Component<any, ChartsState> {
   private unsubscribeStore: Unsubscribe;
   
   constructor(props: any) {
-    super(props);
+    super(props); 
 
     this.state = {
       tokens: store.getState().auth.tokens,
@@ -112,7 +112,7 @@ export class Charts extends Component<any, ChartsState> {
     console.log("-------");
     await TokensServices.getAccessToken(tokens);
     console.log(store.getState().auth.tokens.accessToken);
-  }, 60000);
+  }, 360000);
 }
 
 export default Charts;

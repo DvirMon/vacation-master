@@ -10,17 +10,40 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 
 import { UserModel } from "../../../models/user-model";
 
+// import redux
+import { store } from "../../../redux/store";
+import { Unsubscribe } from "redux";
 
 interface MenuUserProps {
   userInfo?: UserModel;
   followUpCounter?: number;
 }
 
+interface MenuUserState {
+  followUpCounter?: number;
+}
 
-export class MenuUser extends Component<MenuUserProps, any> {
+export class MenuUser extends Component<MenuUserProps, MenuUserState> {
+  constructor(props, private unsubscribeStore: Unsubscribe) {
+    super(props);
 
-  render() { 
-    const { userInfo, followUpCounter } = this.props;
+    this.state = {
+      followUpCounter: store.getState().vacation.followUp.length,
+    };
+  }
+
+  public componentDidMount = () => {
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({
+        followUpCounter: store.getState().vacation.followUp.length,
+      });
+    });
+  };
+
+  render() {
+    
+    const { followUpCounter } = this.state;
+    const { userInfo } = this.props;
 
     return (
       <React.Fragment>

@@ -23,16 +23,16 @@ import { UserVacationModel } from "../../models/vacations-model";
 import { VacationService } from "../../services/vacationsService";
 
 // import redux
-import { store } from "../../redux/store"; 
+import { store } from "../../redux/store";
 import { ActionType } from "../../redux/action-type";
 
 import "./vac-card.scss";
 
 interface VacCardProps {
+  vacation?: UserVacationModel;
   followIcon: boolean;
   admin?: boolean;
   hover?: boolean;
-  vacation: UserVacationModel;
   follow?: boolean;
   preview?: string;
   update?(): void;
@@ -55,48 +55,72 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       setExpanded: false,
       clickEvent: false,
       color: false,
-      followers: 0
+      followers: 0,
     };
   }
-
-  public componentWillMount = () => {
-    if (this.props.follow) {
-      this.setState({
-        color: true,
-        clickEvent: true
-      });
-    }
-  };
 
   public componentDidMount = async () => {
     const vacationID = this.props.vacation.vacationID;
     if (vacationID) {
-      const followers = await VacationService.getFollowersByVacationAsync(vacationID);
-      this.setState({ followers: followers.followers });
+      const vacation = await VacationService.getFollowersByVacationAsync(
+        vacationID
+      );
+      this.setState({ followers: vacation.followers });
+
+      if (this.props.follow) {
+        this.setState({
+          color: true,
+          clickEvent: true,
+        });
+      }
     }
   };
 
-  public handleFollowUp = async (vacationID: number) => {
+  public handleFollowUp = async () => {
     try {
-
       // get accessToken
       const accessToken = store.getState().auth.tokens.accessToken;
+      const vacation = this.props.vacation;
+      let clickEvent = this.state.clickEvent;
+ 
+      if (vacation.followUpID) {
+        clickEvent = true;
+      }
 
-      const clickEvent = this.state.clickEvent;
-      
       switch (clickEvent) {
         case true: {
-          await VacationService.deleteFollowUpAsync(vacationID, accessToken);
-          const action = { type : ActionType.deleteFollowUp, payload : this.props.vacation}
-          store.dispatch(action)
-          this.props.update();
+          try {
+            await VacationService.deleteFollowUpAsync(
+              vacation.followUpID,
+              accessToken
+            );
+            const action = {
+              type: ActionType.deleteFollowUp,
+              payload: vacation,
+            };
+            store.dispatch(action);
+            this.props.update();
+          } catch (err) {
+            console.log(err);
+          }
           break;
         }
         case false: {
-          await VacationService.addFollowUpAsync(vacationID, accessToken);
-          const action = { type : ActionType.addFollowUp, payload : this.props.vacation}
-          store.dispatch(action)
-          this.props.update();
+          try {
+            const addedVacation = await VacationService.addFollowUpAsync(
+              vacation.vacationID,
+              accessToken
+            );
+            vacation.followUpID = addedVacation.id;
+            const action = {
+              type: ActionType.addFollowUp,
+              payload: vacation,
+            };
+            store.dispatch(action);
+            this.props.update();
+          } catch (err) {
+            console.log(err);
+          }
           break;
         }
       }
@@ -105,7 +129,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     }
   };
 
-  render() { 
+  render() {
     const { expanded, color, followers } = this.state;
     const { vacation, followIcon, admin, hover, preview } = this.props;
 
@@ -114,7 +138,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
         <Card
           className={clsx({
             root: true,
-            "root-hover": hover
+            "root-hover": hover,
           })}
         >
           <CardMedia
@@ -127,17 +151,17 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             title=""
           ></CardMedia>
           <CardHeader
-          className={"card-header"}
-          action={
-            <CardTopIcons
-              vacation={vacation}
-              color={color}
-              followIcon={followIcon}
-              admin={admin}
-              handleIconClick={this.handleIconClick}
-            />
-          }
-          title={vacation.destination}
+            className={"card-header"}
+            action={
+              <CardTopIcons
+                vacation={vacation}
+                color={color}
+                followIcon={followIcon}
+                admin={admin}
+                handleIconClick={this.handleIconClick}
+              />
+            }
+            title={vacation.destination}
             subheader={this.formatDate(vacation.startDate, vacation.endDate)}
           />
           <CardActions disableSpacing>
@@ -170,13 +194,16 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     );
   }
 
-  public handleIconClick = async (vacationID: number) => {
+  public handleIconClick = async () => {
     const clickEvent = this.state.clickEvent;
+
+    console.log(this.state.clickEvent);
+
+    await this.handleFollowUp();
     this.setState({ clickEvent: !clickEvent });
-    await this.handleFollowUp(vacationID);
   };
 
-  public handleExpandClick = event => {
+  public handleExpandClick = (event) => {
     const expanded = this.state.expanded;
     this.setState({ expanded: !expanded });
   };
@@ -193,7 +220,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       </React.Fragment>
     );
   };
-
 }
 
 export default VacCard;

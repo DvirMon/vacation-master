@@ -50,7 +50,8 @@ router.post("/", auth.authorize(), async (request, response, next) => {
     
     const addedFollowup = await followUpLogic.addFollowUp(followup);
 
-    addedFollowup.userID = userID;
+    addedFollowup
+    console.log(addedFollowup)
 
     response.json(addedFollowup);
   } catch (err) {
@@ -63,10 +64,11 @@ router.post("/", auth.authorize(), async (request, response, next) => {
 router.delete("/:id", auth.authorize(), async (request, response, next) => {
   try {
     const id = request.params.id;
+    console.log(id)
     await followUpLogic.deleteFollowUp(id);
     response.sendStatus(204);
   } catch (err) {
-    next(err);
+    next(err); 
   }
 });
 
