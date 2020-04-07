@@ -1,7 +1,8 @@
 const express = require("express");
+const router = express.Router();
+
 const followUpLogic = require("../bll/followup-logic");
 const usersLogic = require("../bll/users-logic");
-const router = express.Router();
 const auth = require("../services/auth");
 
 
@@ -51,7 +52,6 @@ router.post("/", auth.authorize(), async (request, response, next) => {
     const addedFollowup = await followUpLogic.addFollowUp(followup);
 
     addedFollowup
-    console.log(addedFollowup)
 
     response.json(addedFollowup);
   } catch (err) {
@@ -64,7 +64,6 @@ router.post("/", auth.authorize(), async (request, response, next) => {
 router.delete("/:id", auth.authorize(), async (request, response, next) => {
   try {
     const id = request.params.id;
-    console.log(id)
     await followUpLogic.deleteFollowUp(id);
     response.sendStatus(204);
   } catch (err) {

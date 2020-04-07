@@ -1,12 +1,12 @@
-import { ServerServices} from "./serverService";
+import { ServerServices } from "./serverService";
+import { store } from "../redux/store";
+import { ActionType } from "../redux/action-type";
 
-
+// class to handle all vacation logic
 export class VacationService {
 
-
+  // function tp get user followed and un-followed vacations
   static getVacationsAsync = async (accessToken) => {
-
-    // get user followed and un-followed vacations
     const url = `http://localhost:3000/api/vacations/user`;
     try {
       const response = await ServerServices.getRequest(url, accessToken);
@@ -35,7 +35,7 @@ export class VacationService {
     const url = `http://localhost:3000/api/followup`;
     try {
       const response = await ServerServices.postRequest(url, { vacationID }, accessToken);
-      return response 
+      return response
     } catch (err) {
       console.log(err);
     }
@@ -109,6 +109,55 @@ export class VacationService {
   }
   // end of function
 
+  // function to handle add followup logic
+  static handleAddFollowUp = async (vacation, accessToken) => {
+    try {
+      const addedVacation = await VacationService.addFollowUpAsync(
+        vacation.vacationID,
+        accessToken
+      );
+      vacation.followUpID = addedVacation.id;
+      const action = {
+        type: ActionType.addFollowUp,
+        payload: vacation,
+      };
+      store.dispatch(action);
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  // end of function
+
+  // function to handle delete followup logic
+  static handleDeleteFollowUp = async (vacation, accessToken) => {
+    try {
+      await VacationService.deleteFollowUpAsync(
+        vacation.followUpID,
+        accessToken
+      );
+      const action = {
+        type: ActionType.deleteFollowUp,
+        payload: vacation,
+      };
+      store.dispatch(action);
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  // end of function
+
+  static handleFollowUp = async (vacation) => {
+ 
+    const accessToken = store.getState().auth.tokens.accessToken;
+
+    if (vacation.followUpID) {
+      await VacationService.handleDeleteFollowUp(vacation, accessToken);
+    } else {
+      await VacationService.handleAddFollowUp(vacation, accessToken);
+    }
+  };
 
 
 }
+// end of vacation service

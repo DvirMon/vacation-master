@@ -8,6 +8,6 @@ const errorHandler = (err, req, response, next) => {
   // default to 500 server error
   return response.status(500).json({ body: err, message: "error" });
 };
-// enf of function
+// end of function
 
 module.exports = errorHandler;

@@ -86,16 +86,13 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public handleTokens = setInterval(async () => {
-    const tokens = store.getState().auth.tokens;
-    console.log(tokens);
-    console.log("-------");
-    await TokensServices.getAccessToken(tokens);
+    await TokensServices.getAccessToken();
     console.log(store.getState().auth.tokens.accessToken);
   }, 60000);
 
   public updateVacation = async () => {
     const { vacation, updated } = this.state;
-
+ 
     if (updated) {
       const answer = window.confirm(
         "No change has been notice, do you wish to continue?"

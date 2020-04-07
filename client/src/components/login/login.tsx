@@ -26,12 +26,17 @@ import { MenuModel, LoginMenu } from "../../models/menu-model";
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
 import { ServerServices } from "../../services/serverService";
+import SocketContext from "../../services/socketServices";
 
 // import redux
 import { ActionType } from "../../redux/action-type";
 import { store } from "../../redux/store";
 
 import "./login.scss";
+
+import io from "socket.io-client"; // npm i socket.io
+
+const ENDPOINT: string = "http://localhost:3000";
 
 interface LoginState {
   user: UserModel;
@@ -43,6 +48,10 @@ interface LoginState {
 }
 
 export class Login extends Component<any, LoginState> {
+  // private socket = io.connect(ENDPOINT, {path:'/stomp'}); // Server Address.
+
+  static contextType = SocketContext;
+
   constructor(props: any) {
     super(props);
 
@@ -52,7 +61,7 @@ export class Login extends Component<any, LoginState> {
       showPassword: false,
       error: false,
       serverError: "",
-      menu: new MenuModel({}, false, false, false, false, 0)
+      menu: new MenuModel({}, false, false, false, false, 0),
     };
   }
 
@@ -60,6 +69,8 @@ export class Login extends Component<any, LoginState> {
     // set style
     store.dispatch({ type: ActionType.updateMenu, payload: LoginMenu });
     store.dispatch({ type: ActionType.updateBackground, payload: "home" });
+
+    // const socket = this.context
 
     // check if user is logged
     try {
@@ -97,7 +108,6 @@ export class Login extends Component<any, LoginState> {
 
       // if false - save user in store
       store.dispatch({ type: ActionType.Login, payload: loggedUser });
-     
 
       // get tokens
       await TokensServices.getTokens(loggedUser);
@@ -109,7 +119,7 @@ export class Login extends Component<any, LoginState> {
     } catch (err) {
       console.log(err);
     }
-  }; 
+  };
 
   render() {
     const { user, serverError, showPassword, error } = this.state;

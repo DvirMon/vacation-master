@@ -2,14 +2,17 @@ import { ServerServices } from "./serverService";
 import { ActionType } from "../redux/action-type";
 import { store } from "../redux/store";
 
+
+
 export class TokensServices {
 
   // function for getting first accessToken and refreshToken
   static getTokens = async user => {
     const url = `http://localhost:3000/api/tokens`;
     try {
-      const tokens = await ServerServices.postRequest(url, user);
-      store.dispatch({ type: ActionType.addToken, payload: tokens });
+      const response = await ServerServices.postRequest(url, user);
+      ServerServices.handleTokenResponse(response)
+
     } catch (err) {
       console.log(err);
     }
@@ -17,22 +20,21 @@ export class TokensServices {
   //end of function
 
   // function for new accessToken
-  static getAccessToken = async storageTokens => {
+  static getAccessToken = async () => {
 
-    const dbToken = storageTokens.dbToken
-    const accessToken = storageTokens.accessToken
+    const tokens = store.getState().auth.tokens;
 
     try {
       const url = `http://localhost:3000/api/tokens/new`;
-      const response = await ServerServices.postRequest(url, dbToken, accessToken)
+      const response = await ServerServices.postRequest(url, tokens.dbToken, tokens.accessToken)
+      console.log(response)
+      ServerServices.handleTokenResponse(response)
 
-      console.log(response.body)
-
-      store.dispatch({ type: ActionType.addToken, payload: response.body })
     } catch (err) {
       console.log(err);
     }
   };
+
 
 }
 

@@ -18,7 +18,7 @@ export const authReducer = (oldAppState = new AppState(), action: Action): AppSt
       break
     case ActionType.addToken:
       newAppState.tokens = action.payload
-      sessionStorage.setItem("tokens", JSON.stringify(action.payload));
+      sessionStorage.setItem("jwt", JSON.stringify(action.payload.dbToken.refreshToken));
       break
     case ActionType.Logout:
       newAppState.isLoggedIn = false

@@ -1,10 +1,13 @@
 const express = require("express");
+const router = express.Router();
+
 const vacationsLogic = require("../bll/vacation-logic");
 const usersLogic = require("../bll/users-logic");
-const VacationModel = require("../models/vacation-model");
-const router = express.Router();
+
 const auth = require("../services/auth");
-const imageLogic = require("../services/image");
+const imageService = require("../services/image");
+
+const VacationModel = require("../models/vacation-model");
 
 // get all vacations
 router.get("/", async (request, response, next) => {
@@ -68,7 +71,7 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
   } 
 
   // save file locally 
-  const fileName = imageLogic.saveImageLocally(file);
+  const fileName = imageService.saveImageLocally(file);
   
   vacation.image = fileName;
 
@@ -96,7 +99,7 @@ router.put("/:id", auth.authorize(1), async (request, response, next) => {
   
   // verify file
   if (file) {
-    const fileName = imageLogic.saveImageLocally(file.image);
+    const fileName = imageService.saveImageLocally(file.image);
     vacation.image = fileName;
   } else if (vacation.image === undefined) {
     response.status(400).json({body : "No image was sent!", message : "error"});
@@ -115,7 +118,6 @@ router.put("/:id", auth.authorize(1), async (request, response, next) => {
     
     // request for update
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
-    console.log(updatedVacation)
 
     // verify update
     if (updatedVacation === null) {
@@ -147,7 +149,7 @@ router.delete("/:id", auth.authorize(1), async (request, response) => {
 router.get("/update/image/:imgName", async (request, response, next) => {
   try {
     const imageName = request.params.imgName;
-    const image = await imageLogic.readImage(imageName);
+    const image = await imageService.readImage(imageName);
     response.sendFile(image);
   } catch (err) {
     next(err);

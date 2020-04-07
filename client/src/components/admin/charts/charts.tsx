@@ -107,10 +107,7 @@ export class Charts extends Component<any, ChartsState> {
   }
 
   public handleTokens = setInterval(async () => {
-    const tokens = store.getState().auth.tokens;
-    console.log(tokens);
-    console.log("-------");
-    await TokensServices.getAccessToken(tokens);
+    await TokensServices.getAccessToken();
     console.log(store.getState().auth.tokens.accessToken);
   }, 360000);
 }

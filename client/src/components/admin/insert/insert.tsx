@@ -103,8 +103,7 @@ export class Insert extends Component<any, InsertState> {
   };
 
   public handleTokens = setInterval(async () => {
-    const tokens = store.getState().auth.tokens;
-    await TokensServices.getAccessToken(tokens);
+    await TokensServices.getAccessToken();
   }, 360000);
 
   render() {

@@ -20,14 +20,10 @@ router.post("/", async (request, response, next) => {
     // create refreshToken for user
     const refreshToken = await auth.setRefreshToken(user);
 
-    const token = {
-      refreshToken: refreshToken
-    };
-
     // save refreshToken in db
-    const dbToken = await tokenLogic.addToken(token);
+    const dbToken = await tokenLogic.addToken({ refreshToken });
 
-    response.status(201).json({ accessToken, dbToken });
+    response.status(201).json({ body: {dbToken, accessToken }, message: "success" });
   } catch (err) {
     next(err);
   }
@@ -59,7 +55,7 @@ router.post("/new", auth.authorize(), async (request, response, next) => {
     // generate new accessToken
     const accessToken = await auth.setToken({
       userName: verify.sub,
-      isAdmin: verify.role
+      isAdmin: verify.role,
     });
 
     response

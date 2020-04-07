@@ -17,15 +17,15 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
       break
     case ActionType.addFollowUp:
       newAppState.followUp.push(action.payload)
-      const unFollowUpDelete = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
-      newAppState.unFollowUp.splice(unFollowUpDelete, 1)
+      const unFollowUpIndex = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
+      newAppState.unFollowUp.splice(unFollowUpIndex, 1)
 
       break
     case ActionType.deleteFollowUp:
       delete action.payload.followUpID;
       newAppState.unFollowUp.push(action.payload)
-      const followUpDelete = newAppState.followUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
-      newAppState.followUp.splice(followUpDelete, 1)
+      const followUpIndex = newAppState.followUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
+      newAppState.followUp.splice(followUpIndex, 1)
       break
     case ActionType.updatedVacation:
       newAppState.unFollowUp.find(vacation => {

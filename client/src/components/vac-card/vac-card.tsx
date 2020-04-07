@@ -41,7 +41,6 @@ interface VacCardProps {
 interface VacCardState {
   expanded: boolean;
   setExpanded: boolean;
-  clickEvent: boolean;
   color: boolean;
   followers: number;
 }
@@ -53,80 +52,25 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     this.state = {
       expanded: false,
       setExpanded: false,
-      clickEvent: false,
       color: false,
       followers: 0,
     };
   }
 
   public componentDidMount = async () => {
+    // update follow icon number
     const vacationID = this.props.vacation.vacationID;
-    if (vacationID) {
-      const vacation = await VacationService.getFollowersByVacationAsync(
-        vacationID
-      );
-      this.setState({ followers: vacation.followers });
+    const vacation = await VacationService.getFollowersByVacationAsync(
+      vacationID
+    );
 
-      if (this.props.follow) {
-        this.setState({
-          color: true,
-          clickEvent: true,
-        });
-      }
-    }
-  };
+    // if (vacationID) {
+    // }
+    this.setState({ followers: vacation.followers });
 
-  public handleFollowUp = async () => {
-    try {
-      // get accessToken
-      const accessToken = store.getState().auth.tokens.accessToken;
-      const vacation = this.props.vacation;
-      let clickEvent = this.state.clickEvent;
- 
-      if (vacation.followUpID) {
-        clickEvent = true;
-      }
-
-      switch (clickEvent) {
-        case true: {
-          try {
-            await VacationService.deleteFollowUpAsync(
-              vacation.followUpID,
-              accessToken
-            );
-            const action = {
-              type: ActionType.deleteFollowUp,
-              payload: vacation,
-            };
-            store.dispatch(action);
-            this.props.update();
-          } catch (err) {
-            console.log(err);
-          }
-          break;
-        }
-        case false: {
-          try {
-            const addedVacation = await VacationService.addFollowUpAsync(
-              vacation.vacationID,
-              accessToken
-            );
-            vacation.followUpID = addedVacation.id;
-            const action = {
-              type: ActionType.addFollowUp,
-              payload: vacation,
-            };
-            store.dispatch(action);
-            this.props.update();
-          } catch (err) {
-            console.log(err);
-          }
-          break;
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
+    this.props.follow === true
+      ? this.setState({ color: true })
+      : this.setState({ color: false });
   };
 
   render() {
@@ -195,12 +139,9 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   }
 
   public handleIconClick = async () => {
-    const clickEvent = this.state.clickEvent;
-
-    console.log(this.state.clickEvent);
-
-    await this.handleFollowUp();
-    this.setState({ clickEvent: !clickEvent });
+    const vacation = this.props.vacation;
+    await VacationService.handleFollowUp(vacation);
+    this.props.update();
   };
 
   public handleExpandClick = (event) => {

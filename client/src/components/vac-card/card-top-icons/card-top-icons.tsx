@@ -24,7 +24,7 @@ interface CardTopIconsProps {
   admin?: boolean;
   handleIconClick?(): void;
 }
- 
+
 interface CardTopIconsState {
   clickEvent: boolean;
 }
@@ -75,11 +75,13 @@ export class CardTopIcons extends Component<
   }
 
   public handleIconClick = () => {
+    console.log(this.props.vacation)
     if (this.props.handleIconClick) {
       this.props.handleIconClick();
     }
   };
 
+  // function to delete vacation (for admin)
   public handleDelete = async () => {
     const answer = window.confirm("Are You Sure yoe?");
     if (!answer) {
@@ -97,6 +99,7 @@ export class CardTopIcons extends Component<
     const action = { type: ActionType.deleteVacation, payload: vacationID };
     store.dispatch(action);
   };
+  // end of function
 }
 
 export default CardTopIcons;

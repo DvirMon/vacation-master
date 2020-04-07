@@ -44,13 +44,11 @@ const setRefreshToken = user => {
 // end of function
 
 // function to handle authorization
-
 const authorize = role => (request, response, next) => {
   // verify if token exist
   const token = request.headers["authorization"];
-
-  console.log(token)
-
+  console.log(request.headers.authorization)
+ 
   if (!token) {
     return response
       .status(401)

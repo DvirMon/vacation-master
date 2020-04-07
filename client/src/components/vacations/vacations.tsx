@@ -26,6 +26,7 @@ import { ActionType } from "../../redux/action-type";
 import "./vacations.scss";
 
 import Slider from "react-slick";
+import UpdateToken from "../updateToken/updateToken";
 
 const myCard = lazy(() => import("../vac-card/vac-card"));
 
@@ -35,7 +36,6 @@ interface VacationsState {
   tokens: TokensModel;
   unFollowUp: UserVacationModel[];
   followUp: UserVacationModel[];
-  followUpCarousel: UserVacationModel[];
   menu: MenuModel;
   sliderSetting: {
     dots: boolean;
@@ -59,7 +59,6 @@ export class Vacations extends Component<any, VacationsState> {
       tokens: store.getState().auth.tokens,
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
-      followUpCarousel: [],
       menu: AdminMenu,
       sliderSetting: {
         dots: true,
@@ -92,8 +91,10 @@ export class Vacations extends Component<any, VacationsState> {
       }
 
       const user = store.getState().auth.user;
-      const tokens = store.getState().auth.tokens;
       const admin = store.getState().auth.admin;
+
+      await TokensServices.getTokens(user);
+      const tokens = store.getState().auth.tokens;
 
       // unable for client to navigate to other route
       if (admin) {
@@ -102,7 +103,7 @@ export class Vacations extends Component<any, VacationsState> {
         LoginServices.verifyUserPath(user, this.props.history);
       }
 
-      // send request for vacations
+      // send request for vacations only is store is empty
       if (store.getState().vacation.unFollowUp.length === 0) {
         const response = await VacationService.getVacationsAsync(
           tokens.accessToken
@@ -128,32 +129,24 @@ export class Vacations extends Component<any, VacationsState> {
       // update background and menu according to client role
       MenuModel.setMenu(user, store.getState().vacation.followUp.length);
       LoginServices.handelBackground(admin);
+      
     } catch (err) {
       console.log(err);
     }
   };
-
+  
   public componentWillUnmount(): void {
     this.unsubscribeStore();
-    clearInterval(this.handleTokens);
   }
-
-  // update tokens every 10 min
-  public handleTokens = setInterval(async () => {
-    const tokens = store.getState().auth.tokens;
-    await TokensServices.getAccessToken(tokens);
-  }, 30000);
-
+  
   public handleFollowUpSlider = () => {
     const sliderSetting = { ...this.state.sliderSetting };
     const length = store.getState().vacation.followUp.length;
 
     if (length > 1) {
       sliderSetting.slidesToShow = length >= 4 ? 4 : length;
-      sliderSetting.slidesToScroll = Math.ceil(length / 4);
+      sliderSetting.slidesToScroll = length > 4 ? 4 : length;
       this.setState({ sliderSetting });
-      console.log(sliderSetting.slidesToShow);
-      console.log(sliderSetting.slidesToScroll);
     }
   };
 
@@ -172,19 +165,19 @@ export class Vacations extends Component<any, VacationsState> {
               )}
             </Row>
             <Row>
-              <Slider {...sliderSetting}> 
-              {followUp.map((vacation) => (
-                <Col key={vacation.vacationID}>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <VacCard
-                      vacation={vacation}
-                      follow={true}
-                      followIcon={true}
-                      update={this.handleFollowUpSlider}
-                    ></VacCard>
-                  </Suspense>
-                </Col>
-              ))}
+              <Slider {...sliderSetting}>
+                {followUp.map((vacation) => (
+                  <Col key={vacation.vacationID}>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <VacCard
+                        vacation={vacation}
+                        follow={true}
+                        followIcon={true}
+                        update={this.handleFollowUpSlider}
+                      ></VacCard>
+                    </Suspense>
+                  </Col>
+                ))}
               </Slider>
             </Row>
             <Row>
@@ -204,6 +197,9 @@ export class Vacations extends Component<any, VacationsState> {
                 </Col>
               ))}
             </Row>
+
+            <UpdateToken />
+
           </div>
         )}
       </React.Fragment>

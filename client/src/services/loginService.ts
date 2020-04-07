@@ -33,7 +33,6 @@ export class LoginServices {
   // function to handle rout according to role
   static handleRouting = (user, history) => {
 
-
     if (user.isAdmin === 1) {
       history.push(`/admin`);
       return;
