@@ -1,5 +1,5 @@
 const path = require("path");
-const vacationsLogic = require("../bll/vacation-logic")
+const followUpLogic = require("../bll/followup-logic")
 
 const findHtmlFile = () => {
   const root = __dirname.substring(0, 38);
@@ -14,22 +14,23 @@ const connect = (socketServer) => {
         socketServer.engine.clientsCount
     );
 
-    socket.on("admin-add-vacation", async (vacation) => {
+    socket.on("admin-add-vacation", (vacation) => {
       socketServer.sockets.emit("server-add-vacation", vacation)
     })  
 
-    socket.on("admin-update-vacation", async (vacation) => {
+    socket.on("admin-update-vacation", (vacation) => {
       socketServer.sockets.emit("server-update-vacation", vacation)
     })  
 
-    socket.on("admin-delete-vacation", async (vacationID) => {
+    socket.on("admin-delete-vacation", (vacationID) => {
       socketServer.sockets.emit("server-delete-vacation", vacationID)
     }) 
         
 
-    socket.on("user-update-chart", msg => {
-      console.log("msg")
-    })  
+    socket.on("user-update-chart", async dataPoints => {
+      dataPoints = await followUpLogic.getAllFollowUp();
+      socketServer.sockets.emit("server-update-chart", dataPoints)
+    })   
  
      
     socket.on("disconnect", () => {

@@ -8,7 +8,7 @@ import Loader from "../loader/loader";
 import Slider from "react-slick";
 import UpdateToken from "../updateToken/updateToken";
 
-// import services 
+// import services
 import { ServerServices } from "../../services/serverService";
 import { VacationService } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
@@ -29,7 +29,6 @@ import { store } from "../../redux/store";
 import { ActionType } from "../../redux/action-type";
 
 import "./vacations.scss";
-
 
 interface VacationsState {
   user: UserModel;
@@ -110,15 +109,14 @@ export class Vacations extends Component<any, VacationsState> {
         tokens.accessToken
       );
 
-      // handle response - if true there is an error
-      if (ServerServices.handleServerResponse(response)) {
-        this.handleServerError(response);
-      } else {
-        this.handleServerSuccess(response);
-      }
-    }
+      // handle server response
+      ServerServices.handleServerResponse(
+        response,
+        () => this.handleServerSuccess(response),
+        () => this.handleServerError(response)
+      );
+    } 
   };
-
   public componentWillUnmount(): void {
     if (this.unsubscribeStore) {
       this.unsubscribeStore();

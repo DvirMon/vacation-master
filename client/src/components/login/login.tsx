@@ -96,7 +96,7 @@ export class Login extends Component<any, LoginState> {
     const serverResponse = await ServerServices.postRequest(url, user);
 
     // handle server response
-    ServerServices.handleServerResponseEx(
+    ServerServices.handleServerResponse(
       serverResponse,
       () => this.handleSuccessResponse(serverResponse.body),
       () => this.handleErrorResponse(serverResponse.body)

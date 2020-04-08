@@ -56,7 +56,7 @@ export class Insert extends Component<any, InsertState> {
       const response = await InsertService.handleRequest(vacation);
 
       // handle response
-      ServerServices.handleServerResponseEx(
+      ServerServices.handleServerResponse(
         response, 
         () => InsertService.handleSuccess(response.body, this.props.history),
         () => InsertService.handleError(response.body) 

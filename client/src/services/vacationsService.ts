@@ -153,10 +153,8 @@ export class VacationService {
     const accessToken = store.getState().auth.tokens.accessToken;
     if (vacation.followUpID) {
       await VacationService.handleDeleteFollowUp(vacation, accessToken);
-      updateChart(vacation)
     } else {
       await VacationService.handleAddFollowUp(vacation, accessToken);
-      updateChart(vacation)
     }
   };
   // end of function

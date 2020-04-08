@@ -3,9 +3,9 @@ import { Action } from "../action";
 import { ActionType } from "../action-type";
 
 export const vacationReducer = (oldAppState = new AppState(), action: Action): AppState => {
- 
+
   const newAppState = { ...oldAppState }
- 
+
 
   switch (action.type) {
 
@@ -28,7 +28,6 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
       newAppState.followUp.splice(followUpIndex, 1)
       break
     case ActionType.updatedVacation:
-
       let find: boolean = false
       newAppState.unFollowUp.find(vacation => {
         updateLogic(vacation, action)
@@ -43,8 +42,10 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
     case ActionType.deleteVacation:
       const index = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload)
       newAppState.unFollowUp.splice(index, 1)
-      break 
- 
+      break
+    case ActionType.updateChartPoints:
+      newAppState.dataPoints = action.payload
+      break
     case ActionType.Logout:
       newAppState.followUp = []
       newAppState.unFollowUp = []

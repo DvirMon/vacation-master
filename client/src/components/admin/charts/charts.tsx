@@ -4,18 +4,16 @@ import Loader from "../../loader/loader";
 import CanvasJSReact from "../../../assets/canvasjs.react";
 
 import { ChartModel } from "../../../models/charts-model";
-import { TokensModel } from "../../../models/tokens.model";
 
 import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
-import { ValidationService } from "../../../services/validationService";
-import { invokeConnection } from "../../../services/socketService";
+import { LoginServices } from "../../../services/loginService";
 
 import { store } from "../../../redux/store";
 import { Unsubscribe } from "redux";
 
 import "./charts.scss";
-import { LoginServices } from "../../../services/loginService";
+import { ActionType } from "../../../redux/action-type";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -30,31 +28,48 @@ export class Charts extends Component<any, ChartsState> {
     super(props);
 
     this.state = {
-      dataPoints: [],
+      dataPoints: store.getState().vacation.dataPoints,
     };
   }
 
   public componentDidMount = async () => {
-    
 
-     LoginServices.adminLoginLogic(this.props.history)
+    LoginServices.adminLoginLogic(this.props.history);
 
+    this.unsubscribeStore = store.subscribe(() => {
+      this.setState({
+        dataPoints: store.getState().vacation.dataPoints,
+      });
+    });
 
     try {
+
+      // handle request
       const url = `http://localhost:3000/api/followup`;
       const tokens = await TokensServices.handleStoreRefresh();
       const response = await ServerServices.getRequest(url, tokens.accessToken);
+       
+      // handle server request
+      ServerServices.handleServerResponse(
+        response,
+        () => this.handleSuccess(response.body),
+        () => this.handleError(response.body)
+      );
 
-      if (ServerServices.handleServerResponse(response)) {
-        alert(response.body);
-        this.props.history.push("/admin");
-      } else {
-        this.setState({ dataPoints: response.body });
-      }
     } catch (err) {
       alert(err);
       this.props.history.push("/admin");
     }
+  }; 
+
+  public handleSuccess = (dataPoints) => {
+    console.log(dataPoints)
+    store.dispatch({ type: ActionType.updateChartPoints, payload: dataPoints });
+  };
+
+  public handleError = (err) => {
+    alert(err);
+    this.props.history.push("/admin");
   };
 
   public componentWillUnmount(): void {

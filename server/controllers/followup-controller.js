@@ -5,12 +5,11 @@ const followUpLogic = require("../bll/followup-logic");
 const usersLogic = require("../bll/users-logic");
 const auth = require("../services/auth");
 
-// get all followup vacation
+// get all followup vacation and users for chart dataPoints
 router.get("/", auth.authorize(1), async (request, response, next) => {
   try {
-    const followers = await followUpLogic.getAllFollowUp();
-
-    response.json({ message: "success ", body: followers });
+    const dataPoints = await followUpLogic.getAllFollowUp();
+    response.json({ message: "success", body: dataPoints });
   } catch (err) {
     next(err);
   }

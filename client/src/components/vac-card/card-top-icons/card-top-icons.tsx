@@ -16,7 +16,10 @@ import { ServerServices } from "../../../services/serverService";
 // import redux
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
-import { handleAdminDelete } from "../../../services/socketService";
+import {
+  handleAdminDelete,
+  updateChart,
+} from "../../../services/socketService";
 import { VacationService } from "../../../services/vacationsService";
 
 interface CardTopIconsProps {
@@ -74,10 +77,15 @@ export class CardTopIcons extends Component<
       </div>
     );
   }
- 
+
   public handleIconClick = async () => {
+    
+    // handle user click
     const vacation = this.props.vacation;
     await VacationService.handleIconClick(vacation);
+
+    // update admin chart
+    updateChart();
   };
 
   // function to delete vacation (for admin)
@@ -99,8 +107,7 @@ export class CardTopIcons extends Component<
     store.dispatch(action);
 
     // update real-time
-    handleAdminDelete(vacationID)
-
+    handleAdminDelete(vacationID);
   };
   // end of function
 }

@@ -10,6 +10,7 @@ export enum ActionType {
   // style ActionType
   updateMenu,
   updateBackground,
+  updateSliderSetting,
   
   // vacations ActionType
   getAllVacation,
@@ -18,6 +19,6 @@ export enum ActionType {
   deleteVacation,
   addFollowUp,
   deleteFollowUp,
-  updateSliderSetting
+  updateChartPoints
   
 } 

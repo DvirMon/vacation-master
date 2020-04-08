@@ -95,7 +95,7 @@ export class Update extends Component<any, UpdateState> {
       );
 
       // handle server response
-      ServerServices.handleServerResponseEx(
+      ServerServices.handleServerResponse(
         response,
         () => UpdateService.handleSuccess(response.body, this.props.history),
         () => UpdateService.handleError(response.body)

@@ -1,3 +1,5 @@
+import { ChartModel } from "../models/charts-model";
+import { UserVacationModel } from "../models/vacations-model";
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 import io from "socket.io-client";
@@ -9,14 +11,15 @@ export const invokeConnection = () => {
     store.dispatch({ type: ActionType.updateSocket, payload: socket });
     if (!store.getState().auth.admin) {
       handleUserRealTimeUpdate(socket);
+    } else {
+      chartRealTimeUpdate(socket)
     }
   }
 }
-
-export const updateChart = (vacation) => {
+ 
+export const updateChart = () => {
   const socket = store.getState().auth.socket
   socket.emit("user-update-chart")
-
 }
 
 export const handleAdminInsert = (vacation) => {
@@ -38,22 +41,29 @@ export const handleAdminDelete = (vacationID) => {
 export const handleUserRealTimeUpdate = (socket) => {
 
   // admin added vacation
-  socket.on("server-add-vacation", vacation => {
+  socket.on("server-add-vacation", (vacation : UserVacationModel) => {
     store.dispatch({ type: ActionType.addVacation, payload: vacation })
   })
 
   // admin updated vacation
-  socket.on("server-update-vacation", vacation => {
+  socket.on("server-update-vacation", (vacation : UserVacationModel)  => {
     store.dispatch({ type: ActionType.updatedVacation, payload: vacation })
   })
 
   // admin deleted vacation
-  socket.on("server-delete-vacation", vacationID => {
+  socket.on("server-delete-vacation", (vacationID : number) => {
     store.dispatch({ type: ActionType.deleteVacation, payload: vacationID })
-
   })
-
+  
 }
+// end of function
 
+
+export const chartRealTimeUpdate = (socket) => {
+  socket.on("server-update-chart", (dataPoints : ChartModel) => {
+    store.dispatch({ type: ActionType.updateChartPoints, payload: dataPoints })
+    console.log(5)
+  })
+}
 // end of function
 
