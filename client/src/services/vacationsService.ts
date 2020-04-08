@@ -1,6 +1,7 @@
 import { ServerServices } from "./serverService";
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
+import { updateChart } from "./socketService";
 
 // class to handle all vacation logic
 export class VacationService {
@@ -130,7 +131,7 @@ export class VacationService {
 
   // function to handle delete followup logic
   static handleDeleteFollowUp = async (vacation, accessToken) => {
-    try {
+    try { 
       await VacationService.deleteFollowUpAsync(
         vacation.followUpID,
         accessToken
@@ -147,16 +148,18 @@ export class VacationService {
   }
   // end of function
 
-  static handleFollowUp = async (vacation) => {
- 
+  // function to handle icon followup click
+  static handleIconClick = async (vacation) => {
     const accessToken = store.getState().auth.tokens.accessToken;
-
     if (vacation.followUpID) {
       await VacationService.handleDeleteFollowUp(vacation, accessToken);
+      updateChart(vacation)
     } else {
       await VacationService.handleAddFollowUp(vacation, accessToken);
+      updateChart(vacation)
     }
   };
+  // end of function
 
 
 }

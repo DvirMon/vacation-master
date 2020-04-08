@@ -5,7 +5,7 @@ export enum ActionType {
   Logout,
   isAdmin,
   addToken,
-  refreshVacation,
+  updateSocket,
  
   // style ActionType
   updateMenu,
@@ -17,6 +17,7 @@ export enum ActionType {
   updatedVacation,
   deleteVacation,
   addFollowUp,
-  deleteFollowUp
+  deleteFollowUp,
+  updateSliderSetting
   
 } 

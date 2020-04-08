@@ -2,6 +2,7 @@ import { UserModel } from "../models/user-model";
 import { TokensModel } from "../models/tokens.model";
 import { MenuModel, AdminMenu } from "../models/menu-model";
 import { UserVacationModel } from "../models/vacations-model";
+import { SliderModel } from "../models/slider-model";
 
 export class AppState {
 
@@ -13,14 +14,17 @@ export class AppState {
   public backgroundImage: string
   public followUp: UserVacationModel[] = []
   public unFollowUp: UserVacationModel[] = []
+  public socket: any
+  public sliderSetting: SliderModel
 
   public constructor() {
 
-     this.user = JSON.parse(sessionStorage.getItem("user"))
+    this.user = JSON.parse(sessionStorage.getItem("user"))
     this.isLoggedIn = this.user !== null;
     if (this.tokens.dbToken) {
       this.tokens.dbToken.refreshToken = JSON.parse(sessionStorage.getItem("jwt"))
-    }
+    }  
+    this.sliderSetting = new SliderModel(false, false, 500, 1, 1)
 
     if (this.isLoggedIn === false) {
       this.backgroundImage = "home"

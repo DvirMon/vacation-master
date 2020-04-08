@@ -10,17 +10,17 @@ import Form from "react-bootstrap/Form";
 // import models
 import { RegistrationErrors } from "../../models/error-model";
 import { RegisterModel } from "../../models/user-model";
-import { MenuModel, RegisterMenu } from "../../models/menu-model";
+import { RegisterMenu } from "../../models/menu-model";
 
 // import services
 import { ServerServices } from "../../services/serverService";
-import { formLegalValues, formLegalErrors, formLegal } from "../../services/validationService";
-import { TokensServices } from "../../services/tokensService";
+import { ValidationService } from "../../services/validationService";
+import { setStyle } from "../../services/styleServices";
 
-// import redux 
+// import redux
 import { ActionType } from "../../redux/action-type";
 import { store } from "../../redux/store";
- 
+
 import generator from "generate-password";
 
 import "./register.scss";
@@ -31,11 +31,10 @@ interface RegisterState {
   password: string;
   serverError: string;
   serverErrorStyle: boolean;
-  menu: MenuModel;
 }
 export class Register extends Component<any, RegisterState> {
   constructor(props: any) {
-    super(props); 
+    super(props);
 
     this.state = {
       user: new RegisterModel(),
@@ -43,26 +42,24 @@ export class Register extends Component<any, RegisterState> {
       password: "",
       serverError: "",
       serverErrorStyle: false,
-      menu: RegisterMenu
     };
   }
 
   public componentDidMount = () => {
     // set style
-    store.dispatch({ type: ActionType.updateMenu, payload: this.state.menu });
-    store.dispatch({ type: ActionType.updateBackground, payload: "home" });
+    setStyle(RegisterMenu, "home");
   };
 
-  public registrationFormLegal = (): boolean => {
+  public disabledButton = (): boolean => {
     const user = this.state.user;
     const errors = this.state.errors;
 
-    const value = formLegalValues(user);
+    const value = ValidationService.formLegalValues(user);
     if (value) {
       return true;
     }
 
-    const error = formLegalErrors(errors);
+    const error = ValidationService.formLegalErrors(errors);
     if (error) {
       return true;
     }
@@ -73,7 +70,7 @@ export class Register extends Component<any, RegisterState> {
   public addUser = async () => {
     const { user } = this.state;
 
-    if (formLegal(user, RegisterModel.validRegistration)) {
+    if (ValidationService.formLegal(user, RegisterModel.validRegistration)) {
       return;
     }
 
@@ -82,17 +79,21 @@ export class Register extends Component<any, RegisterState> {
       const serverResponse = await ServerServices.postRequest(url, user);
 
       if (ServerServices.handleServerResponse(serverResponse)) {
-        this.setState({ serverError: serverResponse.body, serverErrorStyle: true });
-        return;
+        this.setState({
+          serverError: serverResponse.body,
+          serverErrorStyle: true,
+        });
       } else {
-        store.dispatch({ type: ActionType.Login, payload: serverResponse.body });
-        await TokensServices.getTokens(user);
-        this.props.history.push(`/user/${user.userName}`);
-        return;
+        this.handleSuccess(serverResponse.body);
       }
     } catch (err) {
       console.log(err);
     }
+  };
+
+  public handleSuccess = (user) => {
+    store.dispatch({ type: ActionType.Login, payload: user });
+    this.props.history.push(`/user/${user.userName}`);
   };
 
   render() {
@@ -167,7 +168,7 @@ export class Register extends Component<any, RegisterState> {
                 color="secondary"
                 fullWidth={true}
                 onClick={this.addUser}
-                disabled={this.registrationFormLegal()}
+                disabled={this.disabledButton()}
               >
                 Sigh-in
               </Button>
@@ -178,6 +179,7 @@ export class Register extends Component<any, RegisterState> {
     );
   }
 
+  // update user state
   public handleChange = (prop: string, input: string) => {
     const { user, serverError } = this.state;
     user[prop] = input;
@@ -187,30 +189,27 @@ export class Register extends Component<any, RegisterState> {
       this.setState({ serverError: "", serverErrorStyle: false });
     }
   };
+  // end of function
 
+  // update errors state
   public handleErrors = (prop: string, error: string) => {
     const errors = { ...this.state.errors };
     errors[prop] = error;
-    if (error.length > 0) {
-      this.setState({ errors });
-      return;
-    }
-    this.setState({ errors });
+    error.length > 0 ? this.setState({ errors }) : this.setState({ errors });
   };
+  // end of function
 
+  // function to generate strong password
   public getPassword = () => {
     const password = generator.generate({
       length: 10,
       numbers: true,
-      strict: true
+      strict: true,
     });
     this.setState({ password });
     this.handleChange("password", password);
   };
-
-  public loginButton = () => {
-    this.props.history.push("/login");
-  };
+  // end of function
 }
 
 export default Register;

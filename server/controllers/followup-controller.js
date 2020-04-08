@@ -51,7 +51,6 @@ router.post("/", auth.authorize(), async (request, response, next) => {
     
     const addedFollowup = await followUpLogic.addFollowUp(followup);
 
-    addedFollowup
 
     response.json(addedFollowup);
   } catch (err) {

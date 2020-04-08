@@ -8,7 +8,7 @@ import {
   KeyboardDatePicker
 } from "@material-ui/pickers";
 
-import { setObjectForSchema } from "../../services/validationService";
+import { ValidationService } from "../../services/validationService";
 
 
 interface DatePickerState {
@@ -108,9 +108,9 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
     let schema = {};
 
     if (this.props.schema) {
-      schema = setObjectForSchema(this.props.schema, prop, input);
+      schema = ValidationService.setObjectForSchema(this.props.schema, prop, input);
     } else {
-      schema = setObjectForSchema(schema, prop, input);
+      schema = ValidationService.setObjectForSchema(schema, prop, input);
     }
 
     const errorMessage = this.props.validInput(schema);

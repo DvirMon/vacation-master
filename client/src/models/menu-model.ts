@@ -14,18 +14,15 @@ export class MenuModel {
 
   ) { }
 
-  static setMenu = (user: UserModel, followUpCounter: number) => {
-   
+  static setMenu = (admin) => {
     const menu = { ...AdminMenu }
-
-    if (user.isAdmin === 0) {
-      menu.user = user;
-      menu.admin = false;
-      menu.followUpCounter = followUpCounter;
-    }
-    store.dispatch({ type: ActionType.updateMenu, payload: menu });
+    if (!admin) { 
+      menu.user = store.getState().auth.user; 
+      menu.admin = false; 
+      menu.followUpCounter = store.getState().vacation.followUp.length;
+    } 
+    return menu
   };
-
 
 } 
 

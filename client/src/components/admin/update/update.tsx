@@ -17,7 +17,7 @@ import { TokensModel } from "../../../models/tokens.model";
 import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
 import { VacationService } from "../../../services/vacationsService";
-import { formLegal, verifyAdmin } from "../../../services/validationService";
+import { ValidationService } from "../../../services/validationService";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -25,9 +25,10 @@ import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
 import "./update.scss";
+import { handleAdminUpdate } from "../../../services/socketService";
 
 const VacCard = lazy(() => import("../../vac-card/vac-card"));
- 
+
 interface UpdateState {
   vacation: VacationModel;
   tokens: TokensModel;
@@ -45,7 +46,7 @@ export class Update extends Component<any, UpdateState> {
       vacation: new VacationModel(),
       tokens: store.getState().auth.tokens,
       updated: true,
-      preview: ""
+      preview: "",
     };
   }
 
@@ -53,18 +54,12 @@ export class Update extends Component<any, UpdateState> {
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
-        tokens: store.getState().auth.tokens
+        tokens: store.getState().auth.tokens,
       });
     });
 
     // verify admin
-    verifyAdmin(this.props.history);
-
-    //
-    store.dispatch({
-      type: ActionType.refreshVacation,
-      payload: new VacationModel()
-    });
+    ValidationService.verifyAdmin(this.props.history);
 
     try {
       const vacationID = this.props.match.params.id;
@@ -87,12 +82,11 @@ export class Update extends Component<any, UpdateState> {
 
   public handleTokens = setInterval(async () => {
     await TokensServices.getAccessToken();
-    console.log(store.getState().auth.tokens.accessToken);
-  }, 60000);
+  }, 300000);
 
   public updateVacation = async () => {
     const { vacation, updated } = this.state;
- 
+
     if (updated) {
       const answer = window.confirm(
         "No change has been notice, do you wish to continue?"
@@ -103,7 +97,7 @@ export class Update extends Component<any, UpdateState> {
     }
 
     // validate form
-    if (formLegal(vacation, VacationModel.validVacation)) {
+    if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
       return;
     }
 
@@ -135,15 +129,20 @@ export class Update extends Component<any, UpdateState> {
     }
   };
 
-  public handleSuccess = updateVacation => {
-    const action = {
-      type: ActionType.updatedVacation,
-      payload: updateVacation
-    };
-    store.dispatch(action);
+  public handleSuccess = (vacation) => {
+
     alert("Vacation has been updated successfully!");
+    
+    // update store
+    store.dispatch({ type: ActionType.updatedVacation, payload: vacation });
+    
+    // update socket
+    handleAdminUpdate(vacation);
+    
+    // navigate to home page
     this.props.history.push("/admin");
   };
+
 
   render() {
     const { vacation, preview } = this.state;
@@ -191,5 +190,5 @@ export class Update extends Component<any, UpdateState> {
     this.setState({ vacation, updated: false });
   };
 }
- 
+
 export default Update;

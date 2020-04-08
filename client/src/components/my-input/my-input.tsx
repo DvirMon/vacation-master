@@ -1,10 +1,10 @@
 import React, { Component } from "react";
+
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import {
-  isRequired,
-  setObjectForSchema
-} from "../../services/validationService";
+
+import { ValidationService } from "../../services/validationService";
+
 import "./my-input.scss";
 
 export interface MyInputProps {
@@ -47,7 +47,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       on: false,
       success: false,
       danger: false,
-      error: false
+      error: false,
     };
   }
 
@@ -67,7 +67,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       serverErrorStyle,
       required,
       multiline,
-      rows
+      rows,
     } = this.props;
     const { error, errorMessage } = this.state;
 
@@ -88,7 +88,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
           onBlur={this.handleBlur(prop)}
           onFocus={this.handleFocus(prop)}
           InputProps={{
-            endAdornment: passwordIcon
+            endAdornment: passwordIcon,
           }}
           helperText={
             errorMessage || serverError
@@ -118,12 +118,12 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     }
   };
 
-  public handleChange = (prop: string) => event => {
+  public handleChange = (prop: string) => (event) => {
     const on = this.state.on;
     const input = event.target.value;
 
     if (on === true) {
-      const errorMessage = isRequired(input);
+      const errorMessage = ValidationService.isRequired(input);
       this.setState({ errorMessage });
 
       if (errorMessage) {
@@ -139,7 +139,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
 
   public validInput = (input: string, prop: string) => {
     const schema = {};
-    const validSchema = setObjectForSchema(schema, prop, input);
+    const validSchema = ValidationService.setObjectForSchema(schema, prop, input);
     const error = this.props.validInput(validSchema);
     this.handleErrors(error, prop);
   };
@@ -153,7 +153,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
         errorMessage,
         error: true,
         success: false,
-        danger: true
+        danger: true,
       });
 
       if (this.props.handleErrors) {
@@ -174,7 +174,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       errorMessage: "",
       error: false,
       success: true,
-      danger: false
+      danger: false,
     });
 
     if (this.props.handleErrors) {

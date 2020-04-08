@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import { NavLink } from "react-router-dom";
+
 //import materiel ui components
 import FormControl from "@material-ui/core/FormControl";
 import Grid from "@material-ui/core/Grid";
@@ -24,9 +26,8 @@ import { MenuModel, LoginMenu } from "../../models/menu-model";
 
 // import services
 import { LoginServices } from "../../services/loginService";
-import { TokensServices } from "../../services/tokensService";
 import { ServerServices } from "../../services/serverService";
-import SocketContext from "../../services/socketServices";
+import { setStyle } from "../../services/styleServices";
 
 // import redux
 import { ActionType } from "../../redux/action-type";
@@ -34,9 +35,11 @@ import { store } from "../../redux/store";
 
 import "./login.scss";
 
-import io from "socket.io-client"; // npm i socket.io
-
-const ENDPOINT: string = "http://localhost:3000";
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 interface LoginState {
   user: UserModel;
@@ -44,14 +47,9 @@ interface LoginState {
   showPassword: boolean;
   error: boolean;
   serverError: string;
-  menu: MenuModel;
 }
 
 export class Login extends Component<any, LoginState> {
-  // private socket = io.connect(ENDPOINT, {path:'/stomp'}); // Server Address.
-
-  static contextType = SocketContext;
-
   constructor(props: any) {
     super(props);
 
@@ -61,26 +59,15 @@ export class Login extends Component<any, LoginState> {
       showPassword: false,
       error: false,
       serverError: "",
-      menu: new MenuModel({}, false, false, false, false, 0),
     };
   }
 
   public componentDidMount = async () => {
     // set style
-    store.dispatch({ type: ActionType.updateMenu, payload: LoginMenu });
-    store.dispatch({ type: ActionType.updateBackground, payload: "home" });
+    setStyle(LoginMenu, "home");
 
-    // const socket = this.context
-
-    // check if user is logged
     try {
-      if (store.getState().auth.isLoggedIn === false) {
-        return;
-      }
-      LoginServices.handleRouting(
-        store.getState().auth.user,
-        this.props.history
-      );
+      LoginServices.isUserLogged(this.props.history);
     } catch (err) {
       console.log(err);
     }
@@ -93,32 +80,30 @@ export class Login extends Component<any, LoginState> {
     if (LoginServices.loginLegal(user, errors)) {
       return;
     }
-
     try {
-      //send login request
-      const serverResponse = await LoginServices.logInRequest(user);
-
-      // if true server returned error
-      if (ServerServices.handleServerResponse(serverResponse)) {
-        this.setState({ serverError: serverResponse.body, error: true });
-        return;
-      }
-
-      const loggedUser = serverResponse.body;
-
-      // if false - save user in store
-      store.dispatch({ type: ActionType.Login, payload: loggedUser });
-
-      // get tokens
-      await TokensServices.getTokens(loggedUser);
-
-      LoginServices.handelRole(loggedUser);
-
-      // navigate according to role
-      LoginServices.handleRouting(loggedUser, this.props.history);
+      // handle request
+      await this.handleRequest(user);
     } catch (err) {
       console.log(err);
     }
+  };
+
+  public handleRequest = async (user) => {
+    //send login request
+    const serverResponse = await LoginServices.logInRequest(user);
+
+    // if true server returned error
+    if (ServerServices.handleServerResponse(serverResponse)) {
+      this.setState({ serverError: serverResponse.body, error: true });
+      return;
+    }
+    this.handleSuccessResponse(serverResponse.body);
+  };
+
+  public handleSuccessResponse = async (user) => {
+    store.dispatch({ type: ActionType.Login, payload: user });
+    store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
+    LoginServices.handleRouting(user, this.props.history);
   };
 
   render() {
@@ -131,6 +116,7 @@ export class Login extends Component<any, LoginState> {
             <h2>Explore destinations around the world!</h2>
             <h4>Open an account for more information</h4>
           </Grid>
+
         </Grid>
         <Grid className="login-aside">
           <FormControl className="login-aside my-form">
@@ -222,9 +208,10 @@ export class Login extends Component<any, LoginState> {
                   className="text-buttons"
                   variant="outlined"
                   color="secondary"
-                  onClick={this.registerButton}
                 >
-                  Open an Account !
+                  <NavLink to="/register" exact>
+                    Open an Account !
+                  </NavLink>
                 </Button>
               </Grid>
             </Grid>
@@ -259,10 +246,6 @@ export class Login extends Component<any, LoginState> {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-  };
-
-  public registerButton = () => {
-    this.props.history.push("/register");
   };
 }
 

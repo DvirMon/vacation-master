@@ -28,23 +28,38 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
       newAppState.followUp.splice(followUpIndex, 1)
       break
     case ActionType.updatedVacation:
+
+      let find: boolean = false
       newAppState.unFollowUp.find(vacation => {
-        if (vacation.vacationID === +action.payload.vacationID) {
-          for (const prop in action.payload) {
-            if (prop in vacation) {
-              vacation[prop] = action.payload[prop]
-            }
-          }
-        }
+        updateLogic(vacation, action)
       })
+
+      if (newAppState.followUp.length > 0 && find === false) {
+        newAppState.followUp.find(vacation => {
+          updateLogic(vacation, action)
+        })
+      }
       break
     case ActionType.deleteVacation:
       const index = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload)
       newAppState.unFollowUp.splice(index, 1)
+      break 
+    case ActionType.updateSliderSetting:
+      newAppState.sliderSetting = action.payload
       break
     case ActionType.Logout:
       newAppState.followUp = []
       newAppState.unFollowUp = []
   }
   return newAppState
+}
+
+const updateLogic = (vacation, action) => {
+  if (vacation.vacationID === +action.payload.vacationID) {
+    for (const prop in action.payload) {
+      if (prop in vacation) {
+        vacation[prop] = action.payload[prop]
+      }
+    }
+  }
 }

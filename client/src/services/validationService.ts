@@ -2,15 +2,85 @@
 import Joi from "joi"
 import { store } from "../redux/store"
 
-// function for required input validation
-export const isRequired = (prop: string) => {
-  const error = Joi.validate(prop, Joi.required()).error
-  if (error) {
-    return error.details[0].message
+export class ValidationService {
+
+  // function for required input validation
+  static isRequired = (prop: string) => {
+    const error = Joi.validate(prop, Joi.required()).error
+    if (error) {
+      return error.details[0].message
+    }
+    return null
   }
-  return null
+  // end of function
+
+
+  // function to generate an object for joi
+  static setObjectForSchema = (schema: {}, prop: string, input: string) => {
+    schema[prop] = input;
+    return schema;
+  };
+  // end of function
+
+  // function to check if error object contained errors
+  static formLegalErrors = (errors) => {
+    for (const error in errors) {
+      if (errors[error].length > 0) {
+        return errors[error]
+      } else {
+        continue
+      }
+    }
+    return null
+  }
+  // end of function
+
+  // function to check if form's object contain all his values
+  static formLegalValues = (obj) => {
+    for (const value in obj) {
+      if (obj[value] === undefined) {
+        return value
+      }
+      else {
+        continue
+      }
+    };
+    return null
+  }
+  // end of function
+
+  // function for legal form
+  static formLegal = (obj, callback) => {
+
+    const value = ValidationService.formLegalValues(obj);
+    if (value) {
+      alert(`Filed ${value} is required`);
+      return true;
+    }
+
+    const schemeError = callback(obj)
+    if (schemeError) {
+      alert(schemeError)
+      return true
+    }
+
+    return false;
+  }
+  // end of  function for legal form
+
+  //verify admin 
+
+  static verifyAdmin = (history) => {
+    const user = store.getState().auth.user;
+    if (!user || user.isAdmin === 0) {
+      alert("Not Admin");
+      history.push("/login");
+      return;
+    }
+  }
+
 }
-// end of function
+
 
 // function for customized joi error message
 export const handleMassage = (err) => {
@@ -47,76 +117,7 @@ export const handleMassage = (err) => {
       break
   }
 }
-// end of function
-
-// function to generate an object for joi
-export const setObjectForSchema = (schema: {}, prop: string, input: string) => {
-  schema[prop] = input;
-  return schema;
-};
-// end of function
-
-// function to check if error object contained errors
-export const formLegalErrors = (errors) => {
-  for (const error in errors) {
-    if (errors[error].length > 0) {
-      return errors[error]
-    } else {
-      continue
-    }
-  }
-  return null
-}
-// end of function
-
-// function to check if form's object contain all his values
-export const formLegalValues = (obj) => {
-  for (const value in obj) {
-    if (obj[value] === undefined) {
-      return value
-    }
-    else {
-      continue
-    }
-  };
-  return null
-}
-// end of function
-
-// function for legal form
-export const formLegal = (obj, callback) => {
-
-  const value = formLegalValues(obj);
-  if (value) {
-    alert(`Filed ${value} is required`);
-    return true;
-  }
-
-  const schemeError = callback(obj)
-  if (schemeError) {
-    alert(schemeError)
-    return true
-  }
-
-  return false;
-}
-// end of  function for legal form
- 
-//verify admin 
-
-export const verifyAdmin = (history) => {
-  const user = store.getState().auth.user;
-  if (!user || user.isAdmin === 0) {
-    alert("Not Admin");
-    history.push("/login");
-    return;
-  }
-}
-
-
-
-
-
+  // end of function
 
 
 

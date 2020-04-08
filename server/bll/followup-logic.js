@@ -1,7 +1,6 @@
 const dal = require("../dal/dal");
 
 const addFollowUp = async followup => {
-  console.log(followup)
   const sql = `INSERT INTO followers(vacationID, userID)
                 VALUES (${followup.vacationID}, ${followup.userID})`;
   const info = await dal.executeAsync(sql);

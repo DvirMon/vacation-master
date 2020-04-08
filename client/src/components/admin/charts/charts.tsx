@@ -8,11 +8,11 @@ import { TokensModel } from "../../../models/tokens.model";
 
 import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
-import { verifyAdmin } from "../../../services/validationService";
+import { ValidationService } from "../../../services/validationService";
  
 import { store } from "../../../redux/store";
 import { Unsubscribe } from "redux";
- 
+  
 import "./charts.scss";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -45,7 +45,7 @@ export class Charts extends Component<any, ChartsState> {
     });
 
     // verify admin
-    verifyAdmin(this.props.history);
+    ValidationService.verifyAdmin(this.props.history);
 
     try {
       const tokens = store.getState().auth.tokens;

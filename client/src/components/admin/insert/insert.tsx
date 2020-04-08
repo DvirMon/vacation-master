@@ -12,10 +12,11 @@ import { VacationModel } from "../../../models/vacations-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 // import services
-import { formLegal, verifyAdmin } from "../../../services/validationService";
+import { ValidationService } from "../../../services/validationService";
 import { TokensServices } from "../../../services/tokensService";
 import { VacationService } from "../../../services/vacationsService";
 import { ServerServices } from "../../../services/serverService";
+import { handleAdminInsert } from "../../../services/socketService";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -40,7 +41,7 @@ export class Insert extends Component<any, InsertState> {
       vacation: new VacationModel(),
       tokens: store.getState().auth.tokens,
       preview: "aaa"
-    };
+    }
   }
 
   public componentDidMount = async () => {
@@ -53,7 +54,7 @@ export class Insert extends Component<any, InsertState> {
     });
 
     // verify admin
-    verifyAdmin(this.props.history);
+    ValidationService.verifyAdmin(this.props.history);
   };
 
   public componentWillUnmount(): void {
@@ -62,9 +63,11 @@ export class Insert extends Component<any, InsertState> {
   }
 
   public addVacation = async () => {
+
+
     const { vacation } = this.state;
 
-    if (formLegal(vacation, VacationModel.validVacation)) {
+    if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
       return;
     }
 
@@ -95,9 +98,10 @@ export class Insert extends Component<any, InsertState> {
     }
   };
 
-  public handleSuccess = (addedVacation) => {
-    const action = { type: ActionType.addVacation, payload: addedVacation };
+  public handleSuccess = (vacation) => {
+    const action = { type: ActionType.addVacation, payload: vacation };
     store.dispatch(action);
+    handleAdminInsert(vacation)
     alert("New Vacation has been added!");
     this.props.history.push("/admin");
   };

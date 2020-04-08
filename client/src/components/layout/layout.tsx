@@ -15,15 +15,9 @@ import PageNotFound from "../page-not-found/page-not-found";
 // import router
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
-// import  service
-import SocketContext from "../../services/socketServices";
-
 // import redux
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
-
-// client socket.io
-import io from "socket.io-client";
 
 import "./layout.scss";
 
@@ -34,8 +28,6 @@ interface LayoutState {
 export class Layout extends Component<any, LayoutState> {
   private unsubscribeStore: Unsubscribe;
 
-  // private socket = io.connect("http://localhost:3000")
-  
   constructor(props) {
     super(props);
 
@@ -60,7 +52,6 @@ export class Layout extends Component<any, LayoutState> {
     const { backgroundImage } = this.state;
 
     return (
-      <SocketContext.Provider value={true}>
         <div className={clsx("layout", "bg", `${backgroundImage}`)}>
           <BrowserRouter>
             <nav>
@@ -90,7 +81,6 @@ export class Layout extends Component<any, LayoutState> {
             </main>
           </BrowserRouter>
         </div>
-      </SocketContext.Provider>
     );
   }
 }

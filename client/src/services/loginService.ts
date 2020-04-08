@@ -4,6 +4,16 @@ import { ActionType } from "../redux/action-type";
 
 export class LoginServices {
 
+  // function to check if user is logged
+  static isUserLogged = (history) => {
+    if (store.getState().auth.isLoggedIn === false) {
+      return;
+    }
+    LoginServices.handleRouting(store.getState().auth.user, history);
+  }
+  // end of function
+
+  
   // function for legal login form
   static loginLegal = (user, errors) => {
     if (
@@ -32,12 +42,9 @@ export class LoginServices {
 
   // function to handle rout according to role
   static handleRouting = (user, history) => {
-
-    if (user.isAdmin === 1) {
-      history.push(`/admin`);
-      return;
-    }
-    history.push(`/user/${user.userName}`);
+    user.isAdmin === 1 ?
+      history.push(`/admin`)
+      : history.push(`/user/${user.userName}`);
   };
   // end of function
 
@@ -60,22 +67,16 @@ export class LoginServices {
   }
   // end of function
 
-
-  // handle style according to role
-  static handelBackground = (admin: boolean) => {
+  // main function for verify path
+  static verifyPath = (admin, user, history) => {
     if (admin) {
-      store.dispatch({ type: ActionType.updateBackground, payload: "" });
-      return
+      LoginServices.verifyAdminPath(history);
+    } else {
+      LoginServices.verifyUserPath(user, history);
     }
-    store.dispatch({ type: ActionType.updateBackground, payload: "user" });
-  };
+  }
   // end of function
 
-  // handle role
-  static handelRole = (user) => { 
-    store.dispatch({ type : ActionType.isAdmin , payload : user.isAdmin})
-    return 
-  };
-  // end of function
+ 
 
 }

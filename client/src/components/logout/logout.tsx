@@ -20,7 +20,10 @@ export class Logout extends Component <any, any> {
         
         // handle logic in store
         store.dispatch({ type: ActionType.Logout })
-    
+        
+        // disconnect from sockets
+        store.getState().auth.socket.disconnect()
+
         // redirect to login page
         this.props.history.push("/login");
       }

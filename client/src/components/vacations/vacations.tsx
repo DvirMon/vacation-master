@@ -5,28 +5,33 @@ import VacCard from "../vac-card/vac-card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Loader from "../loader/loader";
+import UpdateToken from "../updateToken/updateToken";
+import Slider from "react-slick";
 
 // import services
 import { ServerServices } from "../../services/serverService";
 import { VacationService } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
+import { handleUserRealTimeUpdate } from "../../services/socketService";
 
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
 import { UserModel } from "../../models/user-model";
 import { TokensModel } from "../../models/tokens.model";
 import { MenuModel, AdminMenu } from "../../models/menu-model";
+import { SliderModel } from "../../models/slider-model";
 
 // import redux
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
 import { ActionType } from "../../redux/action-type";
 
-import "./vacations.scss";
+import io from "socket.io-client";
 
-import Slider from "react-slick";
-import UpdateToken from "../updateToken/updateToken";
+import "./vacations.scss";
+import { handelBackground, setStyle } from "../../services/styleServices";
+import { Collapse, CardContent, Typography } from "@material-ui/core";
 
 const myCard = lazy(() => import("../vac-card/vac-card"));
 
@@ -37,18 +42,17 @@ interface VacationsState {
   unFollowUp: UserVacationModel[];
   followUp: UserVacationModel[];
   menu: MenuModel;
-  sliderSetting: {
-    dots: boolean;
-    infinite: boolean;
-    speed: number;
-    slidesToShow: number;
-    slidesToScroll: number;
-    className: string;
-  };
+  sliderSetting: SliderModel;
+  expanded: boolean;
+  collapseVacation: UserVacationModel;
 }
 
 export class Vacations extends Component<any, VacationsState> {
+  // unsubscribe to store
   private unsubscribeStore: Unsubscribe;
+
+  // invoke socket object
+  public socket = io.connect("http://localhost:3000");
 
   constructor(props: any) {
     super(props);
@@ -60,15 +64,14 @@ export class Vacations extends Component<any, VacationsState> {
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
       menu: AdminMenu,
-      sliderSetting: {
-        dots: true,
-        infinite: false,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        className: "follow-slider",
-      },
+      sliderSetting: store.getState().vacation.sliderSetting,
+      expanded: false,
+      collapseVacation: {},
     };
+
+    if (this.state.admin === false) {
+      handleUserRealTimeUpdate(this.socket);
+    }
   }
 
   public componentDidMount = async () => {
@@ -81,6 +84,7 @@ export class Vacations extends Component<any, VacationsState> {
           tokens: store.getState().auth.tokens,
           followUp: store.getState().vacation.followUp,
           unFollowUp: store.getState().vacation.unFollowUp,
+          sliderSetting: store.getState().vacation.sliderSetting,
         });
       });
 
@@ -90,68 +94,66 @@ export class Vacations extends Component<any, VacationsState> {
         return;
       }
 
+      // get data from store
       const user = store.getState().auth.user;
       const admin = store.getState().auth.admin;
 
+      // get tokens
       await TokensServices.getTokens(user);
       const tokens = store.getState().auth.tokens;
 
       // unable for client to navigate to other route
-      if (admin) {
-        LoginServices.verifyAdminPath(this.props.history);
-      } else {
-        LoginServices.verifyUserPath(user, this.props.history);
-      }
+      LoginServices.verifyPath(admin, user, this.props.history);
 
-      // send request for vacations only is store is empty
+      // if store vacations is empty
       if (store.getState().vacation.unFollowUp.length === 0) {
+        // update socket object in store
+        store.dispatch({ type: ActionType.updateSocket, payload: this.socket });
+
+        // get vacation
         const response = await VacationService.getVacationsAsync(
           tokens.accessToken
         );
 
         // handle response - if true there is an error
         if (ServerServices.handleServerResponse(response)) {
-          alert(response);
-          this.props.history.push("/logout");
-          return;
+          this.handleServerError(response);
+        } else {
+          this.handleServerSuccess(response);
         }
-
-        // if false response.body is the vacation object
-        const action = {
-          type: ActionType.getAllVacation,
-          payload: response.body,
-        };
-        store.dispatch(action);
       }
-
-      this.handleFollowUpSlider();
-
-      // update background and menu according to client role
-      MenuModel.setMenu(user, store.getState().vacation.followUp.length);
-      LoginServices.handelBackground(admin);
-      
+      this.handleStyle(admin);
     } catch (err) {
       console.log(err);
     }
   };
-  
+
   public componentWillUnmount(): void {
     this.unsubscribeStore();
   }
-  
-  public handleFollowUpSlider = () => {
-    const sliderSetting = { ...this.state.sliderSetting };
-    const length = store.getState().vacation.followUp.length;
 
-    if (length > 1) {
-      sliderSetting.slidesToShow = length >= 4 ? 4 : length;
-      sliderSetting.slidesToScroll = length > 4 ? 4 : length;
-      this.setState({ sliderSetting });
-    }
+  public handleServerError = (response) => {
+    alert(response);
+    this.props.history.push("/logout");
+  };
+
+  public handleServerSuccess = (response) => {
+    const action = {
+      type: ActionType.getAllVacation,
+      payload: response.body,
+    };
+    store.dispatch(action);
   };
 
   render() {
-    const { followUp, unFollowUp, sliderSetting, admin } = this.state;
+    const {
+      followUp,
+      unFollowUp,
+      sliderSetting,
+      admin,
+      expanded,
+      collapseVacation,
+    } = this.state;
 
     return (
       <React.Fragment>
@@ -167,18 +169,30 @@ export class Vacations extends Component<any, VacationsState> {
             <Row>
               <Slider {...sliderSetting}>
                 {followUp.map((vacation) => (
-                  <Col key={vacation.vacationID}>
+                  <Col className="followed" key={vacation.vacationID}>
                     <Suspense fallback={<div>Loading...</div>}>
                       <VacCard
                         vacation={vacation}
                         follow={true}
                         followIcon={true}
-                        update={this.handleFollowUpSlider}
+                        handleCollapse={this.handleCollapse}
                       ></VacCard>
                     </Suspense>
                   </Col>
                 ))}
               </Slider>
+            </Row>
+            <Row>
+              <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <Col sm={8}>
+                  <CardContent>
+                    <Typography paragraph>
+                      {collapseVacation.description}
+                    </Typography>
+                  </CardContent>
+                </Col>
+                <Col sm={4}></Col>
+              </Collapse>
             </Row>
             <Row>
               {!admin && <h1 className="card-title">Explore Our Vacations</h1>}
@@ -192,19 +206,31 @@ export class Vacations extends Component<any, VacationsState> {
                     followIcon={!admin}
                     hover={!admin}
                     admin={admin}
-                    update={this.handleFollowUpSlider}
                   ></VacCard>
                 </Col>
               ))}
             </Row>
 
             <UpdateToken />
-
           </div>
         )}
       </React.Fragment>
     );
   }
+
+  public handleCollapse = (vacation: UserVacationModel) => {
+    const expanded = this.state.expanded;
+    this.setState({ expanded: !expanded, collapseVacation: vacation });
+  };
+
+  public updateSliderSetting = () => {
+    SliderModel.updateSliderSetting();
+  };
+
+  public handleStyle = (admin) => {
+    SliderModel.updateSliderSetting();
+    setStyle(MenuModel.setMenu(admin), handelBackground(admin));
+  };
 }
 
 export default Vacations;
