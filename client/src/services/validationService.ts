@@ -69,16 +69,14 @@ export class ValidationService {
   // end of  function for legal form
 
   //verify admin 
-
   static verifyAdmin = (history) => {
-    const user = store.getState().auth.user;
-    if (!user || user.isAdmin === 0) {
+    const admin = store.getState().auth.admin;
+    if (!admin) {
       alert("Not Admin");
       history.push("/login");
       return;
     }
   }
-
 }
 
 

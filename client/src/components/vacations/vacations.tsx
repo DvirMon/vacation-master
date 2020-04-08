@@ -51,12 +51,12 @@ export class Vacations extends Component<any, VacationsState> {
 
     this.state = {
       user: store.getState().auth.user,
-      admin: store.getState().auth.admin,
+      admin: store.getState().auth.admin, 
       tokens: store.getState().auth.tokens,
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
+      sliderSetting: store.getState().style.sliderSetting,
       menu: AdminMenu,
-      sliderSetting: store.getState().vacation.sliderSetting,
     };
   }
 
@@ -76,7 +76,7 @@ export class Vacations extends Component<any, VacationsState> {
           tokens: store.getState().auth.tokens,
           followUp: store.getState().vacation.followUp,
           unFollowUp: store.getState().vacation.unFollowUp,
-          sliderSetting: store.getState().vacation.sliderSetting,
+          sliderSetting: store.getState().style.sliderSetting,
         });
       });
 

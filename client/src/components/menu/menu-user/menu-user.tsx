@@ -30,7 +30,7 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
     this.state = {
       followUpCounter: store.getState().vacation.followUp.length,
     };
-  }
+  } 
 
   public componentDidMount = () => {
     this.unsubscribeStore = store.subscribe(() => {

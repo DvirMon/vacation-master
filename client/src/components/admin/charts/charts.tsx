@@ -9,16 +9,17 @@ import { TokensModel } from "../../../models/tokens.model";
 import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
 import { ValidationService } from "../../../services/validationService";
+import { invokeConnection } from "../../../services/socketService";
 
 import { store } from "../../../redux/store";
 import { Unsubscribe } from "redux";
 
 import "./charts.scss";
+import { LoginServices } from "../../../services/loginService";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 interface ChartsState {
-  tokens: TokensModel;
   dataPoints: ChartModel[];
 }
 
@@ -29,28 +30,20 @@ export class Charts extends Component<any, ChartsState> {
     super(props);
 
     this.state = {
-      tokens: store.getState().auth.tokens,
       dataPoints: [],
     };
   }
 
   public componentDidMount = async () => {
-    // subscribe to store
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({
-        tokens: store.getState().auth.tokens,
-      });
-    });
+    
 
-    // verify admin
-    ValidationService.verifyAdmin(this.props.history);
+     LoginServices.adminLoginLogic(this.props.history)
+
 
     try {
       const url = `http://localhost:3000/api/followup`;
       const tokens = await TokensServices.handleStoreRefresh();
       const response = await ServerServices.getRequest(url, tokens.accessToken);
-
-      console.log(response);
 
       if (ServerServices.handleServerResponse(response)) {
         alert(response.body);
@@ -65,7 +58,6 @@ export class Charts extends Component<any, ChartsState> {
   };
 
   public componentWillUnmount(): void {
-    this.unsubscribeStore();
     clearInterval(this.handleTokens);
   }
 

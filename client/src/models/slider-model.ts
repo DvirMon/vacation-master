@@ -10,11 +10,11 @@ export class SliderModel {
     public slidesToShow: number,
     public slidesToScroll: number) { }
 
-
-
+ 
+ 
     static updateSliderSetting = () => {
 
-      const sliderSetting = store.getState().vacation.sliderSetting
+      const sliderSetting = store.getState().style.sliderSetting
       const length = store.getState().vacation.followUp.length;
       if (length > 1) {
         sliderSetting.slidesToShow = 4 ;

@@ -3,8 +3,9 @@ import { Action } from "../action";
 import { ActionType } from "../action-type";
 
 export const vacationReducer = (oldAppState = new AppState(), action: Action): AppState => {
-
+ 
   const newAppState = { ...oldAppState }
+ 
 
   switch (action.type) {
 
@@ -19,7 +20,6 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
       newAppState.followUp.push(action.payload)
       const unFollowUpIndex = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
       newAppState.unFollowUp.splice(unFollowUpIndex, 1)
-
       break
     case ActionType.deleteFollowUp:
       delete action.payload.followUpID;
@@ -44,9 +44,7 @@ export const vacationReducer = (oldAppState = new AppState(), action: Action): A
       const index = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload)
       newAppState.unFollowUp.splice(index, 1)
       break 
-    case ActionType.updateSliderSetting:
-      newAppState.sliderSetting = action.payload
-      break
+ 
     case ActionType.Logout:
       newAppState.followUp = []
       newAppState.unFollowUp = []

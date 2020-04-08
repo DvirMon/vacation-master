@@ -1,6 +1,8 @@
 import { ServerServices } from "./serverService";
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
+import { ValidationService } from "./validationService";
+import { invokeConnection } from "./socketService";
 
 export class LoginServices {
 
@@ -13,7 +15,7 @@ export class LoginServices {
   }
   // end of function
 
-  
+
   // function for legal login form
   static loginLegal = (user, errors) => {
     if (
@@ -77,6 +79,13 @@ export class LoginServices {
   }
   // end of function
 
- 
+  static adminLoginLogic = (history) => {
+    
+    // invoke soket connection
+    invokeConnection();
+    // verify admin
+    ValidationService.verifyAdmin(history);
+
+  }
 
 }

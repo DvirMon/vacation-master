@@ -40,13 +40,13 @@ router.post("/", auth.authorize(), async (request, response, next) => {
 
     // get user uuid from token
     const userID = request.user.sub;
-
+ 
     // get user id from db
     const user = await usersLogic.isUserIdExist(userID);
     if (user.length > 0) {
       next("user is not exist in db");
-      return;
-    }
+      return;  
+    }  
 
     followup.userID = user.id;
 

@@ -2,7 +2,7 @@ import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 
 
- 
+
 export class ServerServices {
 
   // template of fetch get request
@@ -30,7 +30,7 @@ export class ServerServices {
       headers: {
         "Authorization": accessToken,
       }
-    }; 
+    };
 
     try {
       const response = await ServerServices.getData(url, options);
@@ -86,6 +86,16 @@ export class ServerServices {
       return true
     }
     return false;
+  };
+  // end of function
+ 
+
+  static handleServerResponseEx = (response, resolve, reject) => {
+    if (response.message === "success") {
+      resolve(response.body);
+    } else {
+      reject(response.body ? response.body : "pay attention! you cant use apostrophe mark")
+    }
   };
   // end of function
 

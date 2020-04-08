@@ -16,98 +16,98 @@ import { ValidationService } from "../../../services/validationService";
 import { TokensServices } from "../../../services/tokensService";
 import { VacationService } from "../../../services/vacationsService";
 import { ServerServices } from "../../../services/serverService";
+import { LoginServices } from "../../../services/loginService";
 import { handleAdminInsert } from "../../../services/socketService";
 
 // import redux
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
-import { Unsubscribe } from "redux";
-
-import io from "socket.io-client";
 
 import "./insert.scss";
 
 interface InsertState {
   vacation: VacationModel;
-  tokens: TokensModel;
   preview: string;
 }
 
 export class Insert extends Component<any, InsertState> {
-  private unsubscribeStore: Unsubscribe;
-
   constructor(props: any) {
     super(props);
 
     this.state = {
       vacation: new VacationModel(),
-      tokens: store.getState().auth.tokens,
       preview: "aaa",
     };
   }
 
   public componentDidMount = async () => {
-    
-    // if (!store.getState().auth.socket) {
-    //   const socket = io.connect("http://localhost:3000");
-    //   store.dispatch({ type: ActionType.updateSocket, payload: socket });
-    // }
-
-    // subscribe to store
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({
-        tokens: store.getState().style.tokens,
-      });
-    });
-
-    // verify admin
-    ValidationService.verifyAdmin(this.props.history);
+    LoginServices.adminLoginLogic(this.props.history);
   };
 
   public componentWillUnmount(): void {
-    this.unsubscribeStore();
     clearInterval(this.handleTokens);
   }
 
   public addVacation = async () => {
-    
     const { vacation } = this.state;
 
-    if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
-      return;
-    }
-
     try {
-      const tokens = await TokensServices.handleStoreRefresh();
-      const url = `http://localhost:3000/api/vacations`;
-
-      // create formatDate file
-      const myFormData = VacationService.setFormData(vacation);
-
-      // send a request
-      const response = await VacationService.addVacationAsync(
-        url,
-        myFormData,
-        tokens.accessToken
-      );
-
-      // if true server returned an error
-      if (ServerServices.handleServerResponse(response)) {
-        alert(response.body);
+      // validate vacation
+      if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
         return;
       }
 
-      this.handleSuccess(response.body);
+      // handle logic
+      const response = await this.handleInsertLogic(vacation);
+
+      // handle response - if true server returned an error
+      ServerServices.handleServerResponseEx(
+        response,
+        this.handleSuccess,
+        this.handleError
+      ); 
+      // this.handleServerResponse(response)
     } catch (err) {
       console.log(err);
     }
   };
 
+  public handleServerResponse = (response) => {
+    if (response.message === "error") {
+      alert(response.body);
+      return;
+    }
+    this.handleSuccess(response.body);
+  };
+
+  public handleInsertLogic = async (vacation) => {
+    const tokens = await TokensServices.handleStoreRefresh();
+    const url = `http://localhost:3000/api/vacations`;
+
+    // create formatDate file
+    const myFormData = VacationService.setFormData(vacation);
+
+    // send a request
+    const response = await VacationService.addVacationAsync(
+      url,
+      myFormData,
+      tokens.accessToken
+    );
+    return response;
+  };
+
+  public handleError = (err) => {
+    alert(err);
+  };
+
   public handleSuccess = (vacation) => {
     const action = { type: ActionType.addVacation, payload: vacation };
     store.dispatch(action);
+
     handleAdminInsert(vacation);
+
     alert("New Vacation has been added!");
+
     this.props.history.push("/admin");
   };
 

@@ -2,8 +2,6 @@ import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 import io from "socket.io-client";
 
-
-
 export const invokeConnection = () => {
 
   if (!store.getState().auth.socket) {

@@ -18,6 +18,7 @@ import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
 import { VacationService } from "../../../services/vacationsService";
 import { ValidationService } from "../../../services/validationService";
+import { handleAdminUpdate, invokeConnection } from "../../../services/socketService";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -25,9 +26,10 @@ import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
 import "./update.scss";
-import { handleAdminUpdate } from "../../../services/socketService";
+import VacCard from "../../vac-card/vac-card";
+import { LoginServices } from "../../../services/loginService";
 
-const VacCard = lazy(() => import("../../vac-card/vac-card"));
+// const VacCard = lazy(() => import("../../vac-card/vac-card"));
 
 interface UpdateState {
   vacation: VacationModel;
@@ -52,18 +54,8 @@ export class Update extends Component<any, UpdateState> {
 
   public componentDidMount = async () => {
     
-    // subscribe to store
-    this.unsubscribeStore = store.subscribe(() => {
-      this.setState({
-        tokens: store.getState().auth.tokens,
-      });
+    LoginServices.adminLoginLogic(this.props.history)
  
-    });
-
- 
-
-    // verify admin
-    ValidationService.verifyAdmin(this.props.history);
 
     try {
       const vacationID = this.props.match.params.id;
@@ -80,7 +72,6 @@ export class Update extends Component<any, UpdateState> {
   };
 
   public componentWillUnmount(): void {
-    this.unsubscribeStore();
     clearInterval(this.handleTokens);
   }
 

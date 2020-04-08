@@ -19,11 +19,8 @@ export class AppState {
   public backgroundImage: string
   public sliderSetting: SliderModel
 
-  public VacationAppState:
-    {
-      followUp: UserVacationModel[] 
-      unFollowUp: UserVacationModel[]
-    }
+  public followUp: UserVacationModel[] = []
+  public unFollowUp: UserVacationModel[] = []
 
   public constructor() {
 
@@ -46,7 +43,7 @@ export class AppState {
       if (this.user.isAdmin === 0) {
         this.backgroundImage = "user"
         this.admin = false
-        handleUserRealTimeUpdate(this.socket);
+        // handleUserRealTimeUpdate(this.socket);
       }
       else {
         this.backgroundImage = "admin"
