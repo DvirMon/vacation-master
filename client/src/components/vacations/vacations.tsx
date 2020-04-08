@@ -13,7 +13,8 @@ import { ServerServices } from "../../services/serverService";
 import { VacationService } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
-import { handleUserRealTimeUpdate } from "../../services/socketService";
+import { invokeConnection } from "../../services/socketService";
+import { handelBackground, setStyle } from "../../services/styleServices";
 
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
@@ -27,11 +28,7 @@ import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
 import { ActionType } from "../../redux/action-type";
 
-import io from "socket.io-client";
-
 import "./vacations.scss";
-import { handelBackground, setStyle } from "../../services/styleServices";
-import { Collapse, CardContent, Typography } from "@material-ui/core";
 
 const myCard = lazy(() => import("../vac-card/vac-card"));
 
@@ -43,16 +40,11 @@ interface VacationsState {
   followUp: UserVacationModel[];
   menu: MenuModel;
   sliderSetting: SliderModel;
-  expanded: boolean;
-  collapseVacation: UserVacationModel;
 }
 
 export class Vacations extends Component<any, VacationsState> {
   // unsubscribe to store
   private unsubscribeStore: Unsubscribe;
-
-  // invoke socket object
-  public socket = io.connect("http://localhost:3000");
 
   constructor(props: any) {
     super(props);
@@ -65,17 +57,17 @@ export class Vacations extends Component<any, VacationsState> {
       unFollowUp: store.getState().vacation.unFollowUp,
       menu: AdminMenu,
       sliderSetting: store.getState().vacation.sliderSetting,
-      expanded: false,
-      collapseVacation: {},
     };
-
-    if (this.state.admin === false) {
-      handleUserRealTimeUpdate(this.socket);
-    }
   }
 
   public componentDidMount = async () => {
     try {
+      // verify login
+      if (store.getState().auth.isLoggedIn === false) {
+        this.props.history.push("/");
+        return;
+      }
+
       // subscribe to store
       this.unsubscribeStore = store.subscribe(() => {
         this.setState({
@@ -88,43 +80,45 @@ export class Vacations extends Component<any, VacationsState> {
         });
       });
 
-      // verify login
-      if (store.getState().auth.isLoggedIn === false) {
-        this.props.history.push("/");
-        return;
-      }
+      const { user, admin } = this.state;
+      await this.authLogic(user, admin);
+      await this.vacationLogic();
+      this.handleStyle(admin);
+    } 
+    
+    catch (err) {
+      console.log(err);
+    }
+  };
 
-      // get data from store
-      const user = store.getState().auth.user;
-      const admin = store.getState().auth.admin;
+  public authLogic = async (user, admin) => {
+    
+    // invoke socket connection
+    invokeConnection();
 
-      // get tokens
-      await TokensServices.getTokens(user);
+    // get tokens
+    await TokensServices.getTokens(user);
+
+    // unable for client to navigate to other route
+    LoginServices.verifyPath(admin, user, this.props.history);
+  };
+
+  public vacationLogic = async () => {
+    if (store.getState().vacation.unFollowUp.length === 0) {
+      // update socket object in store
       const tokens = store.getState().auth.tokens;
 
-      // unable for client to navigate to other route
-      LoginServices.verifyPath(admin, user, this.props.history);
+      // get vacation
+      const response = await VacationService.getVacationsAsync(
+        tokens.accessToken
+      );
 
-      // if store vacations is empty
-      if (store.getState().vacation.unFollowUp.length === 0) {
-        // update socket object in store
-        store.dispatch({ type: ActionType.updateSocket, payload: this.socket });
-
-        // get vacation
-        const response = await VacationService.getVacationsAsync(
-          tokens.accessToken
-        );
-
-        // handle response - if true there is an error
-        if (ServerServices.handleServerResponse(response)) {
-          this.handleServerError(response);
-        } else {
-          this.handleServerSuccess(response);
-        }
+      // handle response - if true there is an error
+      if (ServerServices.handleServerResponse(response)) {
+        this.handleServerError(response);
+      } else {
+        this.handleServerSuccess(response);
       }
-      this.handleStyle(admin);
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -146,14 +140,7 @@ export class Vacations extends Component<any, VacationsState> {
   };
 
   render() {
-    const {
-      followUp,
-      unFollowUp,
-      sliderSetting,
-      admin,
-      expanded,
-      collapseVacation,
-    } = this.state;
+    const { followUp, unFollowUp, sliderSetting, admin } = this.state;
 
     return (
       <React.Fragment>
@@ -175,24 +162,11 @@ export class Vacations extends Component<any, VacationsState> {
                         vacation={vacation}
                         follow={true}
                         followIcon={true}
-                        handleCollapse={this.handleCollapse}
                       ></VacCard>
                     </Suspense>
                   </Col>
                 ))}
               </Slider>
-            </Row>
-            <Row>
-              <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <Col sm={8}>
-                  <CardContent>
-                    <Typography paragraph>
-                      {collapseVacation.description}
-                    </Typography>
-                  </CardContent>
-                </Col>
-                <Col sm={4}></Col>
-              </Collapse>
             </Row>
             <Row>
               {!admin && <h1 className="card-title">Explore Our Vacations</h1>}
@@ -217,11 +191,6 @@ export class Vacations extends Component<any, VacationsState> {
       </React.Fragment>
     );
   }
-
-  public handleCollapse = (vacation: UserVacationModel) => {
-    const expanded = this.state.expanded;
-    this.setState({ expanded: !expanded, collapseVacation: vacation });
-  };
 
   public updateSliderSetting = () => {
     SliderModel.updateSliderSetting();

@@ -5,12 +5,12 @@ const followUpLogic = require("../bll/followup-logic");
 const usersLogic = require("../bll/users-logic");
 const auth = require("../services/auth");
 
-
 // get all followup vacation
-router.get("/", auth.authorize(1) ,async (request, response, next) => {
+router.get("/", auth.authorize(1), async (request, response, next) => {
   try {
     const followers = await followUpLogic.getAllFollowUp();
-    response.json(followers);
+
+    response.json({ message: "success ", body: followers });
   } catch (err) {
     next(err);
   }
@@ -23,15 +23,16 @@ router.get("/:id", async (request, response, next) => {
     const followers = await followUpLogic.getFollowUpByVacation(vacationID);
     if (!followers) {
       response.json(0);
-      return
+      return;    
     }
     response.json(followers);
   } catch (err) {
-    next(err);
+    next(err); 
   }
 });
 
 // add new followup
+
 router.post("/", auth.authorize(), async (request, response, next) => {
   try {
     // get vacationID uuid from request
@@ -46,18 +47,16 @@ router.post("/", auth.authorize(), async (request, response, next) => {
       next("user is not exist in db");
       return;
     }
- 
-    followup.userID = user.id;
-    
-    const addedFollowup = await followUpLogic.addFollowUp(followup);
 
+    followup.userID = user.id;
+
+    const addedFollowup = await followUpLogic.addFollowUp(followup);
 
     response.json(addedFollowup);
   } catch (err) {
     next(err);
   }
 });
-
 
 // delete followup
 router.delete("/:id", auth.authorize(), async (request, response, next) => {
@@ -66,7 +65,7 @@ router.delete("/:id", auth.authorize(), async (request, response, next) => {
     await followUpLogic.deleteFollowUp(id);
     response.sendStatus(204);
   } catch (err) {
-    next(err); 
+    next(err);
   }
 });
 

@@ -7,36 +7,22 @@
     margin: 0;
     margin-bottom: 1%;
     justify-content: space-around;
-
-    .MuiCollapse-wrapperInner {
-      background-color: white;
-      width: 99%;
-      margin: auto;
-    }
   }
 
   .slick-slider {
     width: 90%;
-
-    .slick-arrow .slick-next {
-      font-size: 20px;
-      z-index: -1;
-      padding: 0;
-      margin: 0;
-      width: 0;
-    }
   }
 
   .col-sm-3 {
     margin: 0;
     padding: 0;
   }
+
   .col.followed {
     padding: 0;
-    width: 100%;
-  }
-
-  .root {
-    width: 90%;
+    
+    .root {
+      width: 90%;
+    }
   }
 }

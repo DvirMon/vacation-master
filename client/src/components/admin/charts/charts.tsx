@@ -9,38 +9,36 @@ import { TokensModel } from "../../../models/tokens.model";
 import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
 import { ValidationService } from "../../../services/validationService";
- 
+
 import { store } from "../../../redux/store";
 import { Unsubscribe } from "redux";
-  
+
 import "./charts.scss";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
- 
+
 interface ChartsState {
   tokens: TokensModel;
   dataPoints: ChartModel[];
 }
 
 export class Charts extends Component<any, ChartsState> {
-  
   private unsubscribeStore: Unsubscribe;
-  
+
   constructor(props: any) {
-    super(props); 
+    super(props);
 
     this.state = {
       tokens: store.getState().auth.tokens,
-      dataPoints: []
+      dataPoints: [],
     };
   }
 
   public componentDidMount = async () => {
-
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
-        tokens: store.getState().auth.tokens
+        tokens: store.getState().auth.tokens,
       });
     });
 
@@ -48,9 +46,18 @@ export class Charts extends Component<any, ChartsState> {
     ValidationService.verifyAdmin(this.props.history);
 
     try {
-      const tokens = store.getState().auth.tokens;
-      const dataPoints = await this.getChartsData(tokens.accessToken);
-      this.setState({ dataPoints });
+      const url = `http://localhost:3000/api/followup`;
+      const tokens = await TokensServices.handleStoreRefresh();
+      const response = await ServerServices.getRequest(url, tokens.accessToken);
+
+      console.log(response);
+
+      if (ServerServices.handleServerResponse(response)) {
+        alert(response.body);
+        this.props.history.push("/admin");
+      } else {
+        this.setState({ dataPoints: response.body });
+      }
     } catch (err) {
       alert(err);
       this.props.history.push("/admin");
@@ -62,33 +69,27 @@ export class Charts extends Component<any, ChartsState> {
     clearInterval(this.handleTokens);
   }
 
-  public getChartsData = async accessToken => {
-    const url = `http://localhost:3000/api/followup`;
-    const dataPoints = await ServerServices.getRequest(url, accessToken);
-    return dataPoints;
-  };
-
   render() {
     const { dataPoints } = this.state;
 
     const options = {
       title: {
-        text: "Followed Vacations"
+        text: "Followed Vacations",
       },
       axisY: {
         title: "Users",
-        includeZero: false
+        includeZero: false,
       },
 
       axisX: {
-        title: "VacationID"
+        title: "VacationID",
       },
       data: [
         {
           type: "column",
-          dataPoints: dataPoints
-        }
-      ]
+          dataPoints: dataPoints,
+        },
+      ],
     };
 
     return (

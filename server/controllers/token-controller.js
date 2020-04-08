@@ -38,13 +38,13 @@ router.post("/new", auth.authorize(), async (request, response, next) => {
     // validate refreshToken in db
     const refreshToken = await tokenLogic.getDatabaseToken(dbToken.id);
     if (!refreshToken) {
-      response.sendStatus(403);
+      response.status(404).json({ message : "error", body : "token is invalid"});
       return;
     }
 
     // verify token
     const verify = jwt.verify(
-      refreshToken.refreshToken,
+      dbToken.refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
     if (!verify) {
@@ -58,15 +58,15 @@ router.post("/new", auth.authorize(), async (request, response, next) => {
       isAdmin: verify.role,
     });
 
-    response
+    response 
       .status(201)
       .json({ message: "success", body: { dbToken, accessToken } });
   } catch (err) {
-    next(err);
-  }
+    next(err); 
+  }  
 });
 
-// logout
+// logout 
 router.delete("/:id", async (request, response, next) => {
   try {
     // get refreshToken id from client

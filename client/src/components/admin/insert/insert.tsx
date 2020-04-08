@@ -22,11 +22,13 @@ import { handleAdminInsert } from "../../../services/socketService";
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
- 
-import "./insert.scss"; 
+
+import io from "socket.io-client";
+
+import "./insert.scss";
 
 interface InsertState {
-  vacation: VacationModel; 
+  vacation: VacationModel;
   tokens: TokensModel;
   preview: string;
 }
@@ -40,16 +42,21 @@ export class Insert extends Component<any, InsertState> {
     this.state = {
       vacation: new VacationModel(),
       tokens: store.getState().auth.tokens,
-      preview: "aaa"
-    }
+      preview: "aaa",
+    };
   }
 
   public componentDidMount = async () => {
+    
+    // if (!store.getState().auth.socket) {
+    //   const socket = io.connect("http://localhost:3000");
+    //   store.dispatch({ type: ActionType.updateSocket, payload: socket });
+    // }
 
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
-        tokens: store.getState().style.tokens
+        tokens: store.getState().style.tokens,
       });
     });
 
@@ -63,8 +70,7 @@ export class Insert extends Component<any, InsertState> {
   }
 
   public addVacation = async () => {
-
-
+    
     const { vacation } = this.state;
 
     if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
@@ -72,7 +78,7 @@ export class Insert extends Component<any, InsertState> {
     }
 
     try {
-      const tokens = store.getState().auth.tokens;
+      const tokens = await TokensServices.handleStoreRefresh();
       const url = `http://localhost:3000/api/vacations`;
 
       // create formatDate file
@@ -91,8 +97,7 @@ export class Insert extends Component<any, InsertState> {
         return;
       }
 
-      this.handleSuccess(response.body)
-
+      this.handleSuccess(response.body);
     } catch (err) {
       console.log(err);
     }
@@ -101,7 +106,7 @@ export class Insert extends Component<any, InsertState> {
   public handleSuccess = (vacation) => {
     const action = { type: ActionType.addVacation, payload: vacation };
     store.dispatch(action);
-    handleAdminInsert(vacation)
+    handleAdminInsert(vacation);
     alert("New Vacation has been added!");
     this.props.history.push("/admin");
   };

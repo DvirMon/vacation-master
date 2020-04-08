@@ -36,7 +36,7 @@ interface VacCardProps {
   follow?: boolean;
   preview?: string;
   update?(): void;
-  handleCollapse?(vacation : UserVacationModel): void;
+  handleCollapse?(vacation: UserVacationModel): void;
 }
 
 interface VacCardState {
@@ -126,17 +126,12 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
               <ExpandMoreIcon />
             </IconButton>
           </CardActions>
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <CardContent>
+              <Typography paragraph>{vacation.description}</Typography>
+            </CardContent>
+          </Collapse>
         </Card>
-        {/* <Collapse
-          className="collapse-info"
-          in={expanded}
-          timeout="auto"
-          unmountOnExit
-        >
-          <CardContent>
-            <Typography paragraph>{vacation.description}</Typography>
-          </CardContent>
-        </Collapse> */}
       </div>
     );
   }
@@ -144,7 +139,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   public handleExpandClick = (event) => {
     const expanded = this.state.expanded;
     this.setState({ expanded: !expanded });
-    this.props.handleCollapse(this.props.vacation);
   };
 
   public formatDate = (start: string, end: string) => {

@@ -4,7 +4,16 @@ import io from "socket.io-client";
 
 
 
+export const invokeConnection = () => {
 
+  if (!store.getState().auth.socket) {
+    const socket = io.connect("http://localhost:3000");
+    store.dispatch({ type: ActionType.updateSocket, payload: socket });
+    if (!store.getState().auth.admin) {
+      handleUserRealTimeUpdate(socket);
+    }
+  }
+}
 
 export const updateChart = (vacation) => {
   const socket = store.getState().auth.socket

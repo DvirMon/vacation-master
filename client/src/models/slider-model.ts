@@ -16,7 +16,6 @@ export class SliderModel {
 
       const sliderSetting = store.getState().vacation.sliderSetting
       const length = store.getState().vacation.followUp.length;
-  
       if (length > 1) {
         sliderSetting.slidesToShow = 4 ;
         sliderSetting.slidesToScroll = length > 4 ? 4 : length;

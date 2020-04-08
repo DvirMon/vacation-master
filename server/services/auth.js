@@ -18,10 +18,10 @@ const setToken = user => {
       (err, result) => {
         if (err) {
           reject(err);
-        }
-        resolve(result);
-      }
-    );
+        }  
+        resolve(result); 
+      } 
+    );   
   });
 };
 // end of function
@@ -47,7 +47,7 @@ const setRefreshToken = user => {
 const authorize = role => (request, response, next) => {
   // verify if token exist
   const token = request.headers["authorization"];
-  console.log(request.headers.authorization)
+  // console.log(request.headers.authorization)
  
   if (!token) {
     return response

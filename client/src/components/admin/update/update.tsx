@@ -51,12 +51,16 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public componentDidMount = async () => {
+    
     // subscribe to store
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
         tokens: store.getState().auth.tokens,
       });
+ 
     });
+
+ 
 
     // verify admin
     ValidationService.verifyAdmin(this.props.history);
@@ -85,6 +89,7 @@ export class Update extends Component<any, UpdateState> {
   }, 300000);
 
   public updateVacation = async () => {
+
     const { vacation, updated } = this.state;
 
     if (updated) {
@@ -102,7 +107,8 @@ export class Update extends Component<any, UpdateState> {
     }
 
     try {
-      const tokens = store.getState().auth.tokens;
+
+      const tokens =   await TokensServices.handleStoreRefresh();;
       const vacationID = +this.props.match.params.id;
 
       // create formatDate file
@@ -123,26 +129,23 @@ export class Update extends Component<any, UpdateState> {
       }
 
       this.handleSuccess(response.body);
-
     } catch (err) {
       alert(err);
     }
   };
 
   public handleSuccess = (vacation) => {
-
     alert("Vacation has been updated successfully!");
-    
+
     // update store
     store.dispatch({ type: ActionType.updatedVacation, payload: vacation });
-    
+
     // update socket
     handleAdminUpdate(vacation);
-    
+
     // navigate to home page
     this.props.history.push("/admin");
   };
-
 
   render() {
     const { vacation, preview } = this.state;

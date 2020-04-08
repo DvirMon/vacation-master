@@ -16,11 +16,11 @@ const connect = (socketServer) => {
 
     socket.on("admin-add-vacation", async (vacation) => {
       socketServer.sockets.emit("server-add-vacation", vacation)
-    })
+    })  
 
     socket.on("admin-update-vacation", async (vacation) => {
       socketServer.sockets.emit("server-update-vacation", vacation)
-    }) 
+    })  
 
     socket.on("admin-delete-vacation", async (vacationID) => {
       socketServer.sockets.emit("server-delete-vacation", vacationID)
