@@ -45,6 +45,7 @@ router.get("/user", auth.authorize(), async (request, response, next) => {
 router.get("/:id", async (request, response, next) => {
   try {
     const vacationID = request.params.id;
+    
     const vacation = await vacationsLogic.getVacation(vacationID);
     
     if (!vacation) {

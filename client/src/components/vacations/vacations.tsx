@@ -1,14 +1,14 @@
-import React, { Component, lazy, Suspense } from "react";
+import React, { Component } from "react";
 
 // import components
-import VacCard from "../vac-card/vac-card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import VacCard from "../vac-card/vac-card";
 import Loader from "../loader/loader";
-import UpdateToken from "../updateToken/updateToken";
 import Slider from "react-slick";
+import UpdateToken from "../updateToken/updateToken";
 
-// import services
+// import services 
 import { ServerServices } from "../../services/serverService";
 import { VacationService } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
@@ -30,7 +30,6 @@ import { ActionType } from "../../redux/action-type";
 
 import "./vacations.scss";
 
-const myCard = lazy(() => import("../vac-card/vac-card"));
 
 interface VacationsState {
   user: UserModel;
@@ -51,7 +50,7 @@ export class Vacations extends Component<any, VacationsState> {
 
     this.state = {
       user: store.getState().auth.user,
-      admin: store.getState().auth.admin, 
+      admin: store.getState().auth.admin,
       tokens: store.getState().auth.tokens,
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
@@ -64,6 +63,7 @@ export class Vacations extends Component<any, VacationsState> {
     try {
       // verify login
       if (store.getState().auth.isLoggedIn === false) {
+        console.log(store.getState().auth.isLoggedIn);
         this.props.history.push("/");
         return;
       }
@@ -84,15 +84,12 @@ export class Vacations extends Component<any, VacationsState> {
       await this.authLogic(user, admin);
       await this.vacationLogic();
       this.handleStyle(admin);
-    } 
-    
-    catch (err) {
+    } catch (err) {
       console.log(err);
     }
   };
 
   public authLogic = async (user, admin) => {
-    
     // invoke socket connection
     invokeConnection();
 
@@ -123,7 +120,9 @@ export class Vacations extends Component<any, VacationsState> {
   };
 
   public componentWillUnmount(): void {
-    this.unsubscribeStore();
+    if (this.unsubscribeStore) {
+      this.unsubscribeStore();
+    }
   }
 
   public handleServerError = (response) => {
@@ -157,13 +156,11 @@ export class Vacations extends Component<any, VacationsState> {
               <Slider {...sliderSetting}>
                 {followUp.map((vacation) => (
                   <Col className="followed" key={vacation.vacationID}>
-                    <Suspense fallback={<div>Loading...</div>}>
-                      <VacCard
-                        vacation={vacation}
-                        follow={true}
-                        followIcon={true}
-                      ></VacCard>
-                    </Suspense>
+                    <VacCard
+                      vacation={vacation}
+                      follow={true}
+                      followIcon={true}
+                    ></VacCard>
                   </Col>
                 ))}
               </Slider>

@@ -15,7 +15,6 @@ export class LoginServices {
   }
   // end of function
 
-
   // function for legal login form
   static loginLegal = (user, errors) => {
     if (
@@ -29,18 +28,6 @@ export class LoginServices {
     return false;
   };
   // end function for legal login form
-
-  // function for login
-  static logInRequest = async user => {
-    try {
-      const url = `http://localhost:3000/api/user/login`;
-      const response = await ServerServices.postRequest(url, user);
-      return response;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  // enf of function for login
 
   // function to handle rout according to role
   static handleRouting = (user, history) => {

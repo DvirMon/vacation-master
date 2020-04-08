@@ -90,9 +90,9 @@ export class ServerServices {
   // end of function
  
 
-  static handleServerResponseEx = (response, resolve, reject) => {
+  static handleServerResponseEx = (response, resolve, reject, history?) => {
     if (response.message === "success") {
-      resolve(response.body);
+      resolve(response.body, history); 
     } else {
       reject(response.body ? response.body : "pay attention! you cant use apostrophe mark")
     }

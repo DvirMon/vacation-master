@@ -9,19 +9,13 @@ import Grid from "@material-ui/core/Grid";
 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
-import { TokensModel } from "../../../models/tokens.model";
 
 // import services
+import { InsertService } from "./insertService";
 import { ValidationService } from "../../../services/validationService";
 import { TokensServices } from "../../../services/tokensService";
-import { VacationService } from "../../../services/vacationsService";
 import { ServerServices } from "../../../services/serverService";
 import { LoginServices } from "../../../services/loginService";
-import { handleAdminInsert } from "../../../services/socketService";
-
-// import redux
-import { store } from "../../../redux/store";
-import { ActionType } from "../../../redux/action-type";
 
 import "./insert.scss";
 
@@ -48,67 +42,28 @@ export class Insert extends Component<any, InsertState> {
     clearInterval(this.handleTokens);
   }
 
-  public addVacation = async () => {
+  public handleInsertRequest = async () => {
     const { vacation } = this.state;
 
     try {
+
       // validate vacation
       if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
         return;
       }
 
-      // handle logic
-      const response = await this.handleInsertLogic(vacation);
+      // handle request
+      const response = await InsertService.handleRequest(vacation);
 
-      // handle response - if true server returned an error
+      // handle response
       ServerServices.handleServerResponseEx(
-        response,
-        this.handleSuccess,
-        this.handleError
-      ); 
-      // this.handleServerResponse(response)
+        response, 
+        () => InsertService.handleSuccess(response.body, this.props.history),
+        () => InsertService.handleError(response.body) 
+      );
     } catch (err) {
       console.log(err);
     }
-  };
-
-  public handleServerResponse = (response) => {
-    if (response.message === "error") {
-      alert(response.body);
-      return;
-    }
-    this.handleSuccess(response.body);
-  };
-
-  public handleInsertLogic = async (vacation) => {
-    const tokens = await TokensServices.handleStoreRefresh();
-    const url = `http://localhost:3000/api/vacations`;
-
-    // create formatDate file
-    const myFormData = VacationService.setFormData(vacation);
-
-    // send a request
-    const response = await VacationService.addVacationAsync(
-      url,
-      myFormData,
-      tokens.accessToken
-    );
-    return response;
-  };
-
-  public handleError = (err) => {
-    alert(err);
-  };
-
-  public handleSuccess = (vacation) => {
-    const action = { type: ActionType.addVacation, payload: vacation };
-    store.dispatch(action);
-
-    handleAdminInsert(vacation);
-
-    alert("New Vacation has been added!");
-
-    this.props.history.push("/admin");
   };
 
   public handleTokens = setInterval(async () => {
@@ -123,7 +78,7 @@ export class Insert extends Component<any, InsertState> {
           <MyForm
             vacation={vacation}
             handleChange={this.handleChange}
-            handleVacation={this.addVacation}
+            handleVacation={this.handleInsertRequest}
             handleImage={this.handleImage}
           />
         </Grid>

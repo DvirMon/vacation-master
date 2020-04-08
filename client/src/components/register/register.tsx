@@ -67,33 +67,46 @@ export class Register extends Component<any, RegisterState> {
     return false;
   };
 
-  public addUser = async () => {
+  public handleRegister = async () => {
     const { user } = this.state;
 
+    // validate form
     if (ValidationService.formLegal(user, RegisterModel.validRegistration)) {
       return;
     }
 
     try {
-      const url = `http://localhost:3000/api/user`;
-      const serverResponse = await ServerServices.postRequest(url, user);
-
-      if (ServerServices.handleServerResponse(serverResponse)) {
-        this.setState({
-          serverError: serverResponse.body,
-          serverErrorStyle: true,
-        });
-      } else {
-        this.handleSuccess(serverResponse.body);
-      }
+      // handle request
+      await this.handleRequest(user);
     } catch (err) {
       console.log(err);
     }
   };
 
-  public handleSuccess = (user) => {
+  public handleRequest = async (user) => {
+   
+    // send register request
+    const url = `http://localhost:3000/api/user`;
+    const serverResponse = await ServerServices.postRequest(url, user);
+
+    // handle server response
+    ServerServices.handleServerResponseEx(
+      serverResponse,
+      () => this.handleSuccessResponse(serverResponse.body),
+      () => this.handleErrorResponse(serverResponse.body)
+    );
+  };
+
+  public handleSuccessResponse = (user) => {
     store.dispatch({ type: ActionType.Login, payload: user });
     this.props.history.push(`/user/${user.userName}`);
+  };
+
+  public handleErrorResponse = (serverError) => {
+    this.setState({
+      serverError,
+      serverErrorStyle: true,
+    });
   };
 
   render() {
@@ -167,7 +180,7 @@ export class Register extends Component<any, RegisterState> {
                 variant="contained"
                 color="secondary"
                 fullWidth={true}
-                onClick={this.addUser}
+                onClick={this.handleRegister}
                 disabled={this.disabledButton()}
               >
                 Sigh-in

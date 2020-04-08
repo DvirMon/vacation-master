@@ -35,11 +35,11 @@ import { store } from "../../redux/store";
 
 import "./login.scss";
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 interface LoginState {
   user: UserModel;
@@ -74,6 +74,7 @@ export class Login extends Component<any, LoginState> {
   };
 
   public handleLogIn = async () => {
+
     const { user, errors } = this.state;
 
     // disabled request if form is not legal
@@ -89,21 +90,27 @@ export class Login extends Component<any, LoginState> {
   };
 
   public handleRequest = async (user) => {
+   
     //send login request
-    const serverResponse = await LoginServices.logInRequest(user);
+    const url = `http://localhost:3000/api/user/login`;
+    const serverResponse = await ServerServices.postRequest(url, user);
 
-    // if true server returned error
-    if (ServerServices.handleServerResponse(serverResponse)) {
-      this.setState({ serverError: serverResponse.body, error: true });
-      return;
-    }
-    this.handleSuccessResponse(serverResponse.body);
+    // handle server response
+    ServerServices.handleServerResponseEx(
+      serverResponse,
+      () => this.handleSuccessResponse(serverResponse.body),
+      () => this.handleErrorResponse(serverResponse.body)
+    );
   };
 
   public handleSuccessResponse = async (user) => {
     store.dispatch({ type: ActionType.Login, payload: user });
     store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
     LoginServices.handleRouting(user, this.props.history);
+  }; 
+
+  public handleErrorResponse = (serverError) => {
+    this.setState({ serverError, error: true });
   };
 
   render() {
@@ -116,7 +123,6 @@ export class Login extends Component<any, LoginState> {
             <h2>Explore destinations around the world!</h2>
             <h4>Open an account for more information</h4>
           </Grid>
-
         </Grid>
         <Grid className="login-aside">
           <FormControl className="login-aside my-form">

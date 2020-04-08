@@ -8,26 +8,24 @@ import Loader from "../../loader/loader";
 
 // import materiel-ui
 import Grid from "@material-ui/core/Grid";
+import VacCard from "../../vac-card/vac-card";
 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
 import { TokensModel } from "../../../models/tokens.model";
 
 // import services
+import { UpdateService } from "./updateService";
 import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
-import { VacationService } from "../../../services/vacationsService";
 import { ValidationService } from "../../../services/validationService";
-import { handleAdminUpdate, invokeConnection } from "../../../services/socketService";
+import { LoginServices } from "../../../services/loginService";
 
 // import redux
 import { store } from "../../../redux/store";
-import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
 import "./update.scss";
-import VacCard from "../../vac-card/vac-card";
-import { LoginServices } from "../../../services/loginService";
 
 // const VacCard = lazy(() => import("../../vac-card/vac-card"));
 
@@ -39,8 +37,6 @@ interface UpdateState {
 }
 
 export class Update extends Component<any, UpdateState> {
-  private unsubscribeStore: Unsubscribe;
-
   constructor(props: any) {
     super(props);
 
@@ -53,14 +49,11 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public componentDidMount = async () => {
-    
-    LoginServices.adminLoginLogic(this.props.history)
- 
+    LoginServices.adminLoginLogic(this.props.history);
 
     try {
       const vacationID = this.props.match.params.id;
-      const url = `http://localhost:3000/api/vacations/${vacationID}`;
-      const vacation = await ServerServices.getRequest(url);
+      const vacation = await UpdateService.getVacation(vacationID);
       this.setState({ vacation });
 
       setTimeout(() => {
@@ -79,63 +72,37 @@ export class Update extends Component<any, UpdateState> {
     await TokensServices.getAccessToken();
   }, 300000);
 
-  public updateVacation = async () => {
 
+  public handleUpdateRequest = async () => {
     const { vacation, updated } = this.state;
+    const vacationID = +this.props.match.params.id;
 
-    if (updated) {
-      const answer = window.confirm(
-        "No change has been notice, do you wish to continue?"
-      );
-      if (!answer) {
-        return;
-      }
-    }
-
-    // validate form
-    if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
+    if (UpdateService.verifyChange(updated)) {
       return;
     }
 
     try {
-
-      const tokens =   await TokensServices.handleStoreRefresh();;
-      const vacationID = +this.props.match.params.id;
-
-      // create formatDate file
-      const myFormData = VacationService.setFormData(vacation);
-
-      const url = `http://localhost:3000/api/vacations/${vacationID}`;
-
-      const response = await VacationService.updateVacationAsync(
-        url,
-        myFormData,
-        tokens.accessToken
-      );
-
-      // if true server returned an error
-      if (ServerServices.handleServerResponse(response)) {
-        alert(response.body);
+      
+      // validate form
+      if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
         return;
       }
 
-      this.handleSuccess(response.body);
+      // send update request
+      const response = await UpdateService.handleRequest(
+        vacation,
+        vacationID
+      );
+
+      // handle server response
+      ServerServices.handleServerResponseEx(
+        response,
+        () => UpdateService.handleSuccess(response.body, this.props.history),
+        () => UpdateService.handleError(response.body)
+      ); 
     } catch (err) {
       alert(err);
     }
-  };
-
-  public handleSuccess = (vacation) => {
-    alert("Vacation has been updated successfully!");
-
-    // update store
-    store.dispatch({ type: ActionType.updatedVacation, payload: vacation });
-
-    // update socket
-    handleAdminUpdate(vacation);
-
-    // navigate to home page
-    this.props.history.push("/admin");
   };
 
   render() {
@@ -152,7 +119,7 @@ export class Update extends Component<any, UpdateState> {
                 <MyForm
                   vacation={vacation}
                   handleChange={this.handleChange}
-                  handleVacation={this.updateVacation}
+                  handleVacation={this.handleUpdateRequest}
                   handleImage={this.handleImage}
                 />
               )}
