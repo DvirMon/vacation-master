@@ -1,9 +1,9 @@
-import { AppState } from "../app-state";
+import { StyleAppState } from "../app-state";
 import { Action } from "../action";
 import { ActionType } from "../action-type";
 
-export const styleReducer = (oldAppState = new AppState(), action: Action): AppState => {
-
+export const styleReducer = (oldAppState = new StyleAppState(), action: Action): StyleAppState => {
+  
   const newAppState = { ...oldAppState }
 
   switch (action.type) {

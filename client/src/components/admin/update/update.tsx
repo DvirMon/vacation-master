@@ -44,9 +44,9 @@ export class Update extends Component<any, UpdateState> {
       vacation: new VacationModel(),
       tokens: store.getState().auth.tokens,
       updated: true,
-      preview: "",
-    };
-  }
+      preview: "",  
+    }; 
+  } 
 
   public componentDidMount = async () => {
     LoginServices.adminLoginLogic(this.props.history);

@@ -1,31 +1,22 @@
 
-import { AppState } from "../app-state";
+import { AuthAppState } from "../app-state";
 import { Action } from "../action";
 import { ActionType } from "../action-type";
 
-export const authReducer = (oldAppState = new AppState(), action: Action): AppState => {
+export const authReducer = (oldAppState = new AuthAppState(), action: Action): AuthAppState => {
 
   const newAppState = { ...oldAppState }
 
   switch (action.type) {
-    case ActionType.Login:
-      newAppState.isLoggedIn = true;
-      newAppState.user = action.payload
-      sessionStorage.setItem("user", JSON.stringify(action.payload));
+
+    case ActionType.addToken:
+      newAppState.tokens = action.payload
+      sessionStorage.setItem("jwt", JSON.stringify(action.payload.dbToken.refreshToken));
       break
-      case ActionType.isAdmin: 
-      (action.payload === 0) ? newAppState.admin = false : newAppState.admin = true 
-      break
-      case ActionType.addToken:
-        newAppState.tokens = action.payload
-        sessionStorage.setItem("jwt", JSON.stringify(action.payload.dbToken.refreshToken));
-        break
-        case ActionType.updateSocket:
-          newAppState.socket = action.payload
+    case ActionType.updateSocket:
+      newAppState.socket = action.payload
       break
     case ActionType.Logout:
-      newAppState.isLoggedIn = false
-      newAppState.user = null
       newAppState.tokens = null
       sessionStorage.clear();
   }

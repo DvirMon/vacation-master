@@ -1,9 +1,9 @@
-import { AppState } from "../app-state";
+import {  VacationAppState } from "../app-state";
 import { Action } from "../action";
 import { ActionType } from "../action-type";
-
-export const vacationReducer = (oldAppState = new AppState(), action: Action): AppState => {
-
+ 
+export const vacationReducer = (oldAppState = new VacationAppState(), action: Action): VacationAppState => {
+ 
   const newAppState = { ...oldAppState }
 
 

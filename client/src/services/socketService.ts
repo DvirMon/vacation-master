@@ -9,12 +9,12 @@ export const invokeConnection = () => {
   if (!store.getState().auth.socket) {
     const socket = io.connect("http://localhost:3000");
     store.dispatch({ type: ActionType.updateSocket, payload: socket });
-    if (!store.getState().auth.admin) {
+    if (!store.getState().login.admin) {
       handleUserRealTimeUpdate(socket);
     } else {
       chartRealTimeUpdate(socket)
     }
-  }
+  } 
 }
  
 export const updateChart = () => {

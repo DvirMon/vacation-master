@@ -48,8 +48,8 @@ export class Vacations extends Component<any, VacationsState> {
     super(props);
 
     this.state = {
-      user: store.getState().auth.user,
-      admin: store.getState().auth.admin,
+      user: store.getState().login.user,
+      admin: store.getState().login.admin,
       tokens: store.getState().auth.tokens,
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
@@ -61,8 +61,8 @@ export class Vacations extends Component<any, VacationsState> {
   public componentDidMount = async () => {
     try {
       // verify login
-      if (store.getState().auth.isLoggedIn === false) {
-        console.log(store.getState().auth.isLoggedIn);
+      if (store.getState().login.isLoggedIn === false) {
+        console.log(store.getState().login.isLoggedIn);
         this.props.history.push("/");
         return;
       }
@@ -70,8 +70,8 @@ export class Vacations extends Component<any, VacationsState> {
       // subscribe to store
       this.unsubscribeStore = store.subscribe(() => {
         this.setState({
-          user: store.getState().auth.user,
-          admin: store.getState().auth.admin,
+          user: store.getState().login.user,
+          admin: store.getState().login.admin,
           tokens: store.getState().auth.tokens,
           followUp: store.getState().vacation.followUp,
           unFollowUp: store.getState().vacation.unFollowUp,
@@ -150,7 +150,7 @@ export class Vacations extends Component<any, VacationsState> {
                 <h1 className="card-title">My Wish List</h1>
               )}
             </Row>
-            <Row>
+            <Row> 
               <Slider {...sliderSetting}>
                 {followUp.map((vacation) => (
                   <Col className="followed" key={vacation.vacationID}>

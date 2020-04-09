@@ -17,7 +17,7 @@ export class MenuModel {
   static setMenu = (admin) => {
     const menu = { ...AdminMenu }
     if (!admin) { 
-      menu.user = store.getState().auth.user; 
+      menu.user = store.getState().login.user; 
       menu.admin = false; 
       menu.followUpCounter = store.getState().vacation.followUp.length;
     } 

@@ -1,44 +1,6 @@
 import Joi from 'joi'
 import { handleMassage } from '../services/validationService';
 
-export class UserModel {
-
-  public constructor(
-    public firstName?: string,
-    public lastName?: string,
-    public userName?: string,
-    public password?: string,
-    public isAdmin?: number
-  ) { }
-
-
-  static validLogin = (user: UserModel) => {
-
-    const schema = Joi.object().keys({
-      userName: Joi.string().min(3).max(10).error(errors => {
-        errors.forEach(err => {
-          handleMassage(err)
-        })
-        return errors;
-      }),
-      password: Joi.string().min(6).max(24).error(errors => {
-        errors.forEach(err => {
-          handleMassage(err)
-        })
-        return errors;
-      }),
-    }).unknown()
-
-    const error = Joi.validate(user, schema).error;
-
-    if (error) {
-      return error.details[0].message
-    }
-    return null;
-  };
-
-}
-
 export class RegisterModel {
 
   public constructor(
@@ -88,5 +50,45 @@ export class RegisterModel {
     }
     return null;
   };
+}
+
+export class UserModel extends RegisterModel {
+
+  public constructor(
+    public isAdmin?: number,
+    firstName?: string,
+    lastName?: string,
+    userName?: string,
+    password?: string
+  ) {
+    super(firstName, lastName, userName, password)
+   }
+
+
+  static validLogin = (user: UserModel) => {
+
+    const schema = Joi.object().keys({
+      userName: Joi.string().min(3).max(10).error(errors => {
+        errors.forEach(err => {
+          handleMassage(err)
+        })
+        return errors;
+      }),
+      password: Joi.string().min(6).max(24).error(errors => {
+        errors.forEach(err => {
+          handleMassage(err)
+        })
+        return errors;
+      }),
+    }).unknown()
+
+    const error = Joi.validate(user, schema).error;
+
+    if (error) {
+      return error.details[0].message
+    }
+    return null;
+  };
+
 }
 

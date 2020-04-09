@@ -23,7 +23,7 @@ export class TokensServices {
   static getAccessToken = async () => {
 
     const tokens = store.getState().auth.tokens;
-
+ 
     try {
       const url = `http://localhost:3000/api/tokens/new`;
       const response = await ServerServices.postRequest(url, tokens.dbToken, tokens.accessToken)
@@ -38,7 +38,7 @@ export class TokensServices {
   static handleStoreRefresh = async () => {
 
     if (!store.getState().auth.tokens.accessToken) {
-      const user = store.getState().auth.user;
+      const user = store.getState().login.user;
       await TokensServices.getTokens(user)
     }
 

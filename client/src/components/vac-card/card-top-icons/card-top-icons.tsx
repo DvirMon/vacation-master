@@ -94,10 +94,10 @@ export class CardTopIcons extends Component<
     if (!answer) {
       return;
     }
-
+ 
     const vacationID = this.props.vacation.vacationID;
     const tokens = store.getState().auth.tokens;
-
+ 
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
     await ServerServices.deleteRequest(url, tokens.accessToken);

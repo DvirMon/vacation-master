@@ -1,6 +1,4 @@
-import { ServerServices } from "./serverService";
 import { store } from "../redux/store";
-import { ActionType } from "../redux/action-type";
 import { ValidationService } from "./validationService";
 import { invokeConnection } from "./socketService";
 
@@ -8,10 +6,10 @@ export class LoginServices {
 
   // function to check if user is logged
   static isUserLogged = (history) => {
-    if (store.getState().auth.isLoggedIn === false) {
+    if (store.getState().login.isLoggedIn === false) {
       return;
     }
-    LoginServices.handleRouting(store.getState().auth.user, history);
+    LoginServices.handleRouting(store.getState().login.user, history);
   }
   // end of function
 

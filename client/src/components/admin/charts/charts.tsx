@@ -112,7 +112,7 @@ export class Charts extends Component<any, ChartsState> {
         )}
       </React.Fragment>
     );
-  }
+  } 
 
   public handleTokens = setInterval(async () => {
     await TokensServices.getAccessToken();
