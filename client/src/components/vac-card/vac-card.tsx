@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
 import clsx from "clsx";
-import Moment from "react-moment";
 
 // import material-ui
 import Card from "@material-ui/core/Card";
@@ -17,14 +16,13 @@ import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import CardTopIcons from "./card-top-icons/card-top-icons";
+import FormatDate from "./format-date/format-date";
 
 import { UserVacationModel } from "../../models/vacations-model";
 
 import { VacationService } from "../../services/vacationsService";
 
 // import redux
-import { store } from "../../redux/store";
-import { ActionType } from "../../redux/action-type";
 
 import "./vac-card.scss";
 
@@ -32,6 +30,7 @@ interface VacCardProps {
   vacation?: UserVacationModel;
   followIcon: boolean;
   admin?: boolean;
+  margin? : boolean
   hover?: boolean;
   follow?: boolean;
   preview?: string;
@@ -64,6 +63,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     const vacation = await VacationService.getFollowersByVacationAsync(
       vacationID
     );
+ 
 
     this.setState({ followers: vacation.followers });
 
@@ -74,13 +74,20 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
   render() {
     const { expanded, color, followers } = this.state;
-    const { vacation, followIcon, admin, hover, preview } = this.props;
+    const { vacation, followIcon, admin, hover, margin, preview } = this.props;
 
     return (
-      <div className="vac-card">
+      <div
+        className="vac-card"
+        id={
+          vacation.vacationID ? `vacation${vacation.vacationID.toString()}` : ""
+        }
+      >
         <Card
           className={clsx({
             root: true,
+            "ml-0": margin,
+            "mr-0": margin,
             "root-hover": hover,
           })}
         >
@@ -104,7 +111,13 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
               />
             }
             title={vacation.destination}
-            subheader={this.formatDate(vacation.startDate, vacation.endDate)}
+            subheader={
+              <FormatDate
+                departing={vacation.startDate}
+                returning={vacation.endDate}
+                follow={this.props.follow}
+              />
+            }
           />
           <CardActions disableSpacing>
             <IconButton aria-label="share">
@@ -139,19 +152,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   public handleExpandClick = (event) => {
     const expanded = this.state.expanded;
     this.setState({ expanded: !expanded });
-  };
-
-  public formatDate = (start: string, end: string) => {
-    return (
-      <React.Fragment>
-        <div>
-          Departing:<Moment format="DD MMMM YYYY">{start}</Moment>
-        </div>
-        <div>
-          Returning: <Moment format="DD MMMM YYYY">{end}</Moment>
-        </div>
-      </React.Fragment>
-    );
   };
 }
 

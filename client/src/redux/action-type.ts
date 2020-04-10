@@ -1,9 +1,11 @@
 export enum ActionType {
-  
-  // auth ActionType
+    
+  // Login ActionType
   Login,
   Logout,
-  isAdmin,
+  isAdmin,  
+
+  // auth ActionType
   addToken,
   updateSocket,
  
@@ -11,6 +13,7 @@ export enum ActionType {
   updateMenu,
   updateBackground,
   updateSliderSetting,
+  updateNotification,
   
   // vacations ActionType
   getAllVacation,

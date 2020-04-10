@@ -1,7 +1,12 @@
+
+
 .vacations {
   height: 100%;
   padding: 0;
-  margin: 0;
+  margin: 1%;
+  height: 90%;
+  overflow: auto;
+
 
   .row {
     margin: 0;
@@ -10,7 +15,7 @@
   }
 
   .slick-slider {
-    width: 90%;
+    width: 95%;
   }
 
   .col-sm-3 {
@@ -20,7 +25,7 @@
 
   .col.followed {
     padding: 0;
-    
+
     .root {
       width: 90%;
     }

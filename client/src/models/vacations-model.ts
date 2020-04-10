@@ -68,10 +68,17 @@ export class UserVacationModel extends VacationModel {
 }
 
 export class FollowUpModel {
-
   constructor(
-    public vacationID?: number,
-    public userID?: string,
+    public vacationID: number,
+    public userID: string,
+  ) { } 
+
+}
+
+export class Notification {
+  constructor(
+    public vacationID: number,
+    public msg: string, 
   ) { }
 
 }

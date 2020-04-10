@@ -26,6 +26,7 @@ import { store } from "../../../redux/store";
 import { Unsubscribe } from "redux";
 
 import "./update.scss";
+import UpdateToken from "../../updateToken/updateToken";
 
 // const VacCard = lazy(() => import("../../vac-card/vac-card"));
 
@@ -44,16 +45,17 @@ export class Update extends Component<any, UpdateState> {
       vacation: new VacationModel(),
       tokens: store.getState().auth.tokens,
       updated: true,
-      preview: "",  
-    }; 
-  } 
+      preview: "",
+    };
+  }
+
+  private UpdateService = new UpdateService(+this.props.match.params.id);
 
   public componentDidMount = async () => {
     LoginServices.adminLoginLogic(this.props.history);
 
     try {
-      const vacationID = this.props.match.params.id;
-      const vacation = await UpdateService.getVacation(vacationID);
+      const vacation = await this.UpdateService.getVacation();
       this.setState({ vacation });
 
       setTimeout(() => {
@@ -64,42 +66,29 @@ export class Update extends Component<any, UpdateState> {
     }
   };
 
-  public componentWillUnmount(): void {
-    clearInterval(this.handleTokens);
-  }
-
-  public handleTokens = setInterval(async () => {
-    await TokensServices.getAccessToken();
-  }, 300000);
-
-
   public handleUpdateRequest = async () => {
     const { vacation, updated } = this.state;
-    const vacationID = +this.props.match.params.id;
 
-    if (UpdateService.verifyChange(updated)) {
+    if (this.UpdateService.verifyChange(updated)) {
       return;
     }
 
     try {
-      
       // validate form
       if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
         return;
       }
 
       // send update request
-      const response = await UpdateService.handleRequest(
-        vacation,
-        vacationID
-      );
+      const response = await this.UpdateService.handleRequest(vacation);
 
       // handle server response
       ServerServices.handleServerResponse(
         response,
-        () => UpdateService.handleSuccess(response.body, this.props.history),
-        () => UpdateService.handleError(response.body)
-      ); 
+        (response) =>
+          this.UpdateService.handleSuccess(response, this.props.history),
+        (response) => this.UpdateService.handleError(response)
+      );
     } catch (err) {
       alert(err);
     }
@@ -130,6 +119,7 @@ export class Update extends Component<any, UpdateState> {
                   vacation={vacation}
                   followIcon={false}
                   admin={false}
+                  margin={false}
                   hover={false}
                   preview={preview}
                 />
@@ -137,6 +127,7 @@ export class Update extends Component<any, UpdateState> {
             </Suspense>
           </Grid>
         )}
+        <UpdateToken />
       </React.Fragment>
     );
   }

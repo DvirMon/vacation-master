@@ -23,16 +23,15 @@ router.get("/", async (request, response, next) => {
 //get users vacation
 router.get("/user", auth.authorize(), async (request, response, next) => {
   try {
-
     const userName = request.user.sub;
-    
+
     // get user id from db
     const user = await usersLogic.isUserIdExist(userName);
     if (user.length > 0) {
       next("user is not exist in db");
       return;
     }
-    
+
     const vacations = await vacationsLogic.getUserVacations(user.id);
     response.json({ message: "success", body: vacations });
   } catch (err) {
@@ -45,13 +44,13 @@ router.get("/user", auth.authorize(), async (request, response, next) => {
 router.get("/:id", async (request, response, next) => {
   try {
     const vacationID = request.params.id;
-    
+
     const vacation = await vacationsLogic.getVacation(vacationID);
-    
+
     if (!vacation) {
       response.sendStatus(404);
     }
-    
+
     response.json(vacation);
   } catch (err) {
     next(err);
@@ -61,19 +60,18 @@ router.get("/:id", async (request, response, next) => {
 
 // add vacation (admin)
 router.post("/", auth.authorize(1), async (request, response, next) => {
-  
   const vacation = request.body;
   const file = request.files.image;
 
   // verify file
   if (!file) {
-    response.status(400).json({body: "no file was sent", message: "error"});
+    response.status(400).json({ body: "no file was sent", message: "error" });
     return;
-  } 
+  }
 
-  // save file locally 
+  // save file locally
   const fileName = imageService.saveImageLocally(file);
-  
+
   vacation.image = fileName;
 
   // verify vacation schema
@@ -85,54 +83,56 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
 
   try {
     const addedVacation = await vacationsLogic.addVacation(vacation);
+
     response.status(201).json({ body: addedVacation, message: "success" });
   } catch (err) {
     next();
   }
 });
-
+ 
 // update vacation (admin only)
 router.put("/:id", auth.authorize(1), async (request, response, next) => {
- 
-  const vacationID = request.params.id;
-  const vacation = request.body;
-  const file = request.files;
-  
-  // verify file
-  if (file) {
-    const fileName = imageService.saveImageLocally(file.image);
-    vacation.image = fileName;
-  } else if (vacation.image === undefined) {
-    response.status(400).json({body : "No image was sent!", message : "error"});
-  }
-  
-  //verify schema
-  const error = VacationModel.validation(vacation);
-  if (error) {
-    response.status(400).send({ body: error, message: "error" });
-    return;
-  }
-  
-  vacation.vacationID = vacationID;
-  
   try {
-    
+    const vacationID = request.params.id;
+    const vacation = request.body;
+    const file = request.files;
+
+    // verify file
+    if (file) {
+      const fileName = imageService.saveImageLocally(file.image);
+      vacation.image = fileName;
+    } else if (vacation.image === undefined) {
+      response
+        .status(400)
+        .json({ body: "No image was sent!", message: "error" });
+    } 
+
+    //verify schema
+    const error = VacationModel.validation(vacation);
+    if (error) {
+      response.status(400).send({ body: error, message: "error" });
+      return;
+    }
+
+    vacation.vacationID = vacationID;
+
     // request for update
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
 
     // verify update
     if (updatedVacation === null) {
-      response.status(404).json({message: "error", body: "Item is not in database"});
+      response
+        .status(404)
+        .json({ message: "error", body: "Item is not in database" });
       return;
     }
 
     // change id from string to number
-    updatedVacation.vacationID = +vacationID
+    updatedVacation.vacationID = +vacationID;
 
     response.json({ body: updatedVacation, message: "success" });
-    
   } catch (err) {
-    next()
+    next();
   }
 });
 

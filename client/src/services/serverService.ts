@@ -86,7 +86,7 @@ export class ServerServices {
       resolve(response.body, history);
       return
     } else {
-      reject(response.body ? response.body : "pay attention! you cant use apostrophe mark")
+      reject(response.body ? response.body : "Pay attention! you cant use apostrophe mark")
     }
   };
   // end of function

@@ -10,7 +10,7 @@ export class MenuModel {
     public register?: boolean,
     public admin?: boolean,
     public logoutButton?: boolean,
-    public followUpCounter?: number
+    public followUpCounter?: number,
 
   ) { }
 

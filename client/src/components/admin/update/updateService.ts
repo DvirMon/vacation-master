@@ -1,20 +1,26 @@
+import { VacationModel } from "../../../models/vacations-model";
+
 import { ServerServices } from "../../../services/serverService";
 import { TokensServices } from "../../../services/tokensService";
 import { VacationService } from "../../../services/vacationsService";
 import { handleAdminUpdate } from "../../../services/socketService";
+
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
-import { VacationModel } from "../../../models/vacations-model";
 
 export class UpdateService {
 
-  static getVacation = async (vacationID : number) => {
-    const url = `http://localhost:3000/api/vacations/${vacationID}`;
+  constructor(public vacationID : number){}
+
+  public getVacation = async () => { 
+
+    const url = `http://localhost:3000/api/vacations/${this.vacationID}`;
     const vacation = await ServerServices.getRequest(url);
     return vacation
   }
 
-  static verifyChange = (updated : boolean) => {
+  public verifyChange = (updated : boolean) => {
+    
     if (updated) {
       const answer = window.confirm(
         "No change has been notice, do you wish to continue?"
@@ -26,16 +32,17 @@ export class UpdateService {
     }
   }
 
-  static handleRequest = async (vacation : VacationModel, vacationID : number) => {
+  public handleRequest = async (vacation : VacationModel) => {
+  
     // get tokens
     const tokens = await TokensServices.handleStoreRefresh();
 
     // create formatDate file
     const myFormData = VacationService.setFormData(vacation);
-
+ 
     // send request
     const response = await VacationService.updateVacationAsync(
-      `http://localhost:3000/api/vacations/${vacationID}`,
+      `http://localhost:3000/api/vacations/${this.vacationID}`,
       myFormData,
       tokens.accessToken
     );
@@ -43,12 +50,9 @@ export class UpdateService {
     return response;
   };
 
-  static handleSuccess = (vacation : VacationModel, history) => {
+  public handleSuccess = (vacation : VacationModel, history) => {
     
     alert("Vacation has been updated successfully!");
-
-    // update store
-    store.dispatch({ type: ActionType.updatedVacation, payload: vacation });
 
     // update socket
     handleAdminUpdate(vacation);
@@ -58,7 +62,7 @@ export class UpdateService {
   };
 
 
-  static handleError = (err : string) => {
+  public handleError = (err : string) => {
     alert(err);
   };
 

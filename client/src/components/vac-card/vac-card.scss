@@ -1,7 +1,8 @@
 .vac-card {
   // main card css
+
   .root {
-    max-width: 450px;
+    max-width: 550px;
     transition: 0.5s ease;
 
     cursor: pointer;
@@ -68,6 +69,12 @@
     }
   }
 
+  // css to FormatDate comp
+  .MuiButtonBase-root:hover {
+    background-color: transparent;
+  }
+
+  // css to collapse content
   .MuiCollapse-wrapperInner {
     height: 150px;
     overflow: auto;

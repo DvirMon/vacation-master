@@ -4,13 +4,11 @@ import { TokensServices } from "../../../services/tokensService";
 import { handleAdminInsert } from "../../../services/socketService";
 import { VacationService } from "../../../services/vacationsService";
 
-import { store } from "../../../redux/store";
-import { ActionType } from "../../../redux/action-type";
 
 export class InsertService {
-  
-  static handleRequest = async (vacation : VacationModel) => {
-    
+
+  public handleRequest = async (vacation: VacationModel) => {
+
     // get tokens
     const tokens = await TokensServices.handleStoreRefresh();
     // create formatDate file
@@ -24,22 +22,18 @@ export class InsertService {
     );
     return response;
   };
- 
   
-  static handleSuccess = (vacation : VacationModel, history) => {
-
-    const action = { type: ActionType.addVacation, payload: vacation };
+  
+  public handleSuccess = (vacation: VacationModel, history) => {
     
-    store.dispatch(action);
-
-    handleAdminInsert(vacation);
-
     alert("New Vacation has been added!");
+ 
+    handleAdminInsert(vacation);
 
     history.push("/admin");
   };
-  
-  static handleError = (err) => {
+
+  public handleError = (err: string) => {
     alert(err);
   };
 }

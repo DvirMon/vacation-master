@@ -18,6 +18,7 @@ import { ServerServices } from "../../../services/serverService";
 import { LoginServices } from "../../../services/loginService";
 
 import "./insert.scss";
+import UpdateToken from "../../updateToken/updateToken";
 
 interface InsertState {
   vacation: VacationModel;
@@ -25,22 +26,20 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
+  private InsertService = new InsertService();
+
   constructor(props: any) {
     super(props);
 
     this.state = {
       vacation: new VacationModel(),
-      preview: "aaa",
+      preview: "",
     };
   }
 
   public componentDidMount = async () => {
     LoginServices.adminLoginLogic(this.props.history);
   };
-
-  public componentWillUnmount(): void {
-    clearInterval(this.handleTokens);
-  }
 
   public handleInsertRequest = async () => {
     const { vacation } = this.state;
@@ -52,45 +51,45 @@ export class Insert extends Component<any, InsertState> {
         return;
       }
 
-      // handle request
-      const response = await InsertService.handleRequest(vacation);
+      // send request
+      const response = await this.InsertService.handleRequest(vacation);
 
-      // handle response
+      // handle server response
       ServerServices.handleServerResponse(
-        response, 
-        () => InsertService.handleSuccess(response.body, this.props.history),
-        () => InsertService.handleError(response.body) 
+        response,
+        (response) =>
+          this.InsertService.handleSuccess(response, this.props.history),
+        (response) => this.InsertService.handleError(response)
       );
     } catch (err) {
       console.log(err);
     }
   };
 
-  public handleTokens = setInterval(async () => {
-    await TokensServices.getAccessToken();
-  }, 360000);
-
   render() {
-    const { vacation, preview } = this.state;
+    const { vacation,  preview } = this.state;
     return (
-      <Grid container className="insert">
-        <Grid item xs={8}>
-          <MyForm
-            vacation={vacation}
-            handleChange={this.handleChange}
-            handleVacation={this.handleInsertRequest}
-            handleImage={this.handleImage}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <VacCard
-            vacation={vacation}
-            followIcon={false}
-            admin={false}
-            preview={preview}
-          />
-        </Grid>
-      </Grid>
+      <React.Fragment>
+        <Grid container className="insert">
+          <Grid item xs={8}>
+            <MyForm
+              vacation={vacation}
+              handleChange={this.handleChange}
+              handleVacation={this.handleInsertRequest}
+              handleImage={this.handleImage}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <VacCard
+              vacation={vacation}
+              followIcon={false}
+              admin={false}
+              preview={preview}
+            />
+          </Grid>
+        </Grid> 
+        <UpdateToken />
+      </React.Fragment>
     );
   }
 

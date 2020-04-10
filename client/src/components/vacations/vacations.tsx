@@ -14,7 +14,7 @@ import { VacationService } from "../../services/vacationsService";
 import { LoginServices } from "../../services/loginService";
 import { TokensServices } from "../../services/tokensService";
 import { invokeConnection } from "../../services/socketService";
-import { handelBackground, setStyle } from "../../services/styleServices";
+import { setStyle } from "../../services/styleServices";
 
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
@@ -62,7 +62,6 @@ export class Vacations extends Component<any, VacationsState> {
     try {
       // verify login
       if (store.getState().login.isLoggedIn === false) {
-        console.log(store.getState().login.isLoggedIn);
         this.props.history.push("/");
         return;
       }
@@ -80,53 +79,49 @@ export class Vacations extends Component<any, VacationsState> {
       });
 
       const { user, admin } = this.state;
-      await this.authLogic(user, admin);
-      await this.vacationLogic();
+
+      await this.handleAuth(user, admin);
+
+      if (store.getState().vacation.unFollowUp.length === 0) {
+        await this.handleRequest();
+      }
+
       this.handleStyle(admin);
     } catch (err) {
       console.log(err);
     }
   };
 
-  public authLogic = async (user, admin) => {
-    // invoke socket connection
-    invokeConnection();
-
-    // get tokens
-    await TokensServices.getTokens(user);
-
-    // unable for client to navigate to other route
-    LoginServices.verifyPath(admin, user, this.props.history);
-  };
-
-  public vacationLogic = async () => {
-    if (store.getState().vacation.unFollowUp.length === 0) {
-      // update socket object in store
-      const tokens = store.getState().auth.tokens;
-
-      // get vacation
-      const response = await VacationService.getVacationsAsync(
-        tokens.accessToken
-      );
-
-      // handle server response
-      ServerServices.handleServerResponse(
-        response,
-        () => this.handleServerSuccess(response),
-        () => this.handleServerError(response)
-      );
-    } 
-  };
   public componentWillUnmount(): void {
     if (this.unsubscribeStore) {
       this.unsubscribeStore();
     }
   }
 
-  public handleServerError = (response) => {
-    alert(response);
-    this.props.history.push("/logout");
+  // invoke socket, set tokens, verify path
+  public handleAuth = async (user, admin) => {
+    invokeConnection();
+    await TokensServices.getTokens(user);
+    LoginServices.verifyPath(admin, user, this.props.history);
   };
+  // end of function
+
+  public handleRequest = async () => {
+    const tokens = store.getState().auth.tokens;
+
+    // send request
+    const response = await VacationService.getVacationsAsync(
+      tokens.accessToken
+    );
+
+    // handle server response
+    ServerServices.handleServerResponse(
+      response,
+      () => this.handleServerSuccess(response),
+      () => this.handleServerError()
+    );
+  };
+
 
   public handleServerSuccess = (response) => {
     const action = {
@@ -134,6 +129,10 @@ export class Vacations extends Component<any, VacationsState> {
       payload: response.body,
     };
     store.dispatch(action);
+  };
+
+  public handleServerError = () => {
+    this.props.history.push("/logout");
   };
 
   render() {
@@ -150,7 +149,7 @@ export class Vacations extends Component<any, VacationsState> {
                 <h1 className="card-title">My Wish List</h1>
               )}
             </Row>
-            <Row> 
+            <Row>
               <Slider {...sliderSetting}>
                 {followUp.map((vacation) => (
                   <Col className="followed" key={vacation.vacationID}>
@@ -173,6 +172,7 @@ export class Vacations extends Component<any, VacationsState> {
                     vacation={vacation}
                     follow={false}
                     followIcon={!admin}
+                    margin={true}
                     hover={!admin}
                     admin={admin}
                   ></VacCard>
@@ -187,13 +187,9 @@ export class Vacations extends Component<any, VacationsState> {
     );
   }
 
-  public updateSliderSetting = () => {
-    SliderModel.updateSliderSetting();
-  };
-
   public handleStyle = (admin) => {
     SliderModel.updateSliderSetting();
-    setStyle(MenuModel.setMenu(admin), handelBackground(admin));
+    setStyle(MenuModel.setMenu(admin), admin ? "admin" : "user");
   };
 }
 

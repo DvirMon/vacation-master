@@ -23,12 +23,12 @@ export class TokensServices {
   static getAccessToken = async () => {
 
     const tokens = store.getState().auth.tokens;
- 
+
     try {
       const url = `http://localhost:3000/api/tokens/new`;
       const response = await ServerServices.postRequest(url, tokens.dbToken, tokens.accessToken)
       ServerServices.handleTokenResponse(response)
-
+      console.log(response)
     } catch (err) {
       console.log(err);
     }

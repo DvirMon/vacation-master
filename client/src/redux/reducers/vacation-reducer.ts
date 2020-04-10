@@ -1,9 +1,9 @@
-import {  VacationAppState } from "../app-state";
+import { VacationAppState } from "../app-state/vacation-state";
 import { Action } from "../action";
 import { ActionType } from "../action-type";
- 
+
 export const vacationReducer = (oldAppState = new VacationAppState(), action: Action): VacationAppState => {
- 
+
   const newAppState = { ...oldAppState }
 
 
@@ -18,33 +18,29 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
       break
     case ActionType.addFollowUp:
       newAppState.followUp.push(action.payload)
-      const unFollowUpIndex = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
-      newAppState.unFollowUp.splice(unFollowUpIndex, 1)
+      deleteLogic(newAppState, "unFollowUp", action.payload)
       break
     case ActionType.deleteFollowUp:
       delete action.payload.followUpID;
       newAppState.unFollowUp.push(action.payload)
-      const followUpIndex = newAppState.followUp.findIndex(vacation => vacation.vacationID === action.payload.vacationID)
-      newAppState.followUp.splice(followUpIndex, 1)
+      deleteLogic(newAppState, "followUp", action.payload)
       break
     case ActionType.updatedVacation:
-      let find: boolean = false
-      newAppState.unFollowUp.find(vacation => {
-        updateLogic(vacation, action)
-      })
-
-      if (newAppState.followUp.length > 0 && find === false) {
-        newAppState.followUp.find(vacation => {
-          updateLogic(vacation, action)
-        })
+      const item = updateCondition(newAppState, "unFollowUp", action.payload)
+      if (item) {
+        updateLogic(item, action.payload)
+      } else if (newAppState.followUp.length > 0) {
+        updateLogic(updateCondition(newAppState, "followUp", action.payload), action.payload)
       }
       break
     case ActionType.deleteVacation:
-      const index = newAppState.unFollowUp.findIndex(vacation => vacation.vacationID === action.payload)
-      newAppState.unFollowUp.splice(index, 1)
+      deleteLogic(newAppState, "unFollowUp", action.payload)
       break
     case ActionType.updateChartPoints:
       newAppState.dataPoints = action.payload
+      break
+    case ActionType.updateNotification:
+      newAppState.notification.push(action.payload)
       break
     case ActionType.Logout:
       newAppState.followUp = []
@@ -53,12 +49,20 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
   return newAppState
 }
 
-const updateLogic = (vacation, action) => {
-  if (vacation.vacationID === +action.payload.vacationID) {
-    for (const prop in action.payload) {
-      if (prop in vacation) {
-        vacation[prop] = action.payload[prop]
-      }
+const updateCondition = (newAppState, prop, vacation) => {
+  const item = newAppState[prop].find(item => item.vacationID === + vacation.vacationID)
+  return item
+}
+
+const updateLogic = (item, vacation, ) => {
+  for (const prop in vacation) {
+    if (prop in vacation) {
+      item[prop] = vacation[prop]
     }
   }
+}
+
+const deleteLogic = (newAppState, prop, vacation) => {
+  const deleteIndex = newAppState[prop].findIndex(item => item.vacationID === vacation.vacationID)
+  newAppState[prop].splice(deleteIndex, 1)
 }

@@ -37,6 +37,7 @@ export class Layout extends Component<any, LayoutState> {
   }
 
   public componentDidMount = () => {
+  
     this.unsubscribeStore = store.subscribe(() =>
       this.setState({
         backgroundImage: store.getState().style.backgroundImage,
@@ -49,8 +50,9 @@ export class Layout extends Component<any, LayoutState> {
   }
 
   render() {
-    const { backgroundImage } = this.state;
 
+    const { backgroundImage } = this.state;
+ 
     return (
         <div className={clsx("layout", "bg", `${backgroundImage}`)}>
           <BrowserRouter>

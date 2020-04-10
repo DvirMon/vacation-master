@@ -49,9 +49,9 @@ const addVacation = async vacation => {
   VALUES('${vacation.description}', '${vacation.destination}', '${vacation.image}', 
   '${vacation.startDate}', '${vacation.endDate}', ${vacation.price} )`;
   const info = await dal.executeAsync(sql);
-  vacation.id = info.insertId;
+  vacation.vacationID = info.insertId;
   return vacation;
-};
+}; 
 
 
 // update new vacation (admin only)

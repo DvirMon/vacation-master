@@ -1,5 +1,5 @@
 
-import { LoginAppState } from "../app-state";
+import { LoginAppState } from "../app-state/login-state";
 import { Action } from "../action";
 import { ActionType } from "../action-type";
 

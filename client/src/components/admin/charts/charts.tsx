@@ -14,6 +14,7 @@ import { Unsubscribe } from "redux";
 
 import "./charts.scss";
 import { ActionType } from "../../../redux/action-type";
+import UpdateToken from "../../updateToken/updateToken";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -33,7 +34,6 @@ export class Charts extends Component<any, ChartsState> {
   }
 
   public componentDidMount = async () => {
-
     LoginServices.adminLoginLogic(this.props.history);
 
     this.unsubscribeStore = store.subscribe(() => {
@@ -41,29 +41,30 @@ export class Charts extends Component<any, ChartsState> {
         dataPoints: store.getState().vacation.dataPoints,
       });
     });
-
+    
     try {
-
       // handle request
       const url = `http://localhost:3000/api/followup`;
       const tokens = await TokensServices.handleStoreRefresh();
       const response = await ServerServices.getRequest(url, tokens.accessToken);
-       
+      
       // handle server request
       ServerServices.handleServerResponse(
         response,
         () => this.handleSuccess(response.body),
         () => this.handleError(response.body)
       );
-
     } catch (err) {
       alert(err);
       this.props.history.push("/admin");
     }
-  }; 
-
+  };
+  
+  public componentWillUnmount(): void {
+    this.unsubscribeStore();
+  }
+  
   public handleSuccess = (dataPoints) => {
-    console.log(dataPoints)
     store.dispatch({ type: ActionType.updateChartPoints, payload: dataPoints });
   };
 
@@ -72,9 +73,6 @@ export class Charts extends Component<any, ChartsState> {
     this.props.history.push("/admin");
   };
 
-  public componentWillUnmount(): void {
-    clearInterval(this.handleTokens);
-  }
 
   render() {
     const { dataPoints } = this.state;
@@ -110,14 +108,10 @@ export class Charts extends Component<any, ChartsState> {
             </div>
           </div>
         )}
+        <UpdateToken />
       </React.Fragment>
     );
-  } 
-
-  public handleTokens = setInterval(async () => {
-    await TokensServices.getAccessToken();
-    console.log(store.getState().auth.tokens.accessToken);
-  }, 360000);
+  }
 }
 
 export default Charts;

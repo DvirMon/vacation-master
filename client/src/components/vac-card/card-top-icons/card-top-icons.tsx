@@ -102,10 +102,6 @@ export class CardTopIcons extends Component<
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
     await ServerServices.deleteRequest(url, tokens.accessToken);
 
-    // delete from store
-    const action = { type: ActionType.deleteVacation, payload: vacationID };
-    store.dispatch(action);
-
     // update real-time
     handleAdminDelete(vacationID);
   };

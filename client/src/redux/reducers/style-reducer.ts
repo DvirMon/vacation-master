@@ -1,9 +1,9 @@
-import { StyleAppState } from "../app-state";
+import { StyleAppState } from "../app-state/style-state";
 import { Action } from "../action";
 import { ActionType } from "../action-type";
 
 export const styleReducer = (oldAppState = new StyleAppState(), action: Action): StyleAppState => {
-  
+
   const newAppState = { ...oldAppState }
 
   switch (action.type) {
@@ -16,6 +16,7 @@ export const styleReducer = (oldAppState = new StyleAppState(), action: Action):
     case ActionType.updateSliderSetting:
       newAppState.sliderSetting = action.payload
       break
+  
   }
 
   return newAppState
