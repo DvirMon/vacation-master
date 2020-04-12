@@ -20,22 +20,21 @@ export const updateChart = () => {
   socket.emit("user-update-chart")
 }
 
-export const handleAdminInsert = (vacation) => {
-  console.log(vacation)
+export const handleAdminInsert = (vacation: UserVacationModel) => {
   const socket = store.getState().auth.socket
   socket.emit("admin-add-vacation", vacation)
 }
 
-export const handleAdminUpdate = (vacation) => {
+export const handleAdminUpdate = (vacation: UserVacationModel) => {
   const socket = store.getState().auth.socket
   socket.emit("admin-update-vacation", vacation)
 }
 
-export const handleAdminDelete = (vacationID) => {
+export const handleAdminDelete = (vacation: UserVacationModel) => {
   const socket = store.getState().auth.socket
-  socket.emit("admin-delete-vacation", vacationID)
+  socket.emit("admin-delete-vacation", vacation)
 }
-// end of section
+// end of section 
 
 // on functions section
 
@@ -44,7 +43,6 @@ export const vacationReaLTimeUpdate = (socket) => {
   // admin added vacation
   socket.on("server-add-vacation", (vacation: UserVacationModel) => {
 
-    console.log(vacation)
     const msg = `New vacation added! : ${vacation.destination}`
     store.dispatch({ type: ActionType.addVacation, payload: vacation })
     store.dispatch({ type: ActionType.updateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
@@ -57,9 +55,11 @@ export const vacationReaLTimeUpdate = (socket) => {
     store.dispatch({ type: ActionType.updateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
   })
 
-  // admin deleted vacation
-  socket.on("server-delete-vacation", (vacationID: number) => {
-    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID })
+  // admin deleted vacation 
+  socket.on("server-delete-vacation", (vacation) => {
+    const msg = `${vacation.destination} has been deleted!`
+    store.dispatch({ type: ActionType.deleteVacation, payload: vacation.vacationID })
+    store.dispatch({ type: ActionType.updateNotification, payload: { msg: msg, vacationID: "" } })
   })
 
 }
@@ -67,7 +67,6 @@ export const vacationReaLTimeUpdate = (socket) => {
 export const chartRealTimeUpdate = (socket) => {
   socket.on("server-update-chart", (dataPoints: ChartModel) => {
     store.dispatch({ type: ActionType.updateChartPoints, payload: dataPoints })
-    console.log(5)
   })
 }
 // end of section

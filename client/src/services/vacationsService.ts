@@ -6,28 +6,20 @@ import { updateChart } from "./socketService";
 // class to handle all vacation logic
 export class VacationService {
 
-  // function tp get user followed and un-followed vacations
-  static getVacationsAsync = async (accessToken) => {
+
+  // get user vacations
+  static getUserVacationAsync = async (accessToken) => {
     const url = `http://localhost:3000/api/vacations/user`;
-    try {
-      const response = await ServerServices.getRequest(url, accessToken);
-      return response
-    } catch (err) {
-      return err
-    }
+    const response = await ServerServices.getRequest(url, accessToken)
+    return response
   }
-  //end of functions
+  //end of function
 
   // get all the users following a vacation
   static getFollowersByVacationAsync = async (vacationID) => {
     const url = `http://localhost:3000/api/followup/${vacationID}`;
-    try {
-      const response = await ServerServices.getRequest(url)
-      return response
-    }
-    catch (err) {
-      console.log(err)
-    }
+    const response = await ServerServices.getRequest(url)
+    return response
   }
   //end of function
 
@@ -71,58 +63,24 @@ export class VacationService {
     return myFormData
   }
   // end of function
-
-  // function to update vacation
-  static updateVacationAsync = async (url: string, vacation?: FormData, accessToken?: string) => {
-    const options = {
-      method: "PUT",
-      headers: {
-        "Authorization": accessToken
-      },
-      body: vacation
-    };
-
-    try {
-      const response = await ServerServices.getData(url, options);
-      return response
-    } catch (err) {
-      return err
-    }
-  }
-  // end of function
-
-  // function for add new vacation
-  static addVacationAsync = async (url: string, vacation?: FormData, accessToken?: string) => {
-    const options = {
-      method: "POST",
-      headers: {
-        "Authorization": accessToken
-      },
-      body: vacation
-    };
-
-    try {
-      const response = await ServerServices.getData(url, options);
-      return response
-    } catch (err) {
-      return err
-    }
-  }
-  // end of function
-
-  // function to handle add followup logic
+  
+  
+  // function to handle add followup 
   static handleAddFollowUp = async (vacation, accessToken) => {
     try {
+      
+      // add in database
       const addedVacation = await VacationService.addFollowUpAsync(
         vacation.vacationID,
         accessToken
       );
+
+      // add follow up ID to new followed vacation
       vacation.followUpID = addedVacation.id;
-      const action = {
-        type: ActionType.addFollowUp,
-        payload: vacation,
-      };
-      store.dispatch(action);
+
+      // add to store
+      store.dispatch({ type: ActionType.addFollowUp, payload: vacation });
+
     } catch (err) {
       console.log(err)
     }
@@ -131,16 +89,21 @@ export class VacationService {
 
   // function to handle delete followup logic
   static handleDeleteFollowUp = async (vacation, accessToken) => {
-    try { 
+    try {
+
+      console.log(vacation)
+      // delete in database
       await VacationService.deleteFollowUpAsync(
         vacation.followUpID,
         accessToken
       );
-      const action = {
-        type: ActionType.deleteFollowUp,
-        payload: vacation,
-      };
-      store.dispatch(action);
+
+      delete vacation.followUpID;
+
+      // update store
+      store.dispatch({
+        type: ActionType.deleteFollowUp, payload: vacation
+      });
 
     } catch (err) {
       console.log(err)
@@ -152,13 +115,15 @@ export class VacationService {
   static handleIconClick = async (vacation) => {
     const accessToken = store.getState().auth.tokens.accessToken;
     if (vacation.followUpID) {
-      await VacationService.handleDeleteFollowUp(vacation, accessToken);
+      await VacationService.handleDeleteFollowUp(vacation, accessToken)
     } else {
       await VacationService.handleAddFollowUp(vacation, accessToken);
     }
   };
   // end of function
- 
+
+
+
 
 }
 // end of vacation service

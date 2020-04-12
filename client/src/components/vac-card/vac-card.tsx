@@ -30,7 +30,7 @@ interface VacCardProps {
   vacation?: UserVacationModel;
   followIcon: boolean;
   admin?: boolean;
-  margin? : boolean
+  margin?: boolean;
   hover?: boolean;
   follow?: boolean;
   preview?: string;
@@ -58,18 +58,22 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   }
 
   public componentDidMount = async () => {
-    // update follow icon number
-    const vacationID = this.props.vacation.vacationID;
-    const vacation = await VacationService.getFollowersByVacationAsync(
-      vacationID
-    );
- 
+    
+    try {
+      
+      // update followup icon number
+      const vacation = await VacationService.getFollowersByVacationAsync(
+        this.props.vacation.vacationID
+      );
 
-    this.setState({ followers: vacation.followers });
+      this.setState({ followers: vacation.followers });
 
-    this.props.follow === true
-      ? this.setState({ color: true })
-      : this.setState({ color: false });
+      this.props.follow === true
+        ? this.setState({ color: true })
+        : this.setState({ color: false });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   render() {

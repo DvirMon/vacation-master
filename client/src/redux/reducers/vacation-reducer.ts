@@ -18,12 +18,11 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
       break
     case ActionType.addFollowUp:
       newAppState.followUp.push(action.payload)
-      deleteLogic(newAppState, "unFollowUp", action.payload)
+      deleteLogic(newAppState, "unFollowUp", action.payload.vacationID)
       break
     case ActionType.deleteFollowUp:
-      delete action.payload.followUpID;
       newAppState.unFollowUp.push(action.payload)
-      deleteLogic(newAppState, "followUp", action.payload)
+      deleteLogic(newAppState, "followUp", action.payload.vacationID)
       break
     case ActionType.updatedVacation:
       const item = updateCondition(newAppState, "unFollowUp", action.payload)
@@ -35,12 +34,16 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
       break
     case ActionType.deleteVacation:
       deleteLogic(newAppState, "unFollowUp", action.payload)
+      deleteLogic(newAppState, "followUp", action.payload)
+      deleteLogic(newAppState, "notification", action.payload)
       break
-    case ActionType.updateChartPoints:
+      case ActionType.updateChartPoints:
       newAppState.dataPoints = action.payload
       break
-    case ActionType.updateNotification:
-      newAppState.notification.push(action.payload)
+      case ActionType.updateNotification:
+        newAppState.notification.push(action.payload)
+        break
+        case ActionType.deleteNotification:
       break
     case ActionType.Logout:
       newAppState.followUp = []
@@ -62,7 +65,7 @@ const updateLogic = (item, vacation, ) => {
   }
 }
 
-const deleteLogic = (newAppState, prop, vacation) => {
-  const deleteIndex = newAppState[prop].findIndex(item => item.vacationID === vacation.vacationID)
+const deleteLogic = (newAppState, prop, id) => {
+  const deleteIndex = newAppState[prop].findIndex(item => item.vacationID === id)
   newAppState[prop].splice(deleteIndex, 1)
 }

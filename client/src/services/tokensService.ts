@@ -28,21 +28,23 @@ export class TokensServices {
       const url = `http://localhost:3000/api/tokens/new`;
       const response = await ServerServices.postRequest(url, tokens.dbToken, tokens.accessToken)
       ServerServices.handleTokenResponse(response)
-      console.log(response)
     } catch (err) {
       console.log(err);
     }
   };
 
-  // function to gain token when refresh
+  // function to get token after refresh
   static handleStoreRefresh = async () => {
 
-    if (!store.getState().auth.tokens.accessToken) {
-      const user = store.getState().login.user;
-      await TokensServices.getTokens(user)
+    try {
+      if (!store.getState().auth.tokens?.accessToken) {
+        const user = store.getState().login.user;
+        await TokensServices.getTokens(user)
+      }
+      return store.getState().auth.tokens;
+    } catch (err) {
+      console.log(err)
     }
-
-    return store.getState().auth.tokens;
   }
 
 

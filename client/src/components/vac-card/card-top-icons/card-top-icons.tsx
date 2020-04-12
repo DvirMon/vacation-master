@@ -1,26 +1,28 @@
 import React, { Component } from "react";
 
-import clsx from "clsx";
-
-import { NavLink } from "react-router-dom";
-
+// import components
 import IconButton from "@material-ui/core/IconButton";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 
+// import model
 import { UserVacationModel } from "../../../models/vacations-model";
 
+// import services
 import { ServerServices } from "../../../services/serverService";
-
-// import redux
-import { store } from "../../../redux/store";
-import { ActionType } from "../../../redux/action-type";
+import { VacationService } from "../../../services/vacationsService";
 import {
   handleAdminDelete,
   updateChart,
 } from "../../../services/socketService";
-import { VacationService } from "../../../services/vacationsService";
+
+// import redux
+import { store } from "../../../redux/store";
+
+// import  utilities
+import clsx from "clsx";
+import { NavLink } from "react-router-dom";
 
 interface CardTopIconsProps {
   vacation: UserVacationModel;
@@ -79,7 +81,6 @@ export class CardTopIcons extends Component<
   }
 
   public handleIconClick = async () => {
-    
     // handle user click
     const vacation = this.props.vacation;
     await VacationService.handleIconClick(vacation);
@@ -94,16 +95,16 @@ export class CardTopIcons extends Component<
     if (!answer) {
       return;
     }
- 
+
     const vacationID = this.props.vacation.vacationID;
     const tokens = store.getState().auth.tokens;
- 
+
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
     await ServerServices.deleteRequest(url, tokens.accessToken);
 
-    // update real-time
-    handleAdminDelete(vacationID);
+    // update real-time 
+    handleAdminDelete(this.props.vacation);
   };
   // end of function
 }

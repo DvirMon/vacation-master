@@ -59,7 +59,7 @@ export class Layout extends Component<any, LayoutState> {
             <nav>
               <Menu />
             </nav>
-            <main>
+            <main> 
               <Switch>
                 <Route path="/login" component={Login} exact></Route>
                 <Route path="/register" component={Register} exact></Route>

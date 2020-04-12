@@ -13,7 +13,7 @@ const deleteFollowUp = async id => {
   await dal.executeAsync(sql);
   return;
 };
-
+  
 //
 const getAllFollowUpByUser = async userID => {
   const sql = `SELECT f.id as followUpID, v.vacationID, description, destination, image,

@@ -17,7 +17,6 @@ import { Unsubscribe } from "redux";
 import Menu from "@material-ui/core/Menu";
 
 import "./menu-user.scss";
-import { Link, animateScroll as scroll } from "react-scroll";
 
 interface MenuUserProps {
   userInfo?: UserModel;
@@ -38,8 +37,8 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
     super(props);
 
     this.state = {
-      followUpCounter: store.getState().vacation.followUp.length,
       anchorEl: null,
+      followUpCounter: store.getState().vacation.followUp.length,
       notification: store.getState().vacation.notification,
       notificationCounter: store.getState().vacation.notification.length,
     };
@@ -47,6 +46,7 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
 
   public componentDidMount = () => {
     this.unsubscribeStore = store.subscribe(() => {
+
       this.setState({
         followUpCounter: store.getState().vacation.followUp.length,
         notification: store.getState().vacation.notification,

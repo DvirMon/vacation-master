@@ -10,17 +10,17 @@ import { ActionType } from "../../../redux/action-type";
 
 export class UpdateService {
 
-  constructor(public vacationID : number){}
+  constructor(public vacationID: number) { }
 
-  public getVacation = async () => { 
+  public getVacation = async () => {
 
     const url = `http://localhost:3000/api/vacations/${this.vacationID}`;
     const vacation = await ServerServices.getRequest(url);
     return vacation
   }
 
-  public verifyChange = (updated : boolean) => {
-    
+  public verifyChange = (updated: boolean) => {
+
     if (updated) {
       const answer = window.confirm(
         "No change has been notice, do you wish to continue?"
@@ -32,16 +32,35 @@ export class UpdateService {
     }
   }
 
-  public handleRequest = async (vacation : VacationModel) => {
-  
+  // function to update vacation
+  public updateVacationAsync = async (url: string, vacation?: FormData, accessToken?: string) => {
+    const options = {
+      method: "PUT",
+      headers: {
+        "Authorization": accessToken
+      },
+      body: vacation
+    };
+
+    try {
+      const response = await ServerServices.getData(url, options);
+      return response
+    } catch (err) {
+      return err
+    }
+  }
+  // end of function
+
+  public handleRequest = async (vacation: VacationModel) => {
+
     // get tokens
     const tokens = await TokensServices.handleStoreRefresh();
 
     // create formatDate file
     const myFormData = VacationService.setFormData(vacation);
- 
+
     // send request
-    const response = await VacationService.updateVacationAsync(
+    const response = await this.updateVacationAsync(
       `http://localhost:3000/api/vacations/${this.vacationID}`,
       myFormData,
       tokens.accessToken
@@ -50,8 +69,8 @@ export class UpdateService {
     return response;
   };
 
-  public handleSuccess = (vacation : VacationModel, history) => {
-    
+  public handleSuccess = (vacation: VacationModel, history) => {
+
     alert("Vacation has been updated successfully!");
 
     // update socket
@@ -62,7 +81,7 @@ export class UpdateService {
   };
 
 
-  public handleError = (err : string) => {
+  public handleError = (err: string) => {
     alert(err);
   };
 

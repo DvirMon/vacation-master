@@ -80,7 +80,7 @@ export class Vacations extends Component<any, VacationsState> {
 
       const { user, admin } = this.state;
 
-      await this.handleAuth(user, admin);
+      this.handleAuth(user, admin);
 
       if (store.getState().vacation.unFollowUp.length === 0) {
         await this.handleRequest();
@@ -93,27 +93,26 @@ export class Vacations extends Component<any, VacationsState> {
   };
 
   public componentWillUnmount(): void {
-    if (this.unsubscribeStore) {
-      this.unsubscribeStore();
-    }
+    this.unsubscribeStore();
   }
 
-  // invoke socket, set tokens, verify path
-  public handleAuth = async (user, admin) => {
+  // invoke socket, verify path
+  public handleAuth = (user, admin) => {
     invokeConnection();
-    await TokensServices.getTokens(user);
     LoginServices.verifyPath(admin, user, this.props.history);
   };
   // end of function
 
   public handleRequest = async () => {
-    const tokens = store.getState().auth.tokens;
 
-    // send request
-    const response = await VacationService.getVacationsAsync(
+    // get tokens
+    const tokens = await TokensServices.handleStoreRefresh();
+
+    // send request 
+    const response = await VacationService.getUserVacationAsync(
       tokens.accessToken
     );
-
+   
     // handle server response
     ServerServices.handleServerResponse(
       response,
@@ -122,8 +121,8 @@ export class Vacations extends Component<any, VacationsState> {
     );
   };
 
-
   public handleServerSuccess = (response) => {
+
     const action = {
       type: ActionType.getAllVacation,
       payload: response.body,

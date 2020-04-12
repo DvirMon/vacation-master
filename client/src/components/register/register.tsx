@@ -78,6 +78,7 @@ export class Register extends Component<any, RegisterState> {
     try {
       // handle request
       await this.handleRequest(user);
+      
     } catch (err) {
       console.log(err);
     }
