@@ -36,7 +36,7 @@ const connect = (socketServer) => {
           socketServer.engine.clientsCount
       );
     });
-  });
+  }); 
 }; 
 
 module.exports = {

@@ -13,20 +13,6 @@ export class LoginServices {
   }
   // end of function
 
-  // function for legal login form
-  static loginLegal = (user, errors) => {
-    if (
-      user.userName === undefined ||
-      user.password === undefined ||
-      errors.userName.length > 0 ||
-      errors.password.length > 0
-    ) {
-      return true;
-    }
-    return false;
-  };
-  // end function for legal login form
-
   // function to handle rout according to role
   static handleRouting = (user, history) => {
     user.isAdmin === 1 ?
@@ -64,13 +50,12 @@ export class LoginServices {
   }
   // end of function
 
-  static adminLoginLogic = (history) => {
-    
-    // invoke soket connection
-    invokeConnection();
-    // verify admin
-    ValidationService.verifyAdmin(history);
 
+  // verify admin role && invoke socket connection 
+  static adminLoginLogic = (history) => {
+    ValidationService.verifyAdmin(history);
+    invokeConnection();
   }
+// end of function
 
 }

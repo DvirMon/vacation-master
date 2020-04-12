@@ -27,7 +27,6 @@ import "./register.scss";
 
 interface RegisterState {
   user: RegisterModel;
-  errors: RegistrationErrors;
   password: string;
   serverError: string;
   serverErrorStyle: boolean;
@@ -38,7 +37,6 @@ export class Register extends Component<any, RegisterState> {
 
     this.state = {
       user: new RegisterModel(),
-      errors: new RegistrationErrors("", "", "", "", ""),
       password: "",
       serverError: "",
       serverErrorStyle: false,
@@ -52,40 +50,27 @@ export class Register extends Component<any, RegisterState> {
 
   public disabledButton = (): boolean => {
     const user = this.state.user;
-    const errors = this.state.errors;
 
-    const value = ValidationService.formLegalValues(user);
-    if (value) {
-      return true;
-    }
-
-    const error = ValidationService.formLegalErrors(errors);
-    if (error) {
-      return true;
-    }
-
-    return false;
+    const valid = ValidationService.formLegal(
+      user,
+      RegisterModel.validRegistration
+    );
+    return valid.msg;
   };
 
   public handleRegister = async () => {
     const { user } = this.state;
 
-    // validate form
-    if (ValidationService.formLegal(user, RegisterModel.validRegistration)) {
-      return;
-    }
-
     try {
       // handle request
       await this.handleRequest(user);
-      
     } catch (err) {
       console.log(err);
     }
   };
 
   public handleRequest = async (user) => {
-   
+
     // send register request
     const url = `http://localhost:3000/api/user`;
     const serverResponse = await ServerServices.postRequest(url, user);
@@ -104,12 +89,10 @@ export class Register extends Component<any, RegisterState> {
   };
 
   public handleErrorResponse = (serverError) => {
-    this.setState({
-      serverError,
-      serverErrorStyle: true,
-    });
+    console.log(serverError)
+    this.setState({ serverError, serverErrorStyle: true });
   };
-
+ 
   render() {
     const { user, password, serverError, serverErrorStyle } = this.state;
 
@@ -120,12 +103,12 @@ export class Register extends Component<any, RegisterState> {
             <MyInput
               width={10}
               fullWidth={true}
+              autoFocus={true}
               value={user.firstName || ""}
               type={"text"}
               prop="firstName"
               label="First Name"
               handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
               validInput={RegisterModel.validRegistration}
               helperText={"Please enter your first name"}
             ></MyInput>
@@ -137,7 +120,6 @@ export class Register extends Component<any, RegisterState> {
               prop="lastName"
               label="Last Name"
               handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
               validInput={RegisterModel.validRegistration}
               helperText={"Please enter your last name"}
             ></MyInput>
@@ -149,7 +131,6 @@ export class Register extends Component<any, RegisterState> {
               prop={"userName"}
               label="Username"
               handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
               validInput={RegisterModel.validRegistration}
               serverError={serverError}
               serverErrorStyle={serverErrorStyle}
@@ -170,7 +151,6 @@ export class Register extends Component<any, RegisterState> {
                 </Tooltip>
               }
               handleChange={this.handleChange}
-              handleErrors={this.handleErrors}
               validInput={RegisterModel.validRegistration}
               helperText={"Please enter a password or create one with the icon"}
             ></MyInput>
@@ -202,14 +182,6 @@ export class Register extends Component<any, RegisterState> {
     if (prop === "userName" && serverError.length > 0) {
       this.setState({ serverError: "", serverErrorStyle: false });
     }
-  };
-  // end of function
-
-  // update errors state
-  public handleErrors = (prop: string, error: string) => {
-    const errors = { ...this.state.errors };
-    errors[prop] = error;
-    error.length > 0 ? this.setState({ errors }) : this.setState({ errors });
   };
   // end of function
 

@@ -11,9 +11,8 @@ import Grid from "@material-ui/core/Grid";
 import { VacationModel } from "../../../models/vacations-model";
 
 // import services
+import { VacationService } from "../../../services/vacationsService";
 import { InsertService } from "./insertService";
-import { ValidationService } from "../../../services/validationService";
-import { TokensServices } from "../../../services/tokensService";
 import { ServerServices } from "../../../services/serverService";
 import { LoginServices } from "../../../services/loginService";
 
@@ -44,13 +43,14 @@ export class Insert extends Component<any, InsertState> {
   public handleInsertRequest = async () => {
     const { vacation } = this.state;
 
+
     try {
 
       // validate vacation
-      if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
-        return;
-      }
-
+     if(VacationService.validVacationForm(vacation)) {
+       return
+     }
+      
       // send request
       const response = await this.InsertService.handleRequest(vacation);
 
@@ -67,7 +67,7 @@ export class Insert extends Component<any, InsertState> {
   };
 
   render() {
-    const { vacation,  preview } = this.state;
+    const { vacation, preview } = this.state;
     return (
       <React.Fragment>
         <Grid container className="insert">
@@ -87,7 +87,7 @@ export class Insert extends Component<any, InsertState> {
               preview={preview}
             />
           </Grid>
-        </Grid> 
+        </Grid>
         <UpdateToken />
       </React.Fragment>
     );

@@ -27,6 +27,7 @@ import { Unsubscribe } from "redux";
 
 import "./update.scss";
 import UpdateToken from "../../updateToken/updateToken";
+import { VacationService } from "../../../services/vacationsService";
 
 // const VacCard = lazy(() => import("../../vac-card/vac-card"));
 
@@ -52,6 +53,7 @@ export class Update extends Component<any, UpdateState> {
   private UpdateService = new UpdateService(+this.props.match.params.id);
 
   public componentDidMount = async () => {
+    
     LoginServices.adminLoginLogic(this.props.history);
 
     try {
@@ -75,8 +77,8 @@ export class Update extends Component<any, UpdateState> {
 
     try {
       // validate form
-      if (ValidationService.formLegal(vacation, VacationModel.validVacation)) {
-        return;
+      if(VacationService.validVacationForm(vacation)) {
+        return
       }
 
       // send update request

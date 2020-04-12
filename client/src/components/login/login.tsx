@@ -21,8 +21,8 @@ import MyInput from "../my-input/my-input";
 
 // import models
 import { LoginErrors } from "../../models/error-model";
-import { UserModel } from "../../models/user-model";
-import { MenuModel, LoginMenu } from "../../models/menu-model";
+import { LoginModel } from "../../models/user-model";
+import { LoginMenu } from "../../models/menu-model";
 
 // import services
 import { LoginServices } from "../../services/loginService";
@@ -34,11 +34,11 @@ import { ActionType } from "../../redux/action-type";
 import { store } from "../../redux/store";
 
 import "./login.scss";
+import { ValidationService } from "../../services/validationService";
 
 
 interface LoginState {
-  user: UserModel;
-  errors: LoginErrors;
+  user: LoginModel;
   showPassword: boolean;
   error: boolean;
   serverError: string;
@@ -49,8 +49,7 @@ export class Login extends Component<any, LoginState> {
     super(props);
 
     this.state = {
-      user: new UserModel(),
-      errors: new LoginErrors(),
+      user: new LoginModel(),
       showPassword: false,
       error: false,
       serverError: "",
@@ -58,6 +57,7 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
+   
     // set style
     setStyle(LoginMenu, "home");
 
@@ -70,12 +70,14 @@ export class Login extends Component<any, LoginState> {
 
   public handleLogIn = async () => {
 
-    const { user, errors } = this.state;
+    const { user } = this.state;
 
     // disabled request if form is not legal
-    if (LoginServices.loginLegal(user, errors)) {
-      return;
+    const valid = ValidationService.formLegal(user, LoginModel.validLogin)
+    if(valid.msg) {
+      return
     }
+
     try {
       // handle request
       await this.handleRequest(user);
@@ -152,11 +154,10 @@ export class Login extends Component<any, LoginState> {
                   serverError={serverError}
                   fullWidth={true}
                   handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={UserModel.validLogin}
+                  validInput={LoginModel.validLogin}
                   helperText={"Please enter your username"}
                 />
-              </Grid>
+              </Grid> 
               <Grid
                 container
                 spacing={3}
@@ -188,8 +189,7 @@ export class Login extends Component<any, LoginState> {
                     </InputAdornment>
                   }
                   handleChange={this.handleChange}
-                  handleErrors={this.handleErrors}
-                  validInput={UserModel.validLogin}
+                  validInput={LoginModel.validLogin}
                 />
               </Grid>
               <Grid className="text-center" item xs={12}>
@@ -226,16 +226,6 @@ export class Login extends Component<any, LoginState> {
     const user = { ...this.state.user };
     user[prop] = input;
     this.setState({ user, serverError: "", error: false });
-  };
-
-  public handleErrors = (prop: string, error: string) => {
-    const errors = { ...this.state.errors };
-    errors[prop] = error;
-    if (error.length > 0) {
-      this.setState({ errors });
-      return;
-    }
-    this.setState({ errors });
   };
 
   public handleClickShowPassword = () => {

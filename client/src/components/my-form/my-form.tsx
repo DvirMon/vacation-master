@@ -15,7 +15,6 @@ import "./my-form.scss";
 interface MyFormProps {
   vacation: VacationModel;
   handleChange(prop: string, input: any): void;
-  handleErrors?(prop: string, error?: string): void;
   handleVacation(): any;
   handleImage(preview: string): void;
 }
@@ -30,6 +29,7 @@ interface MyFormState {
 }
 
 export class MyForm extends Component<MyFormProps, MyFormState> {
+  
   private fileInput: HTMLInputElement;
 
   constructor(props: MyFormProps) {

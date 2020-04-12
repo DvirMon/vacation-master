@@ -27,25 +27,25 @@ export class VacationModel {
         errors.forEach(err => handleMassage(err))
         return errors;
       }),
-      startDate: Joi.date().iso().error(errors => {
-        errors.forEach(err => handleMassage(err))
-        return errors;
-      }),
+      startDate: Joi.date().iso(),
       endDate: Joi.date().iso().greater(Joi.ref("startDate")).error(errors => {
-        errors.forEach(err => handleMassage(err))
+        errors.forEach(err => {
+          console.log(err.type)
+          handleMassage(err)
+        })
         return errors;
-      }),
+    }),
       price: Joi.number().min(1).error(errors => {
         errors.forEach(err => handleMassage(err))
         return errors;
       })
-    }).unknown()
+  }).unknown()
 
-    const error = Joi.validate(vacation, schema).error;
-    if (error) {
-      console.log(error.details[0])
-      return error.details[0].message
-    }
+  const error = Joi.validate(vacation, schema).error;
+  if(error) {
+    console.log(error.details[0])
+    return error.details[0].message
+  }
     return null;
   };
 }
@@ -71,14 +71,14 @@ export class FollowUpModel {
   constructor(
     public vacationID: number,
     public userID: string,
-  ) { } 
+  ) { }
 
 }
 
 export class Notification {
   constructor(
     public vacationID: number,
-    public msg: string, 
+    public msg: string,
   ) { }
 
 }

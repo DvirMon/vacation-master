@@ -26,15 +26,12 @@ export interface MyInputProps {
   multiline?: boolean;
 
   handleChange?(prop: string, input: string): void;
-  handleErrors?(prop: string, error?: string): void;
   validInput?(object: {}): string;
 }
 
 export interface MyInputState {
   errorMessage: string;
   on: boolean;
-  success: boolean;
-  danger: boolean;
   error: boolean;
 }
 
@@ -45,8 +42,6 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     this.state = {
       errorMessage: "",
       on: false,
-      success: false,
-      danger: false,
       error: false,
     };
   }
@@ -103,6 +98,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   public handleBlur = (prop: string) => (
     event: React.FocusEvent<HTMLInputElement>
   ): void => {
+
     const input = event.target.value;
     this.validInput(input, prop);
     this.setState({ on: true });
@@ -111,23 +107,26 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   public handleFocus = (prop: string) => (
     event: React.FocusEvent<HTMLInputElement>
   ): void => {
+
     const on = this.state.on;
+    const input = event.target.value;
     if (on === true) {
-      const input = event.target.value;
       this.validInput(input, prop);
     }
   };
 
+
   public handleChange = (prop: string) => (event) => {
+    
     const on = this.state.on;
     const input = event.target.value;
 
+    // invoke only after blur
     if (on === true) {
       const errorMessage = ValidationService.isRequired(input);
-      this.setState({ errorMessage });
 
       if (errorMessage) {
-        this.props.handleErrors(prop, errorMessage);
+        this.setState({ errorMessage });
       } else {
         this.validInput(input, prop);
       }
@@ -137,49 +136,37 @@ class MyInput extends Component<MyInputProps, MyInputState> {
     this.props.handleChange(prop, input);
   };
 
+  // valid value with given validation function
   public validInput = (input: string, prop: string) => {
     const schema = {};
-    const validSchema = ValidationService.setObjectForSchema(schema, prop, input);
+    const validSchema = ValidationService.setObjectForSchema(
+      schema,
+      prop,
+      input
+    );
     const error = this.props.validInput(validSchema);
-    this.handleErrors(error, prop);
+    this.handleErrors(error);
   };
+  // end of function
 
-  public handleErrors = (errorMessage: string, prop: string) => {
+  //
+  public handleErrors = (errorMessage: string) => {
     const serverError = this.props.serverError;
 
     // joi errors
     if (errorMessage) {
-      this.setState({
-        errorMessage,
-        error: true,
-        success: false,
-        danger: true,
-      });
-
-      if (this.props.handleErrors) {
-        this.props.handleErrors(prop, errorMessage);
-      }
-
+      this.setState({ errorMessage, error: true });
       return;
     }
 
     // server errors
     if (serverError) {
-      this.setState({ error: true, success: false, danger: true });
+      this.setState({ error: true });
       return;
     }
 
     // no errors
-    this.setState({
-      errorMessage: "",
-      error: false,
-      success: true,
-      danger: false,
-    });
-
-    if (this.props.handleErrors) {
-      this.props.handleErrors(prop, "");
-    }
+    this.setState({ errorMessage: "", error: false });
   };
 }
 

@@ -2,10 +2,11 @@ import { ServerServices } from "./serverService";
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 import { updateChart } from "./socketService";
+import { ValidationService } from "./validationService";
+import { VacationModel } from "../models/vacations-model";
 
 // class to handle all vacation logic
 export class VacationService {
-
 
   // get user vacations
   static getUserVacationAsync = async (accessToken) => {
@@ -91,7 +92,6 @@ export class VacationService {
   static handleDeleteFollowUp = async (vacation, accessToken) => {
     try {
 
-      console.log(vacation)
       // delete in database
       await VacationService.deleteFollowUpAsync(
         vacation.followUpID,
@@ -122,7 +122,17 @@ export class VacationService {
   };
   // end of function
 
-
+  
+  static validVacationForm = (vacation) => {
+    const valid = ValidationService.formLegal(
+      vacation,
+      VacationModel.validVacation
+    );
+    if (valid.msg) {
+      alert(valid.body);
+      return true
+    }
+  }
 
 
 }

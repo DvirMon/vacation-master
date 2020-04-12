@@ -4,6 +4,17 @@ import { store } from "../redux/store"
 
 export class ValidationService {
 
+    //verify admin 
+    static verifyAdmin = (history) => {
+      const admin = store.getState().login.admin;
+      if (!admin) {
+        alert("Not Admin");
+        history.push("/login");
+        return;
+      } 
+    }
+    // end of function
+
   // function for required input validation
   static isRequired = (prop: string) => {
     const error = Joi.validate(prop, Joi.required()).error
@@ -20,19 +31,6 @@ export class ValidationService {
     schema[prop] = input;
     return schema;
   };
-  // end of function
-
-  // function to check if error object contained errors
-  static formLegalErrors = (errors) => {
-    for (const error in errors) {
-      if (errors[error].length > 0) {
-        return errors[error]
-      } else {
-        continue
-      }
-    }
-    return null
-  }
   // end of function
 
   // function to check if form's object contain all his values
@@ -54,30 +52,22 @@ export class ValidationService {
 
     const value = ValidationService.formLegalValues(obj);
     if (value) {
-      alert(`Filed ${value} is required`);
-      return true;
+      return { body: `Filed ${value} is required`, msg: true }
     }
 
     const schemeError = callback(obj)
     if (schemeError) {
-      alert(schemeError)
-      return true
+      return { body: schemeError, msg: true }
     }
 
-    return false;
+    return { body: "", msg: false };
   }
   // end of  function for legal form
 
-  //verify admin 
-  static verifyAdmin = (history) => {
-    const admin = store.getState().login.admin;
-    if (!admin) {
-      alert("Not Admin");
-      history.push("/login");
-      return;
-    }
-  }
+
+
 }
+// end of service
 
 
 // function for customized joi error message
@@ -108,15 +98,21 @@ export const handleMassage = (err) => {
       err.message = "Please choose departing date and only then returning date";
       break
     case "date.greater":
-      err.message = `Departing date cant be before ${err.context.limit.toISOString().slice(0, 10).replace("T", " ")}`;
+      err.message = `Returning date cant be before ${err.context.limit.toISOString().slice(0, 10).replace("T", " ")}`;
       break
     case "number.base":
       err.message = `price is required`;
       break
+    case "number.unsafe":
+      err.message = `price cannot be equal or less than 0`;
+      break
+    case "number.min":
+      err.message = `price cannot be equal or less than 0`;
+      break
   }
   
 }
-  // end of function
+// end of function
 
 
 
