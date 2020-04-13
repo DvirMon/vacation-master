@@ -15,13 +15,18 @@ import { LoginServices } from "../../services/login-service";
 import { AuthServices } from "../../services/auth-service";
 import { invokeConnection } from "../../services/socket-service";
 import { setStyle } from "../../services/style-services";
- 
+
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
 import { UserModel } from "../../models/user-model";
 import { TokensModel } from "../../models/tokens.model";
 import { MenuModel, AdminMenu } from "../../models/menu-model";
 import { SliderModel } from "../../models/slider-model";
+import {
+  unFollowUserSetting,
+  unFollowAdminSetting,
+  followSetting,
+} from "../../models/vac-card-model";
 
 // import redux
 import { Unsubscribe } from "redux";
@@ -36,8 +41,8 @@ interface VacationsState {
   tokens: TokensModel;
   unFollowUp: UserVacationModel[];
   followUp: UserVacationModel[];
-  menu: MenuModel;
   sliderSetting: SliderModel;
+  menu: MenuModel;
 }
 
 export class Vacations extends Component<any, VacationsState> {
@@ -84,15 +89,13 @@ export class Vacations extends Component<any, VacationsState> {
 
       if (store.getState().vacation.unFollowUp.length === 0) {
         await this.handleRequest();
-      } 
-      else {
+      } else {
         this.unsubscribeStore = store.subscribe(() => {
           this.setState({
             followUp: store.getState().vacation.followUp,
             unFollowUp: store.getState().vacation.unFollowUp,
           });
         });
-  
       }
 
       this.handleStyle(admin);
@@ -113,15 +116,14 @@ export class Vacations extends Component<any, VacationsState> {
   // end of function
 
   public handleRequest = async () => {
-
     // get tokens
     const tokens = await AuthServices.handleStoreRefresh();
 
-    // send request 
+    // send request
     const response = await VacationService.getUserVacationAsync(
       tokens.accessToken
     );
-   
+
     // handle server response
     ServerServices.handleServerResponse(
       response,
@@ -131,7 +133,6 @@ export class Vacations extends Component<any, VacationsState> {
   };
 
   public handleServerSuccess = (response) => {
-
     const action = {
       type: ActionType.getAllVacation,
       payload: response.body,
@@ -163,8 +164,7 @@ export class Vacations extends Component<any, VacationsState> {
                   <Col className="followed" key={vacation.vacationID}>
                     <VacCard
                       vacation={vacation}
-                      follow={true}
-                      followIcon={true}
+                      vacationSettings={followSetting}
                     ></VacCard>
                   </Col>
                 ))}
@@ -178,12 +178,10 @@ export class Vacations extends Component<any, VacationsState> {
                 <Col key={vacation.vacationID} sm={4}>
                   <VacCard
                     vacation={vacation}
-                    follow={false}
-                    followIcon={!admin}
                     margin={true}
-                    hover={!admin}
-                    admin={admin}
-                    adminIcons={admin}
+                    vacationSettings={
+                      admin ? unFollowAdminSetting : unFollowUserSetting
+                    }
                   ></VacCard>
                 </Col>
               ))}

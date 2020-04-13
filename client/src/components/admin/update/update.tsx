@@ -1,19 +1,19 @@
-import React, { Component } from "react";
+import React, { Component, lazy, Suspense } from "react";
 
 // import my components
 import MyForm from "../../my-form/my-form";
 import Loader from "../../loader/loader";
 import UpdateToken from "../../updateToken/updateToken";
+import VacCard from "../../vac-card/vac-card";
 
 // import materiel-ui
 import Grid from "@material-ui/core/Grid";
-import VacCard from "../../vac-card/vac-card";
-
+ 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
 import { TokensModel } from "../../../models/tokens.model";
 
-// import services 
+// import services
 import { UpdateService } from "./updateService";
 import { ServerServices } from "../../../services/server-service";
 import { VacationService } from "../../../services/vacations-service";
@@ -23,14 +23,16 @@ import { AuthServices } from "../../../services/auth-service";
 import { store } from "../../../redux/store";
 
 import "./update.scss";
-
-// const VacCard = lazy(() => import("../../vac-card/vac-card"));
+import {
+  formAdminSetting,
+  VacationCardSetting,
+} from "../../../models/vac-card-model";
 
 interface UpdateState {
   vacation: VacationModel;
   tokens: TokensModel;
   updated: boolean;
-  preview: string;
+  settings: VacationCardSetting;
 }
 
 export class Update extends Component<any, UpdateState> {
@@ -41,27 +43,25 @@ export class Update extends Component<any, UpdateState> {
       vacation: new VacationModel(),
       tokens: store.getState().auth.tokens,
       updated: true,
-      preview: "",
+      settings: formAdminSetting,
     };
   }
 
   private UpdateService = new UpdateService(+this.props.match.params.id);
 
   public componentDidMount = async () => {
-    
     AuthServices.adminLoginLogic(this.props.history);
 
     try {
       const vacation = await this.UpdateService.getVacation();
-      this.setState({ vacation });
-
-      setTimeout(() => {
-        this.setState({ updated: true });
-      }, 1100);
-    } catch (err) {
+      this.setState({ vacation });  
+      setTimeout(() => this.setState({ updated: true }), 1100);
+    } catch (err) { 
       console.log(err);
     }
-  };
+  }; 
+  
+
 
   public handleUpdateRequest = async () => {
     const { vacation, updated } = this.state;
@@ -72,8 +72,8 @@ export class Update extends Component<any, UpdateState> {
 
     try {
       // validate form
-      if(VacationService.validVacationForm(vacation)) {
-        return
+      if (VacationService.validVacationForm(vacation)) {
+        return;
       }
 
       // send update request
@@ -92,7 +92,7 @@ export class Update extends Component<any, UpdateState> {
   };
 
   render() {
-    const { vacation, preview } = this.state;
+    const { vacation, settings } = this.state;
 
     return (
       <React.Fragment>
@@ -109,18 +109,17 @@ export class Update extends Component<any, UpdateState> {
                   handleImage={this.handleImage}
                 />
               )}
-            </Grid>
-              <Grid item xs={4}>
+            </Grid> 
+            <Grid item xs={4}>
+              {vacation && (
                 <VacCard
                   vacation={vacation}
-                  followIcon={false}
-                  admin={true}
-                  adminIcons={false}
                   margin={false}
-                  hover={false}
-                  preview={preview}
+                  preview={settings.img }
+                  vacationSettings={settings}
                 />
-              </Grid> 
+              )}
+            </Grid>
           </Grid>
         )}
         <UpdateToken />
@@ -129,7 +128,9 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public handleImage = (preview: string) => {
-    this.setState({ preview });
+    const settings = { ...this.state.settings };
+    settings.img = preview;  
+    this.setState({ settings });
   };
 
   public handleChange = (prop: string, input: any) => {

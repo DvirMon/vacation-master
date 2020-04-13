@@ -18,10 +18,14 @@ import { ServerServices } from "../../../services/server-service";
 import { AuthServices } from "../../../services/auth-service";
 
 import "./insert.scss";
+import {
+  VacationCardSetting,
+  formAdminSetting,
+} from "../../../models/vac-card-model";
 
 interface InsertState {
   vacation: VacationModel;
-  preview: string;
+  settings: VacationCardSetting;
 }
 
 export class Insert extends Component<any, InsertState> {
@@ -32,9 +36,9 @@ export class Insert extends Component<any, InsertState> {
 
     this.state = {
       vacation: new VacationModel(),
-      preview: "",
+      settings: formAdminSetting,
     };
-  }
+  } 
 
   public componentDidMount = async () => {
     AuthServices.adminLoginLogic(this.props.history);
@@ -43,14 +47,12 @@ export class Insert extends Component<any, InsertState> {
   public handleInsertRequest = async () => {
     const { vacation } = this.state;
 
-
     try {
-
       // validate vacation
-     if(VacationService.validVacationForm(vacation)) {
-       return
-     }
-      
+      if (VacationService.validVacationForm(vacation)) {
+        return;
+      }
+
       // send request
       const response = await this.InsertService.handleRequest(vacation);
 
@@ -67,7 +69,7 @@ export class Insert extends Component<any, InsertState> {
   };
 
   render() {
-    const { vacation, preview } = this.state;
+    const { vacation, settings } = this.state;
     return (
       <React.Fragment>
         <Grid container className="insert">
@@ -77,15 +79,14 @@ export class Insert extends Component<any, InsertState> {
               handleChange={this.handleChange}
               handleVacation={this.handleInsertRequest}
               handleImage={this.handleImage}
-            />
+            /> 
           </Grid>
           <Grid item xs={4}>
             <VacCard
               vacation={vacation}
-              followIcon={false}
-              admin={true}
-              adminIcons={false}
-              preview={preview}
+              margin={false}
+              preview={settings.img }
+              vacationSettings={settings}
             />
           </Grid>
         </Grid>
@@ -93,9 +94,11 @@ export class Insert extends Component<any, InsertState> {
       </React.Fragment>
     );
   }
-
+ 
   public handleImage = (preview: string) => {
-    this.setState({ preview });
+    const settings = { ...this.state.settings };
+    settings.img = preview;  
+    this.setState({ settings });
   };
 
   public handleChange = (prop: string, input: any): void => {
