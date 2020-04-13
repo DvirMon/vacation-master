@@ -1,5 +1,5 @@
 
-export class VacationCardSetting {
+export class VacationCardModel {
 
   public constructor (
     public admin?: boolean,
@@ -14,9 +14,9 @@ export class VacationCardSetting {
   this.img = ""
   }
   
-}
+} 
 
-export const followSetting = new VacationCardSetting(false, true, false, true, true)
-export const unFollowUserSetting = new VacationCardSetting(false, false, false, true, true)
-export const unFollowAdminSetting = new VacationCardSetting(true, false, true, false,  true)
-export const formAdminSetting = new VacationCardSetting(true, false, false ,false, false)
+export const followSetting = new VacationCardModel(false, true, false, true, true)
+export const unFollowUserSetting = new VacationCardModel(false, false, false, true, true)
+export const unFollowAdminSetting = new VacationCardModel(true, false, true, false,  true)
+export const formAdminSetting = new VacationCardModel(true, false, false ,false, false)

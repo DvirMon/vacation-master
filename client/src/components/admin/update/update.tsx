@@ -8,10 +8,14 @@ import VacCard from "../../vac-card/vac-card";
 
 // import materiel-ui
 import Grid from "@material-ui/core/Grid";
- 
+
 // import models
 import { VacationModel } from "../../../models/vacations-model";
 import { TokensModel } from "../../../models/tokens.model";
+import {
+  formAdminSetting,
+  VacationCardModel,
+} from "../../../models/vac-card-model";
 
 // import services
 import { UpdateService } from "./updateService";
@@ -23,16 +27,12 @@ import { AuthServices } from "../../../services/auth-service";
 import { store } from "../../../redux/store";
 
 import "./update.scss";
-import {
-  formAdminSetting,
-  VacationCardSetting,
-} from "../../../models/vac-card-model";
 
 interface UpdateState {
   vacation: VacationModel;
   tokens: TokensModel;
   updated: boolean;
-  settings: VacationCardSetting;
+  settings: VacationCardModel;
 }
 
 export class Update extends Component<any, UpdateState> {
@@ -54,14 +54,12 @@ export class Update extends Component<any, UpdateState> {
 
     try {
       const vacation = await this.UpdateService.getVacation();
-      this.setState({ vacation });  
+      this.setState({ vacation });
       setTimeout(() => this.setState({ updated: true }), 1100);
-    } catch (err) { 
+    } catch (err) {
       console.log(err);
     }
-  }; 
-  
-
+  };
 
   public handleUpdateRequest = async () => {
     const { vacation, updated } = this.state;
@@ -109,13 +107,13 @@ export class Update extends Component<any, UpdateState> {
                   handleImage={this.handleImage}
                 />
               )}
-            </Grid> 
+            </Grid>
             <Grid item xs={4}>
               {vacation && (
                 <VacCard
                   vacation={vacation}
                   margin={false}
-                  preview={settings.img }
+                  preview={settings.img}
                   vacationSettings={settings}
                 />
               )}
@@ -129,7 +127,7 @@ export class Update extends Component<any, UpdateState> {
 
   public handleImage = (preview: string) => {
     const settings = { ...this.state.settings };
-    settings.img = preview;  
+    settings.img = preview;
     this.setState({ settings });
   };
 

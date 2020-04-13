@@ -45,7 +45,7 @@ export class Charts extends Component<any, ChartsState> {
       // handle request
       const url = `http://localhost:3000/api/followup`;
       const tokens = await AuthServices.handleStoreRefresh();
-      const response = await ServerServices.getDateAsync(url);
+      const response = await ServerServices.getRequestAsync(url);
       
       // handle server request
       ServerServices.handleServerResponse(

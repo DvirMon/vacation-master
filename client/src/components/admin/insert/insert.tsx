@@ -10,6 +10,10 @@ import Grid from "@material-ui/core/Grid";
 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
+import {
+  VacationCardModel,
+  formAdminSetting,
+} from "../../../models/vac-card-model";
 
 // import services
 import { VacationService } from "../../../services/vacations-service";
@@ -18,14 +22,10 @@ import { ServerServices } from "../../../services/server-service";
 import { AuthServices } from "../../../services/auth-service";
 
 import "./insert.scss";
-import {
-  VacationCardSetting,
-  formAdminSetting,
-} from "../../../models/vac-card-model";
 
 interface InsertState {
   vacation: VacationModel;
-  settings: VacationCardSetting;
+  settings: VacationCardModel;
 }
 
 export class Insert extends Component<any, InsertState> {

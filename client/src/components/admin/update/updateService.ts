@@ -11,9 +11,9 @@ export class UpdateService {
   constructor(public vacationID: number) { }
 
   public getVacation = async () => {
- 
+
     const url = `http://localhost:3000/api/vacations/${this.vacationID}`;
-    const vacation = await ServerServices.getDateAsync(url);
+    const vacation = await ServerServices.getRequestAsync(url);
     return vacation
   }
 
@@ -31,11 +31,13 @@ export class UpdateService {
   }
 
   // function to update vacation
-  public updateVacationAsync = async (url: string, vacation?: FormData, accessToken?: string) => {
+  public updateVacationAsync = async (url: string, vacation?: FormData) => {
+    const tokens = await AuthServices.handleStoreRefresh();
+
     const options = {
       method: "PUT",
       headers: {
-        "Authorization": accessToken
+        "Authorization": tokens.accessToken
       },
       body: vacation
     };
@@ -51,9 +53,6 @@ export class UpdateService {
 
   public handleRequest = async (vacation: VacationModel) => {
 
-    // get tokens
-    const tokens = await AuthServices.handleStoreRefresh();
-
     // create formatDate file
     const myFormData = VacationService.setFormData(vacation);
 
@@ -61,7 +60,6 @@ export class UpdateService {
     const response = await this.updateVacationAsync(
       `http://localhost:3000/api/vacations/${this.vacationID}`,
       myFormData,
-      tokens.accessToken
     );
 
     return response;

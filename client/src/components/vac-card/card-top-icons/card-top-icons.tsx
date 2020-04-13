@@ -83,6 +83,7 @@ export class CardTopIcons extends Component<
   public handleIconClick = async () => {
     // handle user click
     const vacation = this.props.vacation;
+    console.log(vacation)
     await VacationService.handleIconClick(vacation);
 
     // update admin chart
@@ -97,11 +98,10 @@ export class CardTopIcons extends Component<
     }
 
     const vacationID = this.props.vacation.vacationID;
-    const tokens = store.getState().auth.tokens;
 
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
-    await ServerServices.deleteRequest(url, tokens.accessToken);
+    await ServerServices.deleteRequest(url);
 
     // update real-time 
     handleAdminDelete(this.props.vacation);

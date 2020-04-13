@@ -12,24 +12,24 @@ export class VacationService {
   // get user vacations
   static getUserVacationAsync = async (accessToken) => {
     const url = `http://localhost:3000/api/vacations/user`;
-    const response = await ServerServices.getDateAsync(url)
-    return response 
+    const response = await ServerServices.getRequestAsync(url)
+    return response
   }
   //end of function
 
   // get all the users following a vacation
   static getFollowersByVacationAsync = async (vacationID) => {
     const url = `http://localhost:3000/api/followup/${vacationID}`;
-    const response = await ServerServices.getDateAsync(url)
+    const response = await ServerServices.getRequestAsync(url)
     return response
   }
   //end of function
 
-  // add new followup vacation
-  static addFollowUpAsync = async (vacationID, accessToken) => {
+  // add new followup vacation 
+  static addFollowUpAsync = async (vacationID) => {
     const url = `http://localhost:3000/api/followup`;
     try {
-      const response = await ServerServices.postRequest(url, { vacationID }, accessToken);
+      const response = await ServerServices.postRequest(url, { vacationID });
       return response
     } catch (err) {
       console.log(err);
@@ -38,10 +38,10 @@ export class VacationService {
   //end of function
 
   // delete followup vacation
-  static deleteFollowUpAsync = async (id, accessToken) => {
+  static deleteFollowUpAsync = async (id) => {
     const url = `http://localhost:3000/api/followup/${id}`;
     try {
-      await ServerServices.deleteRequest(url, accessToken);
+      await ServerServices.deleteRequest(url);
     } catch (err) {
       console.log(err);
     }
@@ -65,17 +65,14 @@ export class VacationService {
     return myFormData
   }
   // end of function
-  
-  
+
+
   // function to handle add followup 
-  static handleAddFollowUp = async (vacation, accessToken) => {
+  static handleAddFollowUp = async (vacation) => {
     try {
-      
+
       // add in database
-      const addedVacation = await VacationService.addFollowUpAsync(
-        vacation.vacationID,
-        accessToken
-      );
+      const addedVacation = await VacationService.addFollowUpAsync(vacation.vacationID);
 
       // add follow up ID to new followed vacation
       vacation.followUpID = addedVacation.id;
@@ -90,14 +87,11 @@ export class VacationService {
   // end of function
 
   // function to handle delete followup logic
-  static handleDeleteFollowUp = async (vacation, accessToken) => {
+  static handleDeleteFollowUp = async (vacation) => {
     try {
 
       // delete in database
-      await VacationService.deleteFollowUpAsync(
-        vacation.followUpID,
-        accessToken
-      );
+      await VacationService.deleteFollowUpAsync(vacation.followUpID);
 
       delete vacation.followUpID;
 
@@ -114,16 +108,15 @@ export class VacationService {
 
   // function to handle icon followup click
   static handleIconClick = async (vacation) => {
-    const accessToken = store.getState().auth.tokens.accessToken;
     if (vacation.followUpID) {
-      await VacationService.handleDeleteFollowUp(vacation, accessToken)
+      await VacationService.handleDeleteFollowUp(vacation)
     } else {
-      await VacationService.handleAddFollowUp(vacation, accessToken);
+      await VacationService.handleAddFollowUp(vacation);
     }
   };
   // end of function
 
-  
+
   static validVacationForm = (vacation) => {
     const valid = ValidationService.formLegal(
       vacation,

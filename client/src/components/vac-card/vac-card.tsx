@@ -19,7 +19,7 @@ import CardTopIcons from "./card-top-icons/card-top-icons";
 import FormatDate from "./format-date/format-date";
 
 import { UserVacationModel } from "../../models/vacations-model";
-import { VacationCardSetting } from "../../models/vac-card-model";
+import { VacationCardModel } from "../../models/vac-card-model";
 
 import { VacationService } from "../../services/vacations-service";
 
@@ -27,12 +27,11 @@ import { VacationService } from "../../services/vacations-service";
 
 import "./vac-card.scss";
 
- 
 interface VacCardProps {
   vacation?: UserVacationModel;
   margin?: boolean;
-  preview? : string 
-  vacationSettings?: VacationCardSetting;
+  preview?: string;
+  vacationSettings?: VacationCardModel;
   update?(): void;
 }
 
@@ -41,7 +40,7 @@ interface VacCardState {
   setExpanded: boolean;
   color: boolean;
   followers: number;
-  settings: VacationCardSetting;
+  settings: VacationCardModel;
 }
 
 export class VacCard extends Component<VacCardProps, VacCardState> {
@@ -53,17 +52,14 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       setExpanded: false,
       color: false,
       followers: 0,
-      settings: new VacationCardSetting(),
+      settings: new VacationCardModel(),
     };
   }
 
   public componentDidMount = async () => {
-  
+    this.handleFollowIcon();
+    setTimeout(() => this.handleSetting(), 400);
 
-    this.handleFollowIcon()
-  
-    setTimeout(() => this.handleSettingImage(), 400)
- 
     try {
       // update followup icon number only in user
       if (this.props.vacationSettings.admin === false) {
@@ -95,24 +91,25 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             "mr-0": margin,
             "root-hover": settings.hover,
           })}
-        > 
-          <CardMedia
-            className="media"
-            image={preview ? preview : settings.img } 
-            title={`${vacation.destination}`}
-          ></CardMedia>
+        >
+          {preview
+            ? this.cardMedia(preview, vacation)
+            : this.cardMedia(
+                `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`,
+                vacation
+              )}
           <CardHeader
-            action={ 
-                <CardTopIcons
-                  vacation={vacation}
-                  color={color}
-                  followIcon={settings.followIcon}
-                  admin={settings.adminIcons}
-                />
+            action={
+              <CardTopIcons
+                vacation={vacation}
+                color={color}
+                followIcon={settings.followIcon}
+                admin={settings.adminIcons}
+              />
             }
             title={vacation.destination}
             subheader={
-              <FormatDate 
+              <FormatDate
                 departing={vacation.startDate}
                 returning={vacation.endDate}
                 follow={settings.follow}
@@ -130,7 +127,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
                 <FavoriteIcon />
               </IconButton>
             )}
-            <IconButton 
+            <IconButton
               onClick={this.handleExpandClick}
               className={clsx({ expand: true, expandOpen: expanded })}
               aria-expanded={expanded}
@@ -149,28 +146,31 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     );
   }
 
-  public handleFollowIcon = () => {
-    this.props.vacationSettings.follow === true
-    ? this.setState({ color: true })
-    : this.setState({ color: false });
-  }
-
-  public handleSettingImage = () => {
-    const settings = { ...this.props.vacationSettings };
-    if (this.props.vacation?.image) {
-      const image = `http://localhost:3000/api/vacations/uploads/${this.props.vacation.image}.jpg`;
-      settings.img = image;
-      this.setState({ settings });
-    }
+  public cardMedia = (imgURL: string, vacation?) => {
+    return (
+      <CardMedia
+        className="media"
+        image={imgURL}
+        title={`${vacation.destination}`}
+      ></CardMedia>
+    );
   };
 
-  public handleExpandClick = (event) => {
+  public handleFollowIcon = () => {
+    this.props.vacationSettings.follow === true
+      ? this.setState({ color: true })
+      : this.setState({ color: false });
+  };
+
+  public handleSetting = () => {
+    const settings = { ...this.props.vacationSettings };
+    this.setState({ settings });
+  };
+
+  public handleExpandClick = () => {
     const expanded = this.state.expanded;
     this.setState({ expanded: !expanded });
   };
- 
-  
-
 }
 
 export default VacCard;

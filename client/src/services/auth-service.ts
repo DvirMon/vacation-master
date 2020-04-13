@@ -26,7 +26,8 @@ export class AuthServices {
 
     try {
       const url = `http://localhost:3000/api/tokens/new`;
-      const response = await ServerServices.postRequest(url, tokens.dbToken, tokens.accessToken)
+      const response = await ServerServices.postRequest(url, tokens.dbToken)
+      console.log(response)
       ServerServices.handleTokenResponse(response)
     } catch (err) {
       console.log(err);

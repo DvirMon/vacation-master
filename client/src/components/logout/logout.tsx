@@ -11,7 +11,6 @@ export class Logout extends Component<any, any> {
     try {
 
       const tokens = store.getState().auth.tokens;
-      console.log(tokens)
 
       // clear refreshToken from db
       const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;

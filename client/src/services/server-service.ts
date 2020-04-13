@@ -6,7 +6,7 @@ import { ActionType } from "../redux/action-type";
 
 export class ServerServices {
 
-  static getDateAsync = async (url) => {
+  static getRequestAsync = async (url) => {
 
     const tokens = store.getState().auth.tokens
 
@@ -24,6 +24,7 @@ export class ServerServices {
       console.log(err)
     }
     
+
   }
   
   // template of fetch get request
@@ -42,39 +43,21 @@ export class ServerServices {
       return err
     }
   }
-  // end of function
-
-  // template of get request with authorization
-  // static getRequest = async (url: string, accessToken?: string) => {
-
-  //   const options = {
-  //     headers: {
-  //       "Authorization": accessToken,
-  //     }
-  //   };
-
-  //   try {
-  //     const response = await ServerServices.getData(url, options);
-  //     return response
-  //   } catch (err) {
-  //     return err
-  //   }
-
-  // }
-  // end of function
 
   // template of post request with authorization
-  static postRequest = async (url: string, body?: any, accessToken?: string) => {
+  static postRequest = async (url: string, body?: any) => {
 
+    const tokens = store.getState().auth.tokens
+    
     const options = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": accessToken
+        "Authorization": tokens ? tokens.accessToken : ""
       },
       body: JSON.stringify(body)
     };
-
+    
     try {
       const response = await ServerServices.getData(url, options);
       return response
@@ -83,14 +66,17 @@ export class ServerServices {
     }
   }
   // end of function
-
-
+  
+  
   // template for delete request
-  static deleteRequest = async (url: string, accessToken?: string) => {
+  static deleteRequest = async (url: string) => {
+    
+    const tokens = store.getState().auth.tokens
+
     const options = {
       method: "DELETE",
       headers: {
-        "Authorization": accessToken
+        "Authorization": tokens.accessToken
       }
     };
     try {
