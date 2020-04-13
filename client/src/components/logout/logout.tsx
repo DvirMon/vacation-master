@@ -9,7 +9,9 @@ import { ActionType } from "../../redux/action-type";
 export class Logout extends Component<any, any> {
   public componentDidMount = async () => {
     try {
+
       const tokens = store.getState().auth.tokens;
+      console.log(tokens)
 
       // clear refreshToken from db
       const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;

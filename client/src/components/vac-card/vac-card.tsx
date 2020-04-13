@@ -30,12 +30,12 @@ interface VacCardProps {
   vacation?: UserVacationModel;
   followIcon: boolean;
   admin?: boolean;
+  adminIcons? : boolean
   margin?: boolean;
   hover?: boolean;
   follow?: boolean;
   preview?: string;
   update?(): void;
-  handleCollapse?(vacation: UserVacationModel): void;
 }
 
 interface VacCardState {
@@ -58,16 +58,16 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   }
 
   public componentDidMount = async () => {
-    
     try {
+      // update followup icon number only in user
+      if (this.props.admin === false) {
+        console.log(1)
+        const vacation = await VacationService.getFollowersByVacationAsync(
+          this.props.vacation.vacationID
+        );
+        this.setState({ followers: vacation.followers });
+      }
       
-      // update followup icon number
-      const vacation = await VacationService.getFollowersByVacationAsync(
-        this.props.vacation.vacationID
-      );
-
-      this.setState({ followers: vacation.followers });
-
       this.props.follow === true
         ? this.setState({ color: true })
         : this.setState({ color: false });
@@ -78,7 +78,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
   render() {
     const { expanded, color, followers } = this.state;
-    const { vacation, followIcon, admin, hover, margin, preview } = this.props;
+    const { vacation, followIcon, admin, hover, margin, preview , adminIcons} = this.props;
 
     return (
       <div
@@ -105,12 +105,12 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             title={`${vacation.destination}`}
           ></CardMedia>
           <CardHeader
-            action={ 
+            action={
               <CardTopIcons
                 vacation={vacation}
                 color={color}
                 followIcon={followIcon}
-                admin={admin}
+                admin={adminIcons}
               />
             }
             title={vacation.destination}

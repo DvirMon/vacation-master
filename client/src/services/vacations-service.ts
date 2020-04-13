@@ -12,15 +12,15 @@ export class VacationService {
   // get user vacations
   static getUserVacationAsync = async (accessToken) => {
     const url = `http://localhost:3000/api/vacations/user`;
-    const response = await ServerServices.getRequest(url, accessToken)
-    return response
+    const response = await ServerServices.getDateAsync(url)
+    return response 
   }
   //end of function
 
   // get all the users following a vacation
   static getFollowersByVacationAsync = async (vacationID) => {
     const url = `http://localhost:3000/api/followup/${vacationID}`;
-    const response = await ServerServices.getRequest(url)
+    const response = await ServerServices.getDateAsync(url)
     return response
   }
   //end of function

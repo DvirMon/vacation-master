@@ -114,7 +114,8 @@ export class Update extends Component<any, UpdateState> {
                 <VacCard
                   vacation={vacation}
                   followIcon={false}
-                  admin={false}
+                  admin={true}
+                  adminIcons={false}
                   margin={false}
                   hover={false}
                   preview={preview}

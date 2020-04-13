@@ -47,11 +47,13 @@ export class AuthServices {
     }
   }
 
-  // verify admin role && invoke socket connection 
-  static adminLoginLogic = (history) => {
+  // verify admin role, invoke socket connection, get tokens
+  static adminLoginLogic = async (history) => {
     ValidationService.verifyAdmin(history);
     invokeConnection();
+    await AuthServices.handleStoreRefresh();
   }
+  
 // end of function
 
 

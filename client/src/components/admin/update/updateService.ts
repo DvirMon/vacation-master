@@ -11,9 +11,9 @@ export class UpdateService {
   constructor(public vacationID: number) { }
 
   public getVacation = async () => {
-
+ 
     const url = `http://localhost:3000/api/vacations/${this.vacationID}`;
-    const vacation = await ServerServices.getRequest(url);
+    const vacation = await ServerServices.getDateAsync(url);
     return vacation
   }
 

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 
@@ -5,9 +6,29 @@ import { ActionType } from "../redux/action-type";
 
 export class ServerServices {
 
+  static getDateAsync = async (url) => {
+
+    const tokens = store.getState().auth.tokens
+
+    const options = {
+      headers: {
+        "Authorization": tokens.accessToken
+      }
+    }
+    try {
+      const response = await axios.get(url, options)
+      const data = await response.data
+      return data
+    }
+    catch (err) {
+      console.log(err)
+    }
+    
+  }
+  
   // template of fetch get request
   static getData = async (url: string, options?: {}) => {
-
+    
     try {
       const response = await fetch(url, options)
       const data = await response.json()
@@ -24,22 +45,22 @@ export class ServerServices {
   // end of function
 
   // template of get request with authorization
-  static getRequest = async (url: string, accessToken?: string) => {
+  // static getRequest = async (url: string, accessToken?: string) => {
 
-    const options = {
-      headers: {
-        "Authorization": accessToken,
-      }
-    };
+  //   const options = {
+  //     headers: {
+  //       "Authorization": accessToken,
+  //     }
+  //   };
 
-    try {
-      const response = await ServerServices.getData(url, options);
-      return response
-    } catch (err) {
-      return err
-    }
+  //   try {
+  //     const response = await ServerServices.getData(url, options);
+  //     return response
+  //   } catch (err) {
+  //     return err
+  //   }
 
-  }
+  // }
   // end of function
 
   // template of post request with authorization

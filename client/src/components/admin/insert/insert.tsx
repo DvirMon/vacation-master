@@ -83,7 +83,8 @@ export class Insert extends Component<any, InsertState> {
             <VacCard
               vacation={vacation}
               followIcon={false}
-              admin={false}
+              admin={true}
+              adminIcons={false}
               preview={preview}
             />
           </Grid>

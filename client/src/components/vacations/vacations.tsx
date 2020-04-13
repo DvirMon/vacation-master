@@ -84,6 +84,15 @@ export class Vacations extends Component<any, VacationsState> {
 
       if (store.getState().vacation.unFollowUp.length === 0) {
         await this.handleRequest();
+      } 
+      else {
+        this.unsubscribeStore = store.subscribe(() => {
+          this.setState({
+            followUp: store.getState().vacation.followUp,
+            unFollowUp: store.getState().vacation.unFollowUp,
+          });
+        });
+  
       }
 
       this.handleStyle(admin);
@@ -174,6 +183,7 @@ export class Vacations extends Component<any, VacationsState> {
                     margin={true}
                     hover={!admin}
                     admin={admin}
+                    adminIcons={admin}
                   ></VacCard>
                 </Col>
               ))}
