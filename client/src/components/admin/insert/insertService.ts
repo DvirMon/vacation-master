@@ -1,9 +1,9 @@
 import { VacationModel } from "../../../models/vacations-model";
 
-import { TokensServices } from "../../../services/tokensService";
-import { handleAdminInsert } from "../../../services/socketService";
-import { VacationService } from "../../../services/vacationsService";
-import { ServerServices } from "../../../services/serverService";
+import { AuthServices } from "../../../services/auth-service";
+import { handleAdminInsert } from "../../../services/socket-service";
+import { VacationService } from "../../../services/vacations-service";
+import { ServerServices } from "../../../services/server-service";
 
 
 export class InsertService {
@@ -30,7 +30,7 @@ export class InsertService {
   public handleRequest = async (vacation: VacationModel) => {
 
     // get tokens
-    const tokens = await TokensServices.handleStoreRefresh();
+    const tokens = await AuthServices.handleStoreRefresh();
     // create formatDate file
     const myFormData = VacationService.setFormData(vacation);
 

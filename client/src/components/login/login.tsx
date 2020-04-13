@@ -20,21 +20,20 @@ import Image from "react-bootstrap/Image";
 import MyInput from "../my-input/my-input";
 
 // import models
-import { LoginErrors } from "../../models/error-model";
 import { LoginModel } from "../../models/user-model";
 import { LoginMenu } from "../../models/menu-model";
 
 // import services
-import { LoginServices } from "../../services/loginService";
-import { ServerServices } from "../../services/serverService";
-import { setStyle } from "../../services/styleServices";
+import { ValidationService } from "../../services/validation-service";
+import { LoginServices } from "../../services/login-service";
+import { ServerServices } from "../../services/server-service";
+import { setStyle } from "../../services/style-services";
 
 // import redux
 import { ActionType } from "../../redux/action-type";
 import { store } from "../../redux/store";
 
 import "./login.scss";
-import { ValidationService } from "../../services/validationService";
 
 
 interface LoginState {

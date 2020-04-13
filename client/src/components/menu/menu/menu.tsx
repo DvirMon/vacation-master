@@ -14,7 +14,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuUser from "../menu-user/menu-user";
 import MenuAdmin from "../menu-admin/menu-admin";
 
-import { MenuModel, LoginMenu } from "../../../models/menu-model";
+import { MenuModel } from "../../../models/menu-model";
 
 import { Unsubscribe } from "redux/";
 import { store } from "../../../redux/store";

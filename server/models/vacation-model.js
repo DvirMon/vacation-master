@@ -5,7 +5,6 @@ class VacationModel {
     vacationID,
     description,
     destination,
-    continentID,
     image,
     startDate,
     endDate,
@@ -14,7 +13,6 @@ class VacationModel {
     this.vacationID = vacationID;
     this.description = description;
     this.destination = destination;
-    this.continentID = continentID;
     this.image = image;
     this.startDate = startDate;
     this.endDate = endDate;

@@ -2,19 +2,18 @@ import React, { Component } from "react";
 
 import Loader from "../../loader/loader";
 import CanvasJSReact from "../../../assets/canvasjs.react";
+import UpdateToken from "../../updateToken/updateToken";
 
 import { ChartModel } from "../../../models/charts-model";
 
-import { ServerServices } from "../../../services/serverService";
-import { TokensServices } from "../../../services/tokensService";
-import { LoginServices } from "../../../services/loginService";
+import { ServerServices } from "../../../services/server-service";
+import { AuthServices } from "../../../services/auth-service"; 
 
 import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
 import "./charts.scss";
-import { ActionType } from "../../../redux/action-type";
-import UpdateToken from "../../updateToken/updateToken";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -31,10 +30,10 @@ export class Charts extends Component<any, ChartsState> {
     this.state = {
       dataPoints: store.getState().vacation.dataPoints,
     };
-  }
-
+  } 
+ 
   public componentDidMount = async () => {
-    LoginServices.adminLoginLogic(this.props.history);
+    AuthServices.adminLoginLogic(this.props.history);
 
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
@@ -45,7 +44,7 @@ export class Charts extends Component<any, ChartsState> {
     try {
       // handle request
       const url = `http://localhost:3000/api/followup`;
-      const tokens = await TokensServices.handleStoreRefresh();
+      const tokens = await AuthServices.handleStoreRefresh();
       const response = await ServerServices.getRequest(url, tokens.accessToken);
       
       // handle server request

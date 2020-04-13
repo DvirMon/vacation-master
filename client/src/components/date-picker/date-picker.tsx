@@ -8,7 +8,7 @@ import {
   KeyboardDatePicker
 } from "@material-ui/pickers";
 
-import { ValidationService } from "../../services/validationService";
+import { ValidationService } from "../../services/validation-service";
 
 
 interface DatePickerState {

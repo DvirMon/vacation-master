@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 
-import { ValidationService } from "../../services/validationService";
+import { ValidationService } from "../../services/validation-service";
 
 import "./my-input.scss";
 

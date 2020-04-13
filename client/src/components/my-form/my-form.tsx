@@ -8,7 +8,6 @@ import Form from "react-bootstrap/Form";
 import MyInput from "../my-input/my-input";
 
 import { VacationModel } from "../../models/vacations-model";
-import { VacationErrors } from "../../models/error-model";
 
 import "./my-form.scss";
 
@@ -20,7 +19,6 @@ interface MyFormProps {
 }
 
 interface MyFormState {
-  errors: VacationErrors;
   date: {
     startDate: string;
     endDate: string;
@@ -36,7 +34,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     super(props);
 
     this.state = {
-      errors: null,
       date: {
         startDate: this.props.vacation.startDate,
         endDate: this.props.vacation.endDate
@@ -56,15 +53,14 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     date.startDate = this.props.vacation.startDate;
     date.endDate = this.props.vacation.endDate;
     this.setState({ date });
-  };
+  }; 
 
   render() {
     const { vacation } = this.props;
     const { date, apostrophe } = this.state;
-
+ 
     return (
       <div className="my-form">
-        <iframe name="hidden-iframe" style={{ display: "none" }}></iframe>
         <Form
           action="/upload-image"
           method="post"
@@ -72,7 +68,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
           target="hidden-iframe"
         >
           <Grid container spacing={2} className="pos">
-            <MyInput
+            <MyInput 
               width={5}
               value={vacation.destination || ""}
               fullWidth={true}

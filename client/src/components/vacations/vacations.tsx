@@ -9,13 +9,13 @@ import Slider from "react-slick";
 import UpdateToken from "../updateToken/updateToken";
 
 // import services
-import { ServerServices } from "../../services/serverService";
-import { VacationService } from "../../services/vacationsService";
-import { LoginServices } from "../../services/loginService";
-import { TokensServices } from "../../services/tokensService";
-import { invokeConnection } from "../../services/socketService";
-import { setStyle } from "../../services/styleServices";
-
+import { ServerServices } from "../../services/server-service";
+import { VacationService } from "../../services/vacations-service";
+import { LoginServices } from "../../services/login-service";
+import { AuthServices } from "../../services/auth-service";
+import { invokeConnection } from "../../services/socket-service";
+import { setStyle } from "../../services/style-services";
+ 
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
 import { UserModel } from "../../models/user-model";
@@ -106,7 +106,7 @@ export class Vacations extends Component<any, VacationsState> {
   public handleRequest = async () => {
 
     // get tokens
-    const tokens = await TokensServices.handleStoreRefresh();
+    const tokens = await AuthServices.handleStoreRefresh();
 
     // send request 
     const response = await VacationService.getUserVacationAsync(

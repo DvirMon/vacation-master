@@ -1,10 +1,10 @@
-import { ServerServices } from "./serverService";
-import { ActionType } from "../redux/action-type";
+import { invokeConnection } from "./socket-service";
+import { ValidationService }  from "./validation-service";
+import { ServerServices } from "./server-service";
+
 import { store } from "../redux/store";
 
-
-
-export class TokensServices {
+export class AuthServices {
 
   // function for getting first accessToken and refreshToken
   static getTokens = async user => {
@@ -39,13 +39,20 @@ export class TokensServices {
     try {
       if (!store.getState().auth.tokens?.accessToken) {
         const user = store.getState().login.user;
-        await TokensServices.getTokens(user)
+        await AuthServices.getTokens(user)
       }
       return store.getState().auth.tokens;
     } catch (err) {
       console.log(err)
     }
   }
+
+  // verify admin role && invoke socket connection 
+  static adminLoginLogic = (history) => {
+    ValidationService.verifyAdmin(history);
+    invokeConnection();
+  }
+// end of function
 
 
 }

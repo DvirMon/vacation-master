@@ -1,10 +1,9 @@
-import React, { Component, lazy, Suspense } from "react";
+import React, { Component } from "react";
 
-// import my como
-// import VacCard from "../../vac-card/vac-card";
-
+// import my components
 import MyForm from "../../my-form/my-form";
 import Loader from "../../loader/loader";
+import UpdateToken from "../../updateToken/updateToken";
 
 // import materiel-ui
 import Grid from "@material-ui/core/Grid";
@@ -14,20 +13,16 @@ import VacCard from "../../vac-card/vac-card";
 import { VacationModel } from "../../../models/vacations-model";
 import { TokensModel } from "../../../models/tokens.model";
 
-// import services
+// import services 
 import { UpdateService } from "./updateService";
-import { ServerServices } from "../../../services/serverService";
-import { TokensServices } from "../../../services/tokensService";
-import { ValidationService } from "../../../services/validationService";
-import { LoginServices } from "../../../services/loginService";
+import { ServerServices } from "../../../services/server-service";
+import { VacationService } from "../../../services/vacations-service";
+import { AuthServices } from "../../../services/auth-service";
 
 // import redux
 import { store } from "../../../redux/store";
-import { Unsubscribe } from "redux";
 
 import "./update.scss";
-import UpdateToken from "../../updateToken/updateToken";
-import { VacationService } from "../../../services/vacationsService";
 
 // const VacCard = lazy(() => import("../../vac-card/vac-card"));
 
@@ -54,7 +49,7 @@ export class Update extends Component<any, UpdateState> {
 
   public componentDidMount = async () => {
     
-    LoginServices.adminLoginLogic(this.props.history);
+    AuthServices.adminLoginLogic(this.props.history);
 
     try {
       const vacation = await this.UpdateService.getVacation();
@@ -115,7 +110,6 @@ export class Update extends Component<any, UpdateState> {
                 />
               )}
             </Grid>
-            <Suspense fallback={<div>Loading.....</div>}>
               <Grid item xs={4}>
                 <VacCard
                   vacation={vacation}
@@ -125,8 +119,7 @@ export class Update extends Component<any, UpdateState> {
                   hover={false}
                   preview={preview}
                 />
-              </Grid>
-            </Suspense>
+              </Grid> 
           </Grid>
         )}
         <UpdateToken />

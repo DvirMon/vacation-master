@@ -1,6 +1,4 @@
 import { store } from "../redux/store";
-import { ValidationService } from "./validationService";
-import { invokeConnection } from "./socketService";
 
 export class LoginServices {
 
@@ -23,7 +21,7 @@ export class LoginServices {
 
   // prevent admin to navigate to users route
   static verifyAdminPath = (history) => {
-    if (history.location.pathname == "/admin") {
+    if (history.location.pathname === "/admin") {
       return
     }
     history.push("/admin")
@@ -51,11 +49,5 @@ export class LoginServices {
   // end of function
 
 
-  // verify admin role && invoke socket connection 
-  static adminLoginLogic = (history) => {
-    ValidationService.verifyAdmin(history);
-    invokeConnection();
-  }
-// end of function
 
 }

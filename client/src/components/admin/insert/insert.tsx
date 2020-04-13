@@ -3,6 +3,7 @@ import React, { Component } from "react";
 // import my components
 import VacCard from "../../vac-card/vac-card";
 import MyForm from "../../my-form/my-form";
+import UpdateToken from "../../updateToken/updateToken";
 
 // import material-ui
 import Grid from "@material-ui/core/Grid";
@@ -11,13 +12,12 @@ import Grid from "@material-ui/core/Grid";
 import { VacationModel } from "../../../models/vacations-model";
 
 // import services
-import { VacationService } from "../../../services/vacationsService";
+import { VacationService } from "../../../services/vacations-service";
 import { InsertService } from "./insertService";
-import { ServerServices } from "../../../services/serverService";
-import { LoginServices } from "../../../services/loginService";
+import { ServerServices } from "../../../services/server-service";
+import { AuthServices } from "../../../services/auth-service";
 
 import "./insert.scss";
-import UpdateToken from "../../updateToken/updateToken";
 
 interface InsertState {
   vacation: VacationModel;
@@ -37,7 +37,7 @@ export class Insert extends Component<any, InsertState> {
   }
 
   public componentDidMount = async () => {
-    LoginServices.adminLoginLogic(this.props.history);
+    AuthServices.adminLoginLogic(this.props.history);
   };
 
   public handleInsertRequest = async () => {

@@ -8,7 +8,7 @@ const hushPassword = async password => {
 };
 // end of function
 
-// function to create first access token
+// function to create an access token
 const setToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
@@ -26,7 +26,7 @@ const setToken = user => {
 };
 // end of function
 
-// function to create the refresh token
+// function to create a refresh token
 const setRefreshToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
@@ -45,9 +45,9 @@ const setRefreshToken = user => {
 
 // function to handle authorization
 const authorize = role => (request, response, next) => {
+  
   // verify if token exist
   const token = request.headers["authorization"];
-  // console.log(request.headers.authorization)
  
   if (!token) {
     return response

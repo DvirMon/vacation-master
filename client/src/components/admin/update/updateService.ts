@@ -1,12 +1,10 @@
 import { VacationModel } from "../../../models/vacations-model";
 
-import { ServerServices } from "../../../services/serverService";
-import { TokensServices } from "../../../services/tokensService";
-import { VacationService } from "../../../services/vacationsService";
-import { handleAdminUpdate } from "../../../services/socketService";
+import { ServerServices } from "../../../services/server-service";
+import { AuthServices } from "../../../services/auth-service";
+import { VacationService } from "../../../services/vacations-service";
+import { handleAdminUpdate } from "../../../services/socket-service";
 
-import { store } from "../../../redux/store";
-import { ActionType } from "../../../redux/action-type";
 
 export class UpdateService {
 
@@ -54,7 +52,7 @@ export class UpdateService {
   public handleRequest = async (vacation: VacationModel) => {
 
     // get tokens
-    const tokens = await TokensServices.handleStoreRefresh();
+    const tokens = await AuthServices.handleStoreRefresh();
 
     // create formatDate file
     const myFormData = VacationService.setFormData(vacation);

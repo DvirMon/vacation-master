@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { handleMassage } from '../services/validationService';
+import { handleMassage } from '../services/validation-service';
 
 export class LoginModel {
 

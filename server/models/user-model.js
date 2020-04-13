@@ -47,7 +47,7 @@ class UserModel {
     }
     return null;
   };
-  // end of function
+  // end of schema
 
   // validation schema for login
   static validateLogin = user => {
@@ -71,7 +71,7 @@ class UserModel {
     }
     return null;
   };
-  // validation schema for login
+  // end schema
 }
 
 module.exports = UserModel;

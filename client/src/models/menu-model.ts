@@ -1,6 +1,5 @@
 import { UserModel } from "./user-model";
 import { store } from "../redux/store"; 
-import { ActionType } from "../redux/action-type";
   
 export class MenuModel { 
 

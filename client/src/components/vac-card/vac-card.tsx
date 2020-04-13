@@ -20,7 +20,7 @@ import FormatDate from "./format-date/format-date";
 
 import { UserVacationModel } from "../../models/vacations-model";
 
-import { VacationService } from "../../services/vacationsService";
+import { VacationService } from "../../services/vacations-service";
 
 // import redux
 

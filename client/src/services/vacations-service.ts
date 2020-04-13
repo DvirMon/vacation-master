@@ -1,9 +1,10 @@
-import { ServerServices } from "./serverService";
+import { VacationModel } from "../models/vacations-model";
+
+import { ServerServices } from "./server-service";
+import { ValidationService } from "./validation-service";
+
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
-import { updateChart } from "./socketService";
-import { ValidationService } from "./validationService";
-import { VacationModel } from "../models/vacations-model";
 
 // class to handle all vacation logic
 export class VacationService {

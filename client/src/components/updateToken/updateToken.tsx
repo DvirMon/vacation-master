@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { TokensServices } from "../../services/tokensService";
-
+import { AuthServices } from "../../services/auth-service";
+ 
 export class UpdateToken extends Component<any, any> {
 
   public componentDidMount = () => {
@@ -14,7 +14,7 @@ export class UpdateToken extends Component<any, any> {
   };
 
   public timer = async () => {
-    await TokensServices.getAccessToken();
+    await AuthServices.getAccessToken();
   };
 
   render() {

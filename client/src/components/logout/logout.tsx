@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { ServerServices } from "../../services/serverService";
+import { ServerServices } from "../../services/server-service";
 
 // import redux
 import { store } from "../../redux/store";

@@ -10,12 +10,12 @@ import EditIcon from "@material-ui/icons/Edit";
 import { UserVacationModel } from "../../../models/vacations-model";
 
 // import services
-import { ServerServices } from "../../../services/serverService";
-import { VacationService } from "../../../services/vacationsService";
+import { ServerServices } from "../../../services/server-service";
+import { VacationService } from "../../../services/vacations-service";
 import {
   handleAdminDelete,
   updateChart,
-} from "../../../services/socketService";
+} from "../../../services/socket-service";
 
 // import redux
 import { store } from "../../../redux/store";

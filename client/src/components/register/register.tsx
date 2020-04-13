@@ -1,21 +1,20 @@
 import React, { Component } from "react";
 
 // import material-ui
-import { Grid, Tooltip, IconButton, FormControl } from "@material-ui/core";
+import { Grid, Tooltip, IconButton } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Button from "@material-ui/core/Button";
 import MyInput from "../my-input/my-input";
 import Form from "react-bootstrap/Form";
 
 // import models
-import { RegistrationErrors } from "../../models/error-model";
 import { RegisterModel } from "../../models/user-model";
 import { RegisterMenu } from "../../models/menu-model";
 
 // import services
-import { ServerServices } from "../../services/serverService";
-import { ValidationService } from "../../services/validationService";
-import { setStyle } from "../../services/styleServices";
+import { ServerServices } from "../../services/server-service";
+import { ValidationService } from "../../services/validation-service";
+import { setStyle } from "../../services/style-services";
 
 // import redux
 import { ActionType } from "../../redux/action-type";
