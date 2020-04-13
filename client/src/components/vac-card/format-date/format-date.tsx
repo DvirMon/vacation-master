@@ -22,7 +22,7 @@ export class FormatDate extends Component<FormatDateProps, any> {
         {follow ? (
           <React.Fragment>
             <Grid container alignItems="flex-end">
-              <Toolbar className="p-0 pt-4">
+              <Toolbar className="p-0 pt-1">
                 <FlightTakeoffIcon />
                 <MenuItem disableRipple={true}> Departing</MenuItem>
                 <FlightLandIcon />

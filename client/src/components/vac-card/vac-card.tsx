@@ -102,11 +102,10 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
                 ? preview
                 : `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`
             }
-            title=""
+            title={`${vacation.destination}`}
           ></CardMedia>
           <CardHeader
-            className={"card-header"}
-            action={
+            action={ 
               <CardTopIcons
                 vacation={vacation}
                 color={color}

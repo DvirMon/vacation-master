@@ -1,12 +1,8 @@
-
-
 .vacations {
-  height: 100%;
+  height: 95%;
   padding: 0;
   margin: 1%;
-  height: 90%;
   overflow: auto;
-
 
   .row {
     margin: 0;
@@ -28,6 +24,15 @@
 
     .root {
       width: 90%;
+      margin: 0;
+
+      .MuiTypography-root {
+        .card-header {
+          font-size: 20px;
+        }
+        margin: 0;
+        padding: 0;
+      }
     }
   }
 }

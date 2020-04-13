@@ -43,7 +43,8 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
       case ActionType.updateNotification:
         newAppState.notification.push(action.payload)
         break
-        case ActionType.deleteNotification:
+        case ActionType.deleteAllNotification:
+          newAppState.notification = []
       break
     case ActionType.Logout:
       newAppState.followUp = []

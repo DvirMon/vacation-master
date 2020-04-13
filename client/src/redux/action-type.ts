@@ -23,6 +23,6 @@ export enum ActionType {
   addFollowUp,
   deleteFollowUp,
   updateChartPoints,
-  deleteNotification
+  deleteAllNotification
   
 } 

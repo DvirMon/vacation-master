@@ -6,15 +6,16 @@ import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import FavoriteIcon from "@material-ui/icons/Favorite";
+import Menu from "@material-ui/core/Menu";
 
 import { UserModel } from "../../../models/user-model";
 import { Notification } from "../../../models/vacations-model";
 
 // import redux
 import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
-import Menu from "@material-ui/core/Menu";
 
 import "./menu-user.scss";
 
@@ -124,7 +125,8 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
   };
 
   public handleClose = () => {
-    this.setState({ anchorEl: null, notificationCounter: 0 });
+    this.setState({ anchorEl: null });
+    store.dispatch({ type  : ActionType.deleteAllNotification})
   };
 }
 
