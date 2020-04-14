@@ -12,18 +12,14 @@ import { RegisterModel } from "../../models/user-model";
 import { RegisterMenu } from "../../models/menu-model";
 
 // import services
+import { LoginServices } from "../../services/login-service";
 import { ServerServices } from "../../services/server-service";
 import { ValidationService } from "../../services/validation-service";
 import { setStyle } from "../../services/style-services";
 
-// import redux
-import { ActionType } from "../../redux/action-type";
-import { store } from "../../redux/store";
-
 import generator from "generate-password";
 
 import "./register.scss";
-import { AuthServices } from "../../services/auth-service";
 
 interface RegisterState {
   user: RegisterModel;
@@ -64,7 +60,6 @@ export class Register extends Component<any, RegisterState> {
     try {
       // handle request
       await this.handleRequest(user);
-
     } catch (err) {
       console.log(err);
     }
@@ -74,21 +69,20 @@ export class Register extends Component<any, RegisterState> {
     
     // send register request
     const url = `http://localhost:3000/api/user`;
-    const serverResponse = await ServerServices.postRequest(url, user);
+    const serverResponse = await ServerServices.postRequestAsync(url, user);
 
     // handle server response
     ServerServices.handleServerResponse(
       serverResponse,
-      () =>  this.handleSuccessResponse(serverResponse.body),
+      () =>
+        LoginServices.handleSuccessResponse(
+          serverResponse.body,
+          this.props.history
+        ), 
       () => this.handleErrorResponse(serverResponse.body)
     );
   };
 
-  public handleSuccessResponse = async (user) => {
-    store.dispatch({ type: ActionType.Login, payload: user });
-    await AuthServices.getTokens()
-    this.props.history.push(`/user/${user.userName}`);
-  };
 
   public handleErrorResponse = (serverError) => {
     this.setState({ serverError, serverErrorStyle: true });

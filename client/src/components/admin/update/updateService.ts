@@ -1,7 +1,6 @@
 import { VacationModel } from "../../../models/vacations-model";
 
 import { ServerServices } from "../../../services/server-service";
-import { AuthServices } from "../../../services/auth-service";
 import { VacationService } from "../../../services/vacations-service";
 import { handleAdminUpdate } from "../../../services/socket-service";
 
@@ -31,48 +30,24 @@ export class UpdateService {
   }
 
   // function to update vacation
-  public updateVacationAsync = async (url: string, vacation?: FormData) => {
-    const tokens = await AuthServices.handleStoreRefresh();
-
-    const options = {
-      method: "PUT",
-      headers: {
-        "Authorization": tokens.accessToken
-      },
-      body: vacation
-    };
-
-    try {
-      const response = await ServerServices.getData(url, options);
-      return response
-    } catch (err) {
-      return err
-    }
-  }
-  // end of function
-
   public handleRequest = async (vacation: VacationModel) => {
 
     // create formatDate file
     const myFormData = VacationService.setFormData(vacation);
-
-    // send request
-    const response = await this.updateVacationAsync(
-      `http://localhost:3000/api/vacations/${this.vacationID}`,
-      myFormData,
-    );
+    const url = `http://localhost:3000/api/vacations/${this.vacationID}`
+    const response = await ServerServices.putRequestAsync(url, myFormData)
 
     return response;
   };
+
+
 
   public handleSuccess = (vacation: VacationModel, history) => {
 
     alert("Vacation has been updated successfully!");
 
-    // update socket
     handleAdminUpdate(vacation);
 
-    // navigate to home page
     history.push("/admin");
   };
 

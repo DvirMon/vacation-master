@@ -56,7 +56,7 @@ const authorize = (role) => (request, response, next) => {
   } 
 
   try {
-    // verify token
+    // verify token 
     verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     request.user = verified; 

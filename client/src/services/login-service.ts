@@ -1,4 +1,6 @@
 import { store } from "../redux/store";
+import { AuthServices } from "./auth-service";
+import { ActionType } from "../redux/action-type";
 
 export class LoginServices {
 
@@ -10,6 +12,13 @@ export class LoginServices {
     LoginServices.handleRouting(store.getState().login.user, history);
   }
   // end of function
+
+  static handleSuccessResponse = async (user, history) => {
+    store.dispatch({ type: ActionType.Login, payload: user });
+    store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
+    await AuthServices.getTokens() 
+    LoginServices.handleRouting(user, history);
+  };
 
   // function to handle rout according to role
   static handleRouting = (user, history) => {

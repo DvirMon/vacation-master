@@ -99,7 +99,7 @@ export class CardTopIcons extends Component<
 
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
-    await ServerServices.deleteRequest(url);
+    await ServerServices.deleteRequestAsync(url);
 
     // update real-time 
     handleAdminDelete(this.props.vacation);

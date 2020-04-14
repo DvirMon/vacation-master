@@ -38,7 +38,7 @@ router.get("/user", auth.authorize(), async (request, response, next) => {
     next(err);
   }
 });
-// end of function
+// end of function 
 
 // get  vacations
 router.get("/:id", async (request, response, next) => {
@@ -61,6 +61,7 @@ router.get("/:id", async (request, response, next) => {
 // add vacation (admin)
 router.post("/", auth.authorize(1), async (request, response, next) => {
   const vacation = request.body;
+  console.log(request.body)
   const file = request.files.image;
 
   // verify file

@@ -6,15 +6,13 @@ import { ActionType } from "../redux/action-type";
 
 export class ServerServices {
 
-  static getRequestAsync = async (url) => {
-
+  // template of get request with authorization
+  static getRequestAsync = async (url: string) => {
+ 
     const tokens = store.getState().auth.tokens;
-
-    const options = {
-      headers: {
-        "Authorization": tokens.accessToken
-      }
-    }
+    const jwt = tokens ? tokens.accessToken : ""
+    const options = setOptions(jwt)
+  
     try {
       const response = await axios.get(url, options)
       const data = await response.data
@@ -26,71 +24,65 @@ export class ServerServices {
 
 
   }
+  // end of function
+  
+  // template of post request with authorization
+  static postRequestAsync = async (url: string, body?: any) => {
 
-  // template of fetch get request
-  static getData = async (url: string, options?: {}) => {
+    const tokens = store.getState().auth.tokens;
+    const jwt = tokens ? tokens.accessToken : ""
+    const options = setOptions(jwt)
 
     try {
-      const response = await fetch(url, options)
-      const data = await response.json()
+      const response = await axios.post(url, body, options)
+      const data = await response.data
       return data
     }
     catch (err) {
-      if (err.name === 'AbortError') {
-        console.log('Fetch aborted');
-        return
-      }
-      return err
-    }
-  }
-
-  // template of post request with authorization
-  static postRequest = async (url: string, body?: any) => {
-
-    const tokens = store.getState().auth.tokens
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": tokens ? tokens.accessToken : ""
-      },
-      body: JSON.stringify(body)
-    };
-
-    try {
-      const response = await ServerServices.getData(url, options);
-      return response
-    } catch (err) {
-      return err
+      console.log(err)
     }
   }
   // end of function
 
+  // template of put request with authorization
+  static putRequestAsync = async (url: string, body?: any) => {
 
-  // template for delete request
-  static deleteRequest = async (url: string) => {
+    const tokens = store.getState().auth.tokens;
+    const jwt = tokens ? tokens.accessToken : ""
+    const options = setOptions(jwt)
 
-    const tokens = store.getState().auth.tokens
-
-    const options = {
-      method: "DELETE",
-      headers: {
-        "Authorization": tokens.accessToken
-      }
-    };
     try {
-      await fetch(url, options);
-    } catch (err) {
-      return err
+      const response = await axios.put(url, body, options)
+      const data = await response.data
+      return data
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+  // end of function
+
+  // template of delete request with authorization
+  static deleteRequestAsync = async (url : string) => {
+    
+    const tokens = store.getState().auth.tokens;
+    const options = setOptions(tokens.accessToken)
+    
+    try {
+      const response = await axios.delete(url, options)
+      const data = await response.data
+      return data
+    }
+    catch (err) {
+      console.log(err)
     }
   }
   // end of function
 
   // handle server response
-  static handleServerResponse = (response, resolve, reject, history?) => {
+  static handleServerResponse = (response, resolve, reject?) => {
     if (response.message.trim() === "success") {
-      resolve(response.body, history);
+      resolve(response.body);
       return
     } else {
       reject(response.body ? response.body : "Pay attention! you cant use apostrophe mark")
@@ -109,28 +101,29 @@ export class ServerServices {
   static postRequestTokens = async (url: string) => {
 
     const tokens = JSON.parse(sessionStorage.getItem("jwt"))
-    const options = ServerServices.setOptions('post', tokens, tokens.refreshToken)
+    const options = setOptions(tokens.refreshToken)
 
     try {
-      const response = await ServerServices.getData(url, options);
-      return response
+      const response = await axios.post(url, tokens, options)
+      const data = await response.data
+      return data
     } catch (err) {
       return err
     }
   }
 
-  static setOptions = (method: string, body: any, jwt?: string) => {
-    const options = {
-      method: method.toUpperCase(),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": jwt
-      },
-      body: JSON.stringify(body)
-    };
-
-    return options
-  }
 }
+
+
+const setOptions = (jwt?: string) => {
+
+  const options = {
+    headers: {
+      "Authorization": jwt
+    }
+  }
+  return options
+}
+
 
 

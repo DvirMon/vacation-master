@@ -14,8 +14,8 @@ export class Logout extends Component<any, any> {
 
       // clear refreshToken from db
       const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;
-      await ServerServices.deleteRequest(url);
-
+      await ServerServices.deleteRequestAsync(url); 
+ 
       // handle logic in store
       store.dispatch({ type: ActionType.Logout });
 

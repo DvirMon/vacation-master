@@ -29,12 +29,7 @@ import { LoginServices } from "../../services/login-service";
 import { ServerServices } from "../../services/server-service";
 import { setStyle } from "../../services/style-services";
 
-// import redux
-import { ActionType } from "../../redux/action-type";
-import { store } from "../../redux/store";
-
 import "./login.scss";
-import { AuthServices } from "../../services/auth-service";
 
 interface LoginState {
   user: LoginModel;
@@ -67,7 +62,6 @@ export class Login extends Component<any, LoginState> {
   };
 
   public handleLogIn = async () => {
-
     const { user } = this.state;
 
     // disabled request if form is not legal
@@ -79,7 +73,6 @@ export class Login extends Component<any, LoginState> {
     try {
       // handle request
       await this.handleRequest(user);
-      
     } catch (err) {
       console.log(err);
     }
@@ -88,21 +81,18 @@ export class Login extends Component<any, LoginState> {
   public handleRequest = async (user) => {
     //send login request
     const url = `http://localhost:3000/api/user/login`;
-    const serverResponse = await ServerServices.postRequest(url, user);
+    const serverResponse = await ServerServices.postRequestAsync(url, user);
 
     // handle server response
     ServerServices.handleServerResponse(
       serverResponse,
-      () => this.handleSuccessResponse(serverResponse.body),
+      () =>
+        LoginServices.handleSuccessResponse(
+          serverResponse.body,
+          this.props.history
+        ),
       () => this.handleErrorResponse(serverResponse.body)
     );
-  };
-
-  public handleSuccessResponse = async (user) => {
-    store.dispatch({ type: ActionType.Login, payload: user });
-    store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
-    await AuthServices.getTokens() 
-    LoginServices.handleRouting(user, this.props.history);
   };
 
   public handleErrorResponse = (serverError) => {

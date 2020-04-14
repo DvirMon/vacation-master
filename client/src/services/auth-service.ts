@@ -12,7 +12,7 @@ export class AuthServices {
     const user = store.getState().login.user
     const url = `http://localhost:3000/api/tokens`;
     try {
-      const response = await ServerServices.postRequest(url, user);
+      const response = await ServerServices.postRequestAsync(url, user);
       ServerServices.handleTokenResponse(response)
 
     } catch (err) {
