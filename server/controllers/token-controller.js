@@ -9,6 +9,9 @@ const tokenLogic = require("../bll/tokens-logic");
 const jwt = require("jsonwebtoken");
 const auth = require("../services/auth");
 
+const key = process.env.REFRESH_TOKEN_SECRET
+
+
 // set refreshToken and first accessToken when login
 router.post("/", async (request, response, next) => {
   const user = request.body;
@@ -30,7 +33,7 @@ router.post("/", async (request, response, next) => {
 });
 
 // get new token
-router.post("/new", auth.refresh(), async (request, response, next) => {
+router.post("/new", auth.authorize(0, key), async (request, response, next) => {
   try { 
 
     // get refreshToken from client

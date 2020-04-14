@@ -5,8 +5,11 @@ const followUpLogic = require("../bll/followup-logic");
 const usersLogic = require("../bll/users-logic");
 const auth = require("../services/auth");
 
+const key = process.env.ACCESS_TOKEN_SECRET
+
+
 // get all followup vacation and users for chart dataPoints
-router.get("/", auth.authorize(1), async (request, response, next) => {
+router.get("/", auth.authorize(1, key), async (request, response, next) => {
   try {
     const dataPoints = await followUpLogic.getAllFollowUp();
     response.json({ message: "success", body: dataPoints });
@@ -32,7 +35,7 @@ router.get("/:id", async (request, response, next) => {
 
 // add new followup
 
-router.post("/", auth.authorize(), async (request, response, next) => {
+router.post("/", auth.authorize(0, key), async (request, response, next) => {
   try {
     // get vacationID uuid from request
     const followup = request.body;
@@ -58,7 +61,7 @@ router.post("/", auth.authorize(), async (request, response, next) => {
 });
 
 // delete followup
-router.delete("/:id", auth.authorize(), async (request, response, next) => {
+router.delete("/:id", auth.authorize(0, key), async (request, response, next) => {
   try {
     const id = request.params.id;
     await followUpLogic.deleteFollowUp(id);

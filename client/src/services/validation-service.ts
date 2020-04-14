@@ -62,7 +62,7 @@ export class ValidationService {
 
     return { body: "", msg: false };
   }
-  // end of  function for legal form
+  // end of function for legal form
 
 }
 // end of service

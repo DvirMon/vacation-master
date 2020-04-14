@@ -2,8 +2,6 @@ import axios from 'axios'
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 
-
-
 export class ServerServices {
 
   // template of get request with authorization
@@ -21,8 +19,6 @@ export class ServerServices {
     catch (err) {
       console.log(err)
     }
-
-
   }
   // end of function
   

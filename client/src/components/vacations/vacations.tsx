@@ -117,7 +117,6 @@ export class Vacations extends Component<any, VacationsState> {
   // end of function
 
   public handleRequest = async () => {
-    // get tokens
 
     // send request
     const response = await VacationService.getUserVacationAsync();

@@ -36,10 +36,8 @@ export class UpdateService {
     const myFormData = VacationService.setFormData(vacation);
     const url = `http://localhost:3000/api/vacations/${this.vacationID}`
     const response = await ServerServices.putRequestAsync(url, myFormData)
-
     return response;
   };
-
 
 
   public handleSuccess = (vacation: VacationModel, history) => {

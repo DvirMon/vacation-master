@@ -44,7 +44,7 @@ const setRefreshToken = (user) => {
 // end of function
 
 // function to handle authorization
-const authorize = (role) => (request, response, next) => {
+const authorize = (role, key) => (request, response, next) => {
 
   // verify if token exist
   const token = request.headers["authorization"];
@@ -57,7 +57,7 @@ const authorize = (role) => (request, response, next) => {
 
   try {
     // verify token 
-    verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    verified = jwt.verify(token, key);
 
     request.user = verified; 
     // verify admin
@@ -72,39 +72,9 @@ const authorize = (role) => (request, response, next) => {
 };
 // end of function
 
-const refresh = (role) => (request, response, next) => {
-
-  // verify if token exist
-  const token = request.headers["authorization"];
-
-  if (!token) {
-    return response
-      .status(401)
-      .json({ message: "error", body: "You are not login" });
-  }
-
-  try {
-    // verify token
-    verified = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-
-    request.user = verified;
-    // verify admin
-    if (role === 1 && request.user.role === 0) {
-      return response.status(403).json({ message: "error", body: "not admin" });
-    }
-
-    next();
-  } catch (err) {
-    response.status(401).json({ message: "error", body: "Token has expired" });
-  }
-};
-
-// end of function
-
 module.exports = {
   hushPassword,
   setToken,
   setRefreshToken,
   authorize,
-  refresh,
 };

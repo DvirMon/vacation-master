@@ -9,6 +9,8 @@ const imageService = require("../services/image");
 
 const VacationModel = require("../models/vacation-model");
 
+const key = process.env.ACCESS_TOKEN_SECRET
+
 // get all vacations
 router.get("/", async (request, response, next) => {
   try {
@@ -21,7 +23,7 @@ router.get("/", async (request, response, next) => {
 // end of function
 
 //get users vacation
-router.get("/user", auth.authorize(), async (request, response, next) => {
+router.get("/user", auth.authorize(0, key), async (request, response, next) => {
   try {
     const userName = request.user.sub;
 
@@ -59,7 +61,7 @@ router.get("/:id", async (request, response, next) => {
 // end of function
 
 // add vacation (admin)
-router.post("/", auth.authorize(1), async (request, response, next) => {
+router.post("/", auth.authorize(1, key), async (request, response, next) => {
   const vacation = request.body;
   console.log(request.body)
   const file = request.files.image;
@@ -92,7 +94,7 @@ router.post("/", auth.authorize(1), async (request, response, next) => {
 });
  
 // update vacation (admin only)
-router.put("/:id", auth.authorize(1), async (request, response, next) => {
+router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
   try {
     const vacationID = request.params.id;
     const vacation = request.body;
@@ -138,7 +140,7 @@ router.put("/:id", auth.authorize(1), async (request, response, next) => {
 });
 
 // delete vacation (only admin)
-router.delete("/:id", auth.authorize(1), async (request, response) => {
+router.delete("/:id", auth.authorize(1, key), async (request, response) => {
   try {
     const id = request.params.id;
     await vacationsLogic.deleteVacation(id);

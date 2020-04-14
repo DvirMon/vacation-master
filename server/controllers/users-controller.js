@@ -6,15 +6,16 @@ const router = express.Router();
 const usersLogic = require("../bll/users-logic");
 const followUpLogic = require("../bll/followup-logic");
 
-// import helpers
+// import auth
 const UserModel = require("../models/user-model");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const helpers = require("../services/auth");
+const auth = require("../services/auth");
+
+const key = process.env.ACCESS_TOKEN_SECRET
 
 
 // get user followup vacations
-router.get("/followup", helpers.authorize(),async (request, response, next) => {
+router.get("/followup", auth.authorize(0, key),async (request, response, next) => {
    
   try { 
 
