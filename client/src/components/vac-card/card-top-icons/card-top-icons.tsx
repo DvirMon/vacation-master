@@ -79,9 +79,9 @@ export class CardTopIcons extends Component<
   }
 
   public handleIconClick = async () => {
+  
     // handle user click
     const vacation = this.props.vacation;
-    console.log(vacation)
     await VacationService.handleIconClick(vacation);
 
     // update admin chart

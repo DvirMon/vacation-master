@@ -10,9 +10,9 @@ import UpdateToken from "../updateToken/updateToken";
 
 // import services
 import { ServerServices } from "../../services/server-service";
+import { AuthServices } from "../../services/auth-service";
 import { VacationService } from "../../services/vacations-service";
 import { LoginServices } from "../../services/login-service";
-import { AuthServices } from "../../services/auth-service";
 import { invokeConnection } from "../../services/socket-service";
 import { setStyle } from "../../services/style-services";
 
@@ -85,7 +85,7 @@ export class Vacations extends Component<any, VacationsState> {
 
       const { user, admin } = this.state;
 
-      this.handleAuth(user, admin);
+      await this.handleAuth(user, admin);
 
       if (store.getState().vacation.unFollowUp.length === 0) {
         await this.handleRequest();
@@ -108,21 +108,19 @@ export class Vacations extends Component<any, VacationsState> {
     this.unsubscribeStore();
   }
 
-  // invoke socket, verify path
-  public handleAuth = (user, admin) => {
-    invokeConnection();
+  // invoke socket, verify path, set tokens
+  public handleAuth = async (user, admin) => {
+    invokeConnection(); 
     LoginServices.verifyPath(admin, user, this.props.history);
+    await AuthServices.handleStoreRefresh();
   };
   // end of function
 
   public handleRequest = async () => {
     // get tokens
-    const tokens = await AuthServices.handleStoreRefresh();
 
     // send request
-    const response = await VacationService.getUserVacationAsync(
-      tokens.accessToken
-    );
+    const response = await VacationService.getUserVacationAsync();
 
     // handle server response
     ServerServices.handleServerResponse(
@@ -147,7 +145,7 @@ export class Vacations extends Component<any, VacationsState> {
   render() {
     const { followUp, unFollowUp, sliderSetting, admin } = this.state;
 
-    return (
+    return ( 
       <React.Fragment>
         {unFollowUp.length === 0 ? (
           <Loader />
@@ -195,7 +193,6 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   public handleStyle = (admin) => {
-    SliderModel.updateSliderSetting();
     setStyle(MenuModel.setMenu(admin), admin ? "admin" : "user");
   };
 }

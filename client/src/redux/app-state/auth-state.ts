@@ -6,7 +6,7 @@ export class AuthAppState  {
  
   constructor() {
     if (this.tokens.dbToken) {
-      this.tokens.dbToken.refreshToken = JSON.parse(sessionStorage.getItem("jwt"))
+      this.tokens.dbToken = JSON.parse(sessionStorage.getItem("jwt"))
     }
   }
 }

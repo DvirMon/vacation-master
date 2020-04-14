@@ -34,6 +34,7 @@ import { ActionType } from "../../redux/action-type";
 import { store } from "../../redux/store";
 
 import "./login.scss";
+import { AuthServices } from "../../services/auth-service";
 
 interface LoginState {
   user: LoginModel;
@@ -100,6 +101,7 @@ export class Login extends Component<any, LoginState> {
   public handleSuccessResponse = async (user) => {
     store.dispatch({ type: ActionType.Login, payload: user });
     store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
+    await AuthServices.getTokens() 
     LoginServices.handleRouting(user, this.props.history);
   };
 
@@ -119,7 +121,7 @@ export class Login extends Component<any, LoginState> {
           </Grid>
         </Grid>
         <Grid className="login-aside">
-          <FormControl className="login-aside my-form">
+          <FormControl component="form" className="login-aside my-form">
             <Grid className="row-header" spacing={2} container>
               <Grid item xs={4}>
                 <Image

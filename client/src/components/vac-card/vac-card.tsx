@@ -32,7 +32,6 @@ interface VacCardProps {
   margin?: boolean;
   preview?: string;
   vacationSettings?: VacationCardModel;
-  update?(): void;
 }
 
 interface VacCardState {
@@ -91,12 +90,11 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             "mr-0": margin,
             "root-hover": settings.hover,
           })}
-        >
-          {preview
-            ? this.cardMedia(preview, vacation)
+        > 
+          {preview 
+            ? this.cardMedia(preview)
             : this.cardMedia(
                 `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`,
-                vacation
               )}
           <CardHeader
             action={
@@ -146,7 +144,10 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     );
   }
 
-  public cardMedia = (imgURL: string, vacation?) => {
+  public cardMedia = (imgURL: string) => {
+ 
+    const vacation = {...this.props.vacation}
+
     return (
       <CardMedia
         className="media"

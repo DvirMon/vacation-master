@@ -30,8 +30,9 @@ router.post("/", async (request, response, next) => {
 });
 
 // get new token
-router.post("/new", auth.authorize(), async (request, response, next) => {
-  try {
+router.post("/new", auth.refresh(), async (request, response, next) => {
+  try { 
+
     // get refreshToken from client
     const dbToken = request.body;
 
@@ -41,7 +42,7 @@ router.post("/new", auth.authorize(), async (request, response, next) => {
       response.status(404).json({ message : "error", body : "token is invalid"});
       return;
     }
-
+ 
     // verify token
     const verify = jwt.verify(
       dbToken.refreshToken,

@@ -10,7 +10,7 @@ import { ActionType } from "../redux/action-type";
 export class VacationService {
 
   // get user vacations
-  static getUserVacationAsync = async (accessToken) => {
+  static getUserVacationAsync = async () => {
     const url = `http://localhost:3000/api/vacations/user`;
     const response = await ServerServices.getRequestAsync(url)
     return response

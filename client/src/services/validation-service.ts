@@ -64,8 +64,6 @@ export class ValidationService {
   }
   // end of  function for legal form
 
-
-
 }
 // end of service
 
@@ -81,7 +79,6 @@ export const handleMassage = (err) => {
       err.message = "This field should only include a-z/A-Z characters";
       break
     case "any.empty":
-      console.log(err.path[0])
       if (err.path[0] === "firstName" || err.path[0] === "lastName") {
         err.message = "This field is required";
         break

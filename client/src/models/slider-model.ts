@@ -1,5 +1,3 @@
-import { store } from "../redux/store";
-import { ActionType } from "../redux/action-type";
 
 export class SliderModel {
 
@@ -10,19 +8,6 @@ export class SliderModel {
     public speed: number,
     public slidesToShow: number,
     public slidesToScroll: number) { }
-
   
- 
-    static updateSliderSetting = () => {
-
-      const sliderSetting = store.getState().style.sliderSetting
-      const length = store.getState().vacation.followUp.length;
-      if (length >= 1) {
-        sliderSetting.slidesToShow = 4;
-        sliderSetting.slidesToScroll = length > 4 ? 4 : length;
-        
-        store.dispatch({type : ActionType.updateSliderSetting, payload : sliderSetting})
-      }
-    };
 }
  

@@ -1,5 +1,5 @@
 import { invokeConnection } from "./socket-service";
-import { ValidationService }  from "./validation-service";
+import { ValidationService } from "./validation-service";
 import { ServerServices } from "./server-service";
 
 import { store } from "../redux/store";
@@ -7,7 +7,9 @@ import { store } from "../redux/store";
 export class AuthServices {
 
   // function for getting first accessToken and refreshToken
-  static getTokens = async user => {
+  static getTokens = async () => {
+
+    const user = store.getState().login.user
     const url = `http://localhost:3000/api/tokens`;
     try {
       const response = await ServerServices.postRequest(url, user);
@@ -22,12 +24,9 @@ export class AuthServices {
   // function for new accessToken
   static getAccessToken = async () => {
 
-    const tokens = store.getState().auth.tokens;
-
     try {
       const url = `http://localhost:3000/api/tokens/new`;
-      const response = await ServerServices.postRequest(url, tokens.dbToken)
-      console.log(response)
+      const response = await ServerServices.postRequestTokens(url)
       ServerServices.handleTokenResponse(response)
     } catch (err) {
       console.log(err);
@@ -38,24 +37,27 @@ export class AuthServices {
   static handleStoreRefresh = async () => {
 
     try {
-      if (!store.getState().auth.tokens?.accessToken) {
-        const user = store.getState().login.user;
-        await AuthServices.getTokens(user)
-      }
+      await AuthServices.getAccessToken()
       return store.getState().auth.tokens;
     } catch (err) {
       console.log(err)
     }
   }
+  // end of function
 
-  // verify admin role, invoke socket connection, get tokens
-  static adminLoginLogic = async (history) => {
+  // verify admin role, invoke socket connection, set tokens
+  static handleAuth = async (history) => {
     ValidationService.verifyAdmin(history);
-    invokeConnection();
+    invokeConnection(); 
     await AuthServices.handleStoreRefresh();
   }
-  
-// end of function
+
+  // end of function
+
+
+  // end of function
+
+
 
 
 }

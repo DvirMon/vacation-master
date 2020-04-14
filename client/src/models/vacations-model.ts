@@ -29,23 +29,19 @@ export class VacationModel {
       }),
       startDate: Joi.date().iso(),
       endDate: Joi.date().iso().greater(Joi.ref("startDate")).error(errors => {
-        errors.forEach(err => {
-          console.log(err.type)
-          handleMassage(err)
-        })
+        errors.forEach(err => handleMassage(err))
         return errors;
-    }),
+      }),
       price: Joi.number().min(1).error(errors => {
         errors.forEach(err => handleMassage(err))
         return errors;
       })
-  }).unknown()
-
-  const error = Joi.validate(vacation, schema).error;
-  if(error) {
-    console.log(error.details[0])
-    return error.details[0].message
-  }
+    }).unknown()
+ 
+    const error = Joi.validate(vacation, schema).error;
+    if (error) {
+      return error.details[0].message
+    }
     return null;
   };
 }

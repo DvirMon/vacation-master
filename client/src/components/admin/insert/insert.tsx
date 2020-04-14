@@ -41,7 +41,8 @@ export class Insert extends Component<any, InsertState> {
   } 
 
   public componentDidMount = async () => {
-    AuthServices.adminLoginLogic(this.props.history);
+    await AuthServices.handleAuth(this.props.history);
+    this.setPreview() 
   };
 
   public handleInsertRequest = async () => {
@@ -96,6 +97,13 @@ export class Insert extends Component<any, InsertState> {
     );
   }
  
+  public setPreview = () => {
+    const settings = { ...this.state.settings };
+    const preview = "alt"
+    settings.img = preview;  
+    this.setState({ settings });
+  };
+
   public handleImage = (preview: string) => {
     const settings = { ...this.state.settings };
     settings.img = preview;  

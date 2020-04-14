@@ -24,10 +24,10 @@ interface MyFormState {
     endDate: string;
   };
   apostrophe: string;
-  errorUpdate: string;
 }
 
 export class MyForm extends Component<MyFormProps, MyFormState> {
+
   private fileInput: HTMLInputElement;
 
   constructor(props: MyFormProps) {
@@ -39,22 +39,8 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
         endDate: this.props.vacation.endDate,
       },
       apostrophe: `(pay attention! you cant use apostrophe mark)`,
-      errorUpdate: "",
     };
   }
-
-  public componentDidMount = () => {
-    setTimeout(() => {
-      this.updateDate();
-    }, 1500);
-  };
-
-  public updateDate = () => {
-    const date = { ...this.state.date };
-    date.startDate = this.props.vacation.startDate;
-    date.endDate = this.props.vacation.endDate;
-    this.setState({ date });
-  };
 
   render() {
     const { vacation } = this.props;
@@ -184,16 +170,20 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
 
   // function to update vacation values
   public handleChange = (prop: string, input: any) => {
-    this.handleDate(input);
+    
+    if (prop === "startDate" || prop === "endDate") {
+      this.handleDate(input, prop);
+    }
+
     if (this.props.handleChange) {
       this.props.handleChange(prop, input);
     }
   };
   // end of function
-
-  public handleDate = (input) => {
+ 
+  public handleDate = (input, prop) => {
     const date = { ...this.state.date };
-    date.startDate = input;
+    date[prop] = input;
     this.setState({ date });
   };
   // end of function

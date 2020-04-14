@@ -12,14 +12,10 @@ import { ValidationService } from "../../services/validation-service";
 
 interface DatePickerState {
   selectedDate: Date;
-  setSelectedDate: Date;
   errorMessage: string;
   error: boolean;
   on: boolean;
-  success: boolean;
-  danger: boolean;
-  isLoading: boolean;
-}
+}  
 
 interface DatePickerProps {
   dateNow?: string;
@@ -27,7 +23,6 @@ interface DatePickerProps {
   label: string;
   prop: string;
   helperText?: string;
-  errorUpdate?: string;
   handleChange(prop: string, input: string): void;
   handleErrors?(prop: string, error?: string): void;
   validInput?(schema: {}): string;
@@ -39,13 +34,9 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
 
     this.state = {
       selectedDate: new Date(),
-      setSelectedDate: new Date(),
       error: false,
       errorMessage: "",
-      on: false,
-      success: false,
-      danger: false,
-      isLoading: true,
+      on: false
     };
   }
 
@@ -62,8 +53,9 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
   };
 
   render() {
+    
     const { selectedDate, error, errorMessage } = this.state;
-    const { label, helperText, errorUpdate } = this.props;
+    const { label, helperText } = this.props;
 
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -80,9 +72,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
               "aria-label": "change date",
             }}
             helperText={
-              errorMessage || errorUpdate
-                ? errorMessage || errorUpdate
-                : helperText
+              errorMessage ? errorMessage : helperText
             }
           />
         </Grid>

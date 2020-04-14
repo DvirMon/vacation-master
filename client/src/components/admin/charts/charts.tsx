@@ -34,14 +34,15 @@ export class Charts extends Component<any, ChartsState> {
   } 
  
   public componentDidMount = async () => {
-    AuthServices.adminLoginLogic(this.props.history);
+
+    await AuthServices.handleAuth(this.props.history);
 
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
         dataPoints: store.getState().vacation.dataPoints,
       });
     });
-    
+     
     try {
       // handle request
       const url = `http://localhost:3000/api/followup`;

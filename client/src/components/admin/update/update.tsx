@@ -50,7 +50,7 @@ export class Update extends Component<any, UpdateState> {
   private UpdateService = new UpdateService(+this.props.match.params.id);
 
   public componentDidMount = async () => {
-    AuthServices.adminLoginLogic(this.props.history);
+    await AuthServices.handleAuth(this.props.history);
 
     try {
       const vacation = await this.UpdateService.getVacation();
@@ -124,6 +124,12 @@ export class Update extends Component<any, UpdateState> {
       </React.Fragment>
     );
   }
+  public setPreview = () => {
+    const settings = { ...this.state.settings };
+    const preview = "alt"
+    settings.img = preview;  
+    this.setState({ settings });
+  };
 
   public handleImage = (preview: string) => {
     const settings = { ...this.state.settings };

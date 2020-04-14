@@ -23,6 +23,6 @@ export class StyleAppState extends LoginAppState {
         this.backgroundImage = "user"
       }
     }
-    this.sliderSetting = new SliderModel(true, "slick-dots slick-thumb", false, 500, 1, 1)
+    this.sliderSetting = new SliderModel(true, "slick-dots slick-thumb", false, 500, 4, 4)
   }
 }

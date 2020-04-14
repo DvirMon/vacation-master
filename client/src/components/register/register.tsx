@@ -23,6 +23,7 @@ import { store } from "../../redux/store";
 import generator from "generate-password";
 
 import "./register.scss";
+import { AuthServices } from "../../services/auth-service";
 
 interface RegisterState {
   user: RegisterModel;
@@ -78,13 +79,14 @@ export class Register extends Component<any, RegisterState> {
     // handle server response
     ServerServices.handleServerResponse(
       serverResponse,
-      () => this.handleSuccessResponse(serverResponse.body),
+      () =>  this.handleSuccessResponse(serverResponse.body),
       () => this.handleErrorResponse(serverResponse.body)
     );
   };
 
-  public handleSuccessResponse = (user) => {
+  public handleSuccessResponse = async (user) => {
     store.dispatch({ type: ActionType.Login, payload: user });
+    await AuthServices.getTokens()
     this.props.history.push(`/user/${user.userName}`);
   };
 

@@ -16,7 +16,6 @@ import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
-
 import "./menu-user.scss";
 
 interface MenuUserProps {
@@ -47,7 +46,6 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
 
   public componentDidMount = () => {
     this.unsubscribeStore = store.subscribe(() => {
-
       this.setState({
         followUpCounter: store.getState().vacation.followUp.length,
         notification: store.getState().vacation.notification,
@@ -94,7 +92,8 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
           onClose={this.handleClose}
         >
           {notification.map((msg) => (
-            <MenuItem
+            <MenuItem 
+              key={msg.vacationID}
               className="dropdown-item"
               onClick={this.handleLinkClick(msg.vacationID)}
             >
@@ -116,17 +115,17 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
       this.setState({ anchorEl: event.currentTarget });
     }
   };
- 
+
   public handleLinkClick = (id: number) => (event) => {
-    const target = document.getElementById("vacation" + id)
+    const target = document.getElementById("vacation" + id);
     if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
-    } 
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   };
 
   public handleClose = () => {
     this.setState({ anchorEl: null });
-    store.dispatch({ type  : ActionType.deleteAllNotification})
+    store.dispatch({ type: ActionType.deleteAllNotification });
   };
 }
 
