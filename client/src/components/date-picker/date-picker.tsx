@@ -5,11 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 
 import { ValidationService } from "../../services/validation-service";
-
 
 interface DatePickerState {
   selectedDate: Date;
@@ -28,6 +27,7 @@ interface DatePickerProps {
   label: string;
   prop: string;
   helperText?: string;
+  errorUpdate?: string;
   handleChange(prop: string, input: string): void;
   handleErrors?(prop: string, error?: string): void;
   validInput?(schema: {}): string;
@@ -45,7 +45,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
       on: false,
       success: false,
       danger: false,
-      isLoading: true
+      isLoading: true,
     };
   }
 
@@ -63,7 +63,7 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
 
   render() {
     const { selectedDate, error, errorMessage } = this.state;
-    const { label, helperText } = this.props;
+    const { label, helperText, errorUpdate } = this.props;
 
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -77,9 +77,13 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
             value={selectedDate}
             onChange={this.handleDateChange}
             KeyboardButtonProps={{
-              "aria-label": "change date"
+              "aria-label": "change date",
             }}
-            helperText={errorMessage ? errorMessage : helperText}
+            helperText={
+              errorMessage || errorUpdate
+                ? errorMessage || errorUpdate
+                : helperText
+            }
           />
         </Grid>
       </MuiPickersUtilsProvider>
@@ -89,15 +93,11 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
   public handleDateChange = (date: Date | null, value) => {
     this.setState({ selectedDate: date });
 
-    const input = date
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
+    const input = date.toISOString().slice(0, 19).replace("T", " ");
 
     if (value) {
       this.validInput(input, this.props.prop);
     }
-   
 
     if (this.props.handleChange) {
       this.props.handleChange(this.props.prop, input);
@@ -108,36 +108,23 @@ export class DatePicker extends Component<DatePickerProps, DatePickerState> {
     let schema = {};
 
     if (this.props.schema) {
-      schema = ValidationService.setObjectForSchema(this.props.schema, prop, input);
+      schema = ValidationService.setObjectForSchema(
+        this.props.schema,
+        prop,
+        input
+      );
     } else {
       schema = ValidationService.setObjectForSchema(schema, prop, input);
     }
 
     const errorMessage = this.props.validInput(schema);
-
-    this.handleErrors(errorMessage, prop);
+    this.handleErrors(errorMessage);
   };
 
-  public handleErrors = (errorMessage: string, prop: string): boolean => {
-    if (errorMessage) {
-      this.setState({
-        errorMessage,
-        error: true,
-        success: false,
-        danger: true
-      });
-      // this.props.handleErrors(prop, errorMessage);
-      return;
-    }
-
-    this.setState({
-      errorMessage: "",
-      error: false,
-      success: true,
-      danger: false
-    });
-
-    // this.props.handleErrors(prop, "");
+  public handleErrors = (errorMessage: string): void => {
+    errorMessage
+      ? this.setState({ errorMessage, error: true })
+      : this.setState({ errorMessage: "", error: false });
   };
 }
 

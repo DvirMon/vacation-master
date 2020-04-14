@@ -35,7 +35,6 @@ import { store } from "../../redux/store";
 
 import "./login.scss";
 
-
 interface LoginState {
   user: LoginModel;
   showPassword: boolean;
@@ -56,7 +55,6 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
-   
     // set style
     setStyle(LoginMenu, "home");
 
@@ -72,25 +70,25 @@ export class Login extends Component<any, LoginState> {
     const { user } = this.state;
 
     // disabled request if form is not legal
-    const valid = ValidationService.formLegal(user, LoginModel.validLogin)
-    if(valid.msg) {
-      return
+    const valid = ValidationService.formLegal(user, LoginModel.validLogin);
+    if (valid.msg) {
+      return;
     }
 
     try {
       // handle request
       await this.handleRequest(user);
+      
     } catch (err) {
       console.log(err);
     }
   };
 
   public handleRequest = async (user) => {
-   
     //send login request
     const url = `http://localhost:3000/api/user/login`;
     const serverResponse = await ServerServices.postRequest(url, user);
- 
+
     // handle server response
     ServerServices.handleServerResponse(
       serverResponse,
@@ -103,7 +101,7 @@ export class Login extends Component<any, LoginState> {
     store.dispatch({ type: ActionType.Login, payload: user });
     store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
     LoginServices.handleRouting(user, this.props.history);
-  }; 
+  };
 
   public handleErrorResponse = (serverError) => {
     this.setState({ serverError, error: true });
@@ -156,7 +154,7 @@ export class Login extends Component<any, LoginState> {
                   validInput={LoginModel.validLogin}
                   helperText={"Please enter your username"}
                 />
-              </Grid> 
+              </Grid>
               <Grid
                 container
                 spacing={3}

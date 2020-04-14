@@ -9,6 +9,7 @@ import { ChartModel } from "../../../models/charts-model";
 import { ServerServices } from "../../../services/server-service";
 import { AuthServices } from "../../../services/auth-service"; 
 
+// import redux
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
@@ -44,7 +45,6 @@ export class Charts extends Component<any, ChartsState> {
     try {
       // handle request
       const url = `http://localhost:3000/api/followup`;
-      const tokens = await AuthServices.handleStoreRefresh();
       const response = await ServerServices.getRequestAsync(url);
       
       // handle server request

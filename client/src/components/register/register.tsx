@@ -63,13 +63,14 @@ export class Register extends Component<any, RegisterState> {
     try {
       // handle request
       await this.handleRequest(user);
+
     } catch (err) {
       console.log(err);
     }
   };
 
   public handleRequest = async (user) => {
-
+    
     // send register request
     const url = `http://localhost:3000/api/user`;
     const serverResponse = await ServerServices.postRequest(url, user);
@@ -88,10 +89,9 @@ export class Register extends Component<any, RegisterState> {
   };
 
   public handleErrorResponse = (serverError) => {
-    console.log(serverError)
     this.setState({ serverError, serverErrorStyle: true });
   };
- 
+
   render() {
     const { user, password, serverError, serverErrorStyle } = this.state;
 

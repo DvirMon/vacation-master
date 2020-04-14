@@ -138,14 +138,15 @@ class MyInput extends Component<MyInputProps, MyInputState> {
 
   // valid value with given validation function
   public validInput = (input: string, prop: string) => {
+    
     const schema = {};
     const validSchema = ValidationService.setObjectForSchema(
       schema,
       prop,
       input
     );
-    const error = this.props.validInput(validSchema);
-    this.handleErrors(error);
+    const errorMessage = this.props.validInput(validSchema);
+    this.handleErrors(errorMessage); 
   };
   // end of function
 

@@ -1,4 +1,4 @@
-import React, { Component, lazy, Suspense } from "react";
+import React, { Component } from "react";
 
 // import my components
 import MyForm from "../../my-form/my-form";

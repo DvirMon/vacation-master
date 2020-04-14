@@ -6,6 +6,10 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 
+// import  utilities
+import clsx from "clsx";
+import { NavLink } from "react-router-dom";
+
 // import model
 import { UserVacationModel } from "../../../models/vacations-model";
 
@@ -17,12 +21,6 @@ import {
   updateChart,
 } from "../../../services/socket-service";
 
-// import redux
-import { store } from "../../../redux/store";
-
-// import  utilities
-import clsx from "clsx";
-import { NavLink } from "react-router-dom";
 
 interface CardTopIconsProps {
   vacation: UserVacationModel;

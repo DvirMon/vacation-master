@@ -48,6 +48,7 @@ export class Insert extends Component<any, InsertState> {
     const { vacation } = this.state;
 
     try {
+      
       // validate vacation
       if (VacationService.validVacationForm(vacation)) {
         return;

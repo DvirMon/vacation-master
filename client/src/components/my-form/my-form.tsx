@@ -23,11 +23,11 @@ interface MyFormState {
     startDate: string;
     endDate: string;
   };
-  apostrophe  : string
+  apostrophe: string;
+  errorUpdate: string;
 }
 
 export class MyForm extends Component<MyFormProps, MyFormState> {
-  
   private fileInput: HTMLInputElement;
 
   constructor(props: MyFormProps) {
@@ -36,9 +36,10 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     this.state = {
       date: {
         startDate: this.props.vacation.startDate,
-        endDate: this.props.vacation.endDate
+        endDate: this.props.vacation.endDate,
       },
-      apostrophe :  `(pay attention! you cant use apostrophe mark)`
+      apostrophe: `(pay attention! you cant use apostrophe mark)`,
+      errorUpdate: "",
     };
   }
 
@@ -53,12 +54,12 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     date.startDate = this.props.vacation.startDate;
     date.endDate = this.props.vacation.endDate;
     this.setState({ date });
-  }; 
+  };
 
   render() {
     const { vacation } = this.props;
     const { date, apostrophe } = this.state;
- 
+
     return (
       <div className="my-form">
         <Form
@@ -68,7 +69,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
           target="hidden-iframe"
         >
           <Grid container spacing={2} className="pos">
-            <MyInput 
+            <MyInput
               width={5}
               value={vacation.destination || ""}
               fullWidth={true}
@@ -78,7 +79,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               handleChange={this.handleChange}
               validInput={VacationModel.validVacation}
               helperText={"Enter vacation destination " + apostrophe}
-            /> 
+            />
             <MyInput
               width={5}
               fullWidth={true}
@@ -124,7 +125,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
                   type="file"
                   accept="image/*"
                   onChange={this.handleImage}
-                  ref={fi => (this.fileInput = fi)}
+                  ref={(fi) => (this.fileInput = fi)}
                 />
                 <Button
                   className="upload-button"
@@ -180,45 +181,50 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     }
   };
   // end of function
-  
+
   // function to update vacation values
   public handleChange = (prop: string, input: any) => {
-    if (prop === "startDate") {
-      const date = { ...this.state.date };
-      date.startDate = input;
-      this.setState({ date });
-    }
-    
+    this.handleDate(input);
     if (this.props.handleChange) {
       this.props.handleChange(prop, input);
     }
   };
   // end of function
-  
+
+  public handleDate = (input) => {
+    const date = { ...this.state.date };
+    date.startDate = input;
+    this.setState({ date });
+  };
+  // end of function
+
   // function to handle image file
-  
-  public handleImage = async event => {
+  public handleImage = async (event) => {
     const image = event.target.files[0];
+
     if (!image) {
       alert("Please choose image");
       return;
     }
 
-    // Display image on client:
     try {
-      const reader = new FileReader();
-      reader.onload = args => {
-        if (this.props.handleImage) {
-          this.props.handleImage(args.target.result.toString());
-        }
-      };
-      reader.readAsDataURL(image); // Read the image.
-      // update image in values
+      this.displayImage(image);
       this.handleChange("image", image);
-      return;
     } catch (err) {
       console.log(err);
     }
+  };
+  // end of function
+
+  // Display image on client:
+  public displayImage = (image) => {
+    const reader = new FileReader();
+    reader.onload = (args) => {
+      if (this.props.handleImage) {
+        this.props.handleImage(args.target.result.toString());
+      }
+    };
+    reader.readAsDataURL(image);
   };
 }
 // end of function
