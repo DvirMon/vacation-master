@@ -5,7 +5,7 @@ export class UpdateToken extends Component<any, any> {
 
   public componentDidMount = () => {
 
-    const updateToken = setInterval(this.timer, 660000);
+    const updateToken = setInterval(this.timer, 2000);
     this.setState({ updateToken });
   };
 

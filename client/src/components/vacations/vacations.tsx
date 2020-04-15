@@ -112,7 +112,7 @@ export class Vacations extends Component<any, VacationsState> {
   public handleAuth = async (user, admin) => {
     invokeConnection(); 
     LoginServices.verifyPath(admin, user, this.props.history);
-    await AuthServices.handleStoreRefresh();
+    await AuthServices.getAccessToken()
   };
   // end of function
 

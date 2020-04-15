@@ -23,7 +23,6 @@ export class AuthServices {
 
   // function for new accessToken
   static getAccessToken = async () => {
-
     try {
       const url = `http://localhost:3000/api/tokens/new`;
       const response = await ServerServices.postRequestTokens(url)
@@ -33,32 +32,18 @@ export class AuthServices {
     }
   };
 
-  // function to get token after refresh
-  static handleStoreRefresh = async () => {
-
+  // verify admin role, invoke socket connection, set tokens
+  static handleAuth = async (history) => {
     try {
+      ValidationService.verifyAdmin(history);
+      invokeConnection();
       await AuthServices.getAccessToken()
-      return store.getState().auth.tokens;
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
     }
   }
   // end of function
-
-  // verify admin role, invoke socket connection, set tokens
-  static handleAuth = async (history) => {
-    ValidationService.verifyAdmin(history);
-    invokeConnection(); 
-    await AuthServices.handleStoreRefresh();
-  }
-
-  // end of function
-
-
-  // end of function
-
-
-
 
 }
 
