@@ -2,12 +2,15 @@ const path = require("path");
 const followUpLogic = require("../bll/followup-logic");
 
 const findHtmlFile = () => {
-  const root = __dirname.substring(0, 38);
+  console.log(process.cwd())
+  const root = process.cwd().substring(0, 65);
+  console.log(root)
   const pathToHtml = path.join(root, "client", "public");
+  console.log(pathToHtml)
   return pathToHtml;
 };
 
-const connect = (socketServer) => {
+const handleSockets = (socketServer) => {
   socketServer.sockets.on("connection", (socket) => {
     console.log(
       "One client has been logged. Total clients : " +
@@ -38,8 +41,8 @@ const connect = (socketServer) => {
     });
   }); 
 }; 
-
+ 
 module.exports = {
   findHtmlFile,
-  connect,
+  handleSockets,
 };

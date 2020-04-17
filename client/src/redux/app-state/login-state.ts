@@ -2,8 +2,8 @@ import { UserModel } from "../../models/user-model";
 
 export class LoginAppState {
   public isLoggedIn: boolean
-  public user: UserModel = new UserModel();
   public admin: boolean;
+  public user: UserModel = new UserModel();
 
   public constructor() {
     this.user = JSON.parse(sessionStorage.getItem("user"))

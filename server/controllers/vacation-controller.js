@@ -163,8 +163,9 @@ router.get("/update/image/:imgName", async (request, response, next) => {
 // route for  getting images from the server
 router.get("/uploads/:imgName", async (request, response, next) => {
   try {
-    const dirName = __dirname.substring(0, 44);
-    response.sendFile(dirName + "\\uploads\\" + request.params.imgName);
+    
+    const path = process.cwd()
+    response.sendFile(path + "\\uploads\\" + request.params.imgName);
   } catch (err) {
     next(err);
   }

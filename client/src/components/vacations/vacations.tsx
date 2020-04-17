@@ -110,8 +110,8 @@ export class Vacations extends Component<any, VacationsState> {
 
   // invoke socket, verify path, set tokens
   public handleAuth = async (user, admin) => {
-    invokeConnection(); 
     LoginServices.verifyPath(admin, user, this.props.history);
+    invokeConnection(); 
     await AuthServices.getAccessToken()
   };
   // end of function

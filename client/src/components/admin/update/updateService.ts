@@ -4,6 +4,9 @@ import { ServerServices } from "../../../services/server-service";
 import { VacationService } from "../../../services/vacations-service";
 import { handleAdminUpdate } from "../../../services/socket-service";
 
+// import redux
+import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 
 export class UpdateService {
 
@@ -43,6 +46,8 @@ export class UpdateService {
   public handleSuccess = (vacation: VacationModel, history) => {
 
     alert("Vacation has been updated successfully!");
+
+    store.dispatch({ type: ActionType.updatedVacation, payload: vacation })
 
     handleAdminUpdate(vacation);
 

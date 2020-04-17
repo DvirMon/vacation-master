@@ -1,12 +1,15 @@
 import { VacationModel } from "../../../models/vacations-model";
 
-import { handleAdminInsert } from "../../../services/socket-service";
-import { VacationService } from "../../../services/vacations-service";
 import { ServerServices } from "../../../services/server-service";
+import { VacationService } from "../../../services/vacations-service";
+import { handleAdminInsert } from "../../../services/socket-service";
+
+// import redux
+import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 
 
 export class InsertService {
-
 
   // handle post request for vacation
   public handleRequest = async (vacation: VacationModel) => {
@@ -23,6 +26,8 @@ export class InsertService {
   public handleSuccess = (vacation: VacationModel, history) => {
     
     alert("New Vacation has been added!");
+
+    store.dispatch({ type: ActionType.addVacation, payload: vacation })
     
     handleAdminInsert(vacation);
     

@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 
+// import  utilities
+import clsx from "clsx";
+import { NavLink } from "react-router-dom";
+
 // import components
 import IconButton from "@material-ui/core/IconButton";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-
-// import  utilities
-import clsx from "clsx";
-import { NavLink } from "react-router-dom";
 
 // import model
 import { UserVacationModel } from "../../../models/vacations-model";
@@ -20,6 +20,10 @@ import {
   handleAdminDelete,
   updateChart,
 } from "../../../services/socket-service";
+
+// import redux
+import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 
 
 interface CardTopIconsProps {
@@ -100,6 +104,9 @@ export class CardTopIcons extends Component<
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}`;
     await ServerServices.deleteRequestAsync(url);
+
+    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID })
+
 
     // update real-time 
     handleAdminDelete(this.props.vacation);

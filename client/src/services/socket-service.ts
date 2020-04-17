@@ -8,11 +8,21 @@ import io from "socket.io-client";
 
 export const invokeConnection = () => {
 
-  if (!store.getState().auth.socket) {
+  const validSocket = store.getState().auth.socket
+
+  if (!validSocket || validSocket.disconnected) {
+
     const socket = io.connect("http://localhost:3000");
+
     store.dispatch({ type: ActionType.updateSocket, payload: socket });
-    vacationReaLTimeUpdate(socket);
-    chartRealTimeUpdate(socket)
+
+    if (store.getState().login.admin) {
+      // updates for admin
+      chartRealTimeUpdate(socket)
+    } else {
+      // updates for user
+      vacationReaLTimeUpdate(socket);
+    }
   }
 }
 

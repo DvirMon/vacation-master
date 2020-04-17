@@ -1,3 +1,5 @@
+import { UserVacationModel } from "../../models/vacations-model";
+
 import { VacationAppState } from "../app-state/vacation-state";
 import { Action } from "../action";
 import { ActionType } from "../action-type";
@@ -37,14 +39,14 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
       deleteLogic(newAppState, "followUp", action.payload)
       deleteLogic(newAppState, "notification", action.payload)
       break
-      case ActionType.updateChartPoints:
+    case ActionType.updateChartPoints:
       newAppState.dataPoints = action.payload
       break
-      case ActionType.updateNotification:
-        newAppState.notification.push(action.payload)
-        break
-        case ActionType.deleteAllNotification:
-          newAppState.notification = []
+    case ActionType.updateNotification:
+      newAppState.notification.push(action.payload)
+      break
+    case ActionType.deleteAllNotification:
+      newAppState.notification = []
       break
     case ActionType.Logout:
       newAppState.followUp = []
@@ -53,7 +55,7 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
   return newAppState
 }
 
-const updateCondition = (newAppState, prop, vacation) => {
+const updateCondition = (newAppState: VacationAppState, prop: string, vacation: UserVacationModel) => {
   const item = newAppState[prop].find(item => item.vacationID === + vacation.vacationID)
   return item
 }
@@ -66,7 +68,7 @@ const updateLogic = (item, vacation, ) => {
   }
 }
 
-const deleteLogic = (newAppState, prop, id) => {
+const deleteLogic = (newAppState: VacationAppState, prop: string, id: number) => {
   const deleteIndex = newAppState[prop].findIndex(item => item.vacationID === id)
   newAppState[prop].splice(deleteIndex, 1)
 }

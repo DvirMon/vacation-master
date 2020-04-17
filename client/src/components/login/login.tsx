@@ -53,15 +53,18 @@ export class Login extends Component<any, LoginState> {
   public componentDidMount = async () => {
     // set style
     setStyle(LoginMenu, "home");
-
+ 
     try {
+      // verify if user is already logged
       LoginServices.isUserLogged(this.props.history);
     } catch (err) {
       console.log(err);
     }
   };
 
+  // function to handle loign request
   public handleLogIn = async () => {
+    
     const { user } = this.state;
 
     // disabled request if form is not legal

@@ -6,17 +6,16 @@ export class LoginServices {
 
   // function to check if user is logged
   static isUserLogged = (history) => {
-    if (store.getState().login.isLoggedIn === false) {
-      return;
+    if (store.getState().login.isLoggedIn) {
+      LoginServices.handleRouting(store.getState().login.user, history);
     }
-    LoginServices.handleRouting(store.getState().login.user, history);
   }
   // end of function
 
   static handleSuccessResponse = async (user, history) => {
     store.dispatch({ type: ActionType.Login, payload: user });
     store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
-    await AuthServices.getTokens() 
+    await AuthServices.getTokens()
     LoginServices.handleRouting(user, history);
   };
 
