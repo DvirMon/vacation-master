@@ -28,7 +28,7 @@ import { store } from "../../../redux/store";
 
 import "./update.scss";
 
-interface UpdateState {
+interface UpdateState { 
   vacation: VacationModel;
   tokens: TokensModel;
   updated: boolean;
@@ -73,7 +73,6 @@ export class Update extends Component<any, UpdateState> {
     }
 
     try {
-      
       // validate form
       if (VacationService.validVacationForm(vacation)) {
         return;
@@ -85,7 +84,7 @@ export class Update extends Component<any, UpdateState> {
       // handle server response
       ServerServices.handleServerResponse(
         response,
-        (response) =>
+        (response) => 
           this.UpdateForm.handleIUpdateSuccess(response),
         (response) => this.UpdateForm.handleError(response)
       );

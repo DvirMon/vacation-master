@@ -25,7 +25,7 @@ export class InsertForm extends FormService{
     
     store.dispatch({ type: ActionType.addVacation, payload: vacation })
     handleAdminInsert(vacation)
-    this.handleSuccess(vacation)
+    this.handleSuccess()
   };
   // end of function
 }

@@ -1,5 +1,3 @@
-import { VacationModel } from "../models/vacations-model";
-
 export class FormService {
 
   constructor(
@@ -27,7 +25,7 @@ export class FormService {
   // end of function
 
   // handle success
-  public handleSuccess = (vacation: VacationModel) => {
+  public handleSuccess = () => {
 
     alert(this.successMsg);
    this.history.push("/admin");

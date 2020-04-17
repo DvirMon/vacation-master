@@ -38,7 +38,7 @@ export class UpdateForm extends FormService {
       
       store.dispatch({ type: ActionType.updatedVacation, payload: vacation })
       handleAdminUpdate(vacation)
-      this.handleSuccess(vacation)
+      this.handleSuccess()
     };
     // end of function
 
