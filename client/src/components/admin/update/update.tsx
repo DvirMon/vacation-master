@@ -18,15 +18,16 @@ import {
 } from "../../../models/vac-card-model";
 
 // import services
-import { UpdateService } from "./updateService";
 import { ServerServices } from "../../../services/server-service";
 import { VacationService } from "../../../services/vacations-service";
 import { AuthServices } from "../../../services/auth-service";
+import { UpdateForm } from "./update-service";
 
-// import redux
+// import redux 
 import { store } from "../../../redux/store";
 
 import "./update.scss";
+import { ActionType } from "../../../redux/action-type";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -47,13 +48,19 @@ export class Update extends Component<any, UpdateState> {
     };
   }
 
-  private UpdateService = new UpdateService(+this.props.match.params.id);
+  private UpdateForm = new UpdateForm(
+    `http://localhost:3000/api/vacations/${this.props.match.params.id}`,
+    "Vacation has been updated successfully!",
+    ActionType.updatedVacation,
+    "putRequestAsync",
+    this.props.history
+  );
 
   public componentDidMount = async () => {
     await AuthServices.handleAuth(this.props.history);
 
     try {
-      const vacation = await this.UpdateService.getVacation();
+      const vacation = await this.UpdateForm.getVacation();
       this.setState({ vacation });
       setTimeout(() => this.setState({ updated: true }), 1100);
     } catch (err) {
@@ -64,25 +71,26 @@ export class Update extends Component<any, UpdateState> {
   public handleUpdateRequest = async () => {
     const { vacation, updated } = this.state;
 
-    if (this.UpdateService.verifyChange(updated)) {
+    if (this.UpdateForm.verifyChange(updated)) {
       return;
     }
 
     try {
+      
       // validate form
       if (VacationService.validVacationForm(vacation)) {
         return;
       }
 
       // send update request
-      const response = await this.UpdateService.handleRequest(vacation);
+      const response = await this.UpdateForm.handleRequest(vacation);
 
       // handle server response
       ServerServices.handleServerResponse(
         response,
         (response) =>
-          this.UpdateService.handleSuccess(response, this.props.history),
-        (response) => this.UpdateService.handleError(response)
+          this.UpdateForm.handleSuccess(response),
+        (response) => this.UpdateForm.handleError(response)
       );
     } catch (err) {
       alert(err);
@@ -126,8 +134,8 @@ export class Update extends Component<any, UpdateState> {
   }
   public setPreview = () => {
     const settings = { ...this.state.settings };
-    const preview = "alt"
-    settings.img = preview;  
+    const preview = "alt";
+    settings.img = preview;
     this.setState({ settings });
   };
 

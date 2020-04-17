@@ -17,11 +17,12 @@ import {
 
 // import services
 import { VacationService } from "../../../services/vacations-service";
-import { InsertService } from "./insertService";
 import { ServerServices } from "../../../services/server-service";
 import { AuthServices } from "../../../services/auth-service";
 
 import "./insert.scss";
+import { FormService } from "../../../services/form-service";
+import { ActionType } from "../../../redux/action-type";
 
 interface InsertState {
   vacation: VacationModel;
@@ -29,8 +30,7 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
-  private InsertService = new InsertService();
-
+  
   constructor(props: any) {
     super(props);
 
@@ -38,32 +38,38 @@ export class Insert extends Component<any, InsertState> {
       vacation: new VacationModel(),
       settings: formAdminSetting,
     };
-  } 
+  }
+
+  private InsertForm = new FormService(
+    `http://localhost:3000/api/vacations`,
+    "New Vacation has been added!",
+    ActionType.addVacation,
+    "postRequestAsync",
+    this.props.history
+  );
 
   public componentDidMount = async () => {
     await AuthServices.handleAuth(this.props.history);
-    this.setPreview() 
+    this.setPreview();
   };
 
   public handleInsertRequest = async () => {
     const { vacation } = this.state;
 
     try {
-      
       // validate vacation
       if (VacationService.validVacationForm(vacation)) {
         return;
       }
 
       // send request
-      const response = await this.InsertService.handleRequest(vacation);
+      const response = await this.InsertForm.handleRequest(vacation);
 
       // handle server response
       ServerServices.handleServerResponse(
         response,
-        (response) =>
-          this.InsertService.handleSuccess(response, this.props.history),
-        (response) => this.InsertService.handleError(response)
+        (response) => this.InsertForm.handleSuccess(response),
+        (response) => this.InsertForm.handleError(response)
       );
     } catch (err) {
       console.log(err);
@@ -81,13 +87,13 @@ export class Insert extends Component<any, InsertState> {
               handleChange={this.handleChange}
               handleVacation={this.handleInsertRequest}
               handleImage={this.handleImage}
-            /> 
+            />
           </Grid>
           <Grid item xs={4}>
             <VacCard
               vacation={vacation}
               margin={false}
-              preview={settings.img }
+              preview={settings.img}
               vacationSettings={settings}
             />
           </Grid>
@@ -96,17 +102,17 @@ export class Insert extends Component<any, InsertState> {
       </React.Fragment>
     );
   }
- 
+
   public setPreview = () => {
     const settings = { ...this.state.settings };
-    const preview = "alt"
-    settings.img = preview;  
+    const preview = "alt";
+    settings.img = preview;
     this.setState({ settings });
   };
 
   public handleImage = (preview: string) => {
     const settings = { ...this.state.settings };
-    settings.img = preview;  
+    settings.img = preview;
     this.setState({ settings });
   };
 
