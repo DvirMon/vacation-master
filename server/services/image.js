@@ -20,8 +20,22 @@ const createUploadDir = () => {
 };
 // end of function
 
+// function to remove image
+
+const deleteImageLocally = (fileName) => {
+  
+  const path = `./uploads/${fileName}.jpg`;
+
+  fs.unlink(path, (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  });
+};
+
 module.exports = {
   saveImageLocally,
   createUploadDir,
+  deleteImageLocally
 };
-    

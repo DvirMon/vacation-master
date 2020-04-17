@@ -27,7 +27,6 @@ import { UpdateForm } from "./update-service";
 import { store } from "../../../redux/store";
 
 import "./update.scss";
-import { ActionType } from "../../../redux/action-type";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -51,8 +50,6 @@ export class Update extends Component<any, UpdateState> {
   private UpdateForm = new UpdateForm(
     `http://localhost:3000/api/vacations/${this.props.match.params.id}`,
     "Vacation has been updated successfully!",
-    ActionType.updatedVacation,
-    "putRequestAsync",
     this.props.history
   );
 
@@ -83,13 +80,13 @@ export class Update extends Component<any, UpdateState> {
       }
 
       // send update request
-      const response = await this.UpdateForm.handleRequest(vacation);
+      const response = await this.UpdateForm.handleIUpdateRequest(vacation);
 
       // handle server response
       ServerServices.handleServerResponse(
         response,
         (response) =>
-          this.UpdateForm.handleSuccess(response),
+          this.UpdateForm.handleIUpdateSuccess(response),
         (response) => this.UpdateForm.handleError(response)
       );
     } catch (err) {

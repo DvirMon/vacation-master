@@ -144,6 +144,7 @@ router.delete("/:id", auth.authorize(1, key), async (request, response) => {
   try {
     const id = request.params.id;
     await vacationsLogic.deleteVacation(id);
+    imageService.deleteImageLocally('c6f0dbef-9908-4957-b716-e0498588cc4b')
     response.sendStatus(204);
   } catch (err) {
     response.status(500).json(err.message);
@@ -163,7 +164,6 @@ router.get("/update/image/:imgName", async (request, response, next) => {
 // route for  getting images from the server
 router.get("/uploads/:imgName", async (request, response, next) => {
   try {
-    
     const path = process.cwd()
     response.sendFile(path + "\\uploads\\" + request.params.imgName);
   } catch (err) {

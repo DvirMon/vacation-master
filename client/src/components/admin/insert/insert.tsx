@@ -19,10 +19,9 @@ import {
 import { VacationService } from "../../../services/vacations-service";
 import { ServerServices } from "../../../services/server-service";
 import { AuthServices } from "../../../services/auth-service";
+import { InsertForm } from "./insert-service";
 
 import "./insert.scss";
-import { FormService } from "../../../services/form-service";
-import { ActionType } from "../../../redux/action-type";
 
 interface InsertState {
   vacation: VacationModel;
@@ -40,11 +39,9 @@ export class Insert extends Component<any, InsertState> {
     };
   }
 
-  private InsertForm = new FormService(
+  private InsertForm = new InsertForm(
     `http://localhost:3000/api/vacations`,
     "New Vacation has been added!",
-    ActionType.addVacation,
-    "postRequestAsync",
     this.props.history
   );
 
@@ -63,15 +60,15 @@ export class Insert extends Component<any, InsertState> {
       }
 
       // send request
-      const response = await this.InsertForm.handleRequest(vacation);
+      const response = await this.InsertForm.handleInsertRequest(vacation);
 
       // handle server response
       ServerServices.handleServerResponse(
         response,
-        (response) => this.InsertForm.handleSuccess(response),
+        (response) => this.InsertForm.handleInsertSuccess(response),
         (response) => this.InsertForm.handleError(response)
       );
-    } catch (err) {
+    } catch (err) { 
       console.log(err);
     }
   };
