@@ -1,5 +1,5 @@
+import { ActionType } from "../redux/action-type";
 import { invokeConnection } from "./socket-service";
-import { ValidationService } from "./validation-service";
 import { ServerServices } from "./server-service";
 
 import { store } from "../redux/store";
@@ -11,40 +11,44 @@ export class AuthServices {
     try {
       const user = store.getState().login.user
       const url = `http://localhost:3000/api/tokens`;
-      
       const response = await ServerServices.postRequestAsync(url, user, true);
-      ServerServices.handleTokenResponse(response)
+      store.dispatch({ type: ActionType.addToken, payload: response })
     } catch (err) {
-      console.log(err);
+      handleError(err)
     }
   };
   //end of function
 
   // function for new accessToken
   static getAccessToken = async () => {
-    try {
-      const url = `http://localhost:3000/api/tokens/new`;
-      const tokens = JSON.parse(sessionStorage.getItem("jwt"))
-
-      const response = await ServerServices.postRequestAsync(url, tokens, false)
-      ServerServices.handleTokenResponse(response)
-    } catch (err) {
-      console.log(err);
-    }
+    const tokens = JSON.parse(sessionStorage.getItem("jwt"))
+    const url = `http://localhost:3000/api/tokens/new`;
+    const response = await ServerServices.postRequestAsync(url, tokens, false)
+    store.dispatch({ type: ActionType.addToken, payload: response })
   };
 
   // verify admin role, invoke socket connection, set tokens
-  static handleAuth = async (history) => {
+  static handleAuth = async (callback, history) => {
     try {
-      ValidationService.verifyAdmin(history);
+      callback()
       invokeConnection();
       await AuthServices.getAccessToken()
     }
     catch (err) {
-      console.log(err)
+      handleError(err)
+      history.push("/logout")
     }
   }
   // end of function
+
+}
+
+
+const handleError = (err) => {
+  console.log(err)
+  err.response.status === 401 || err.response.status === 403
+    ? console.log(err.response.data)
+    : console.log(err)
 
 }
 

@@ -21,8 +21,8 @@ const setToken = (user) => {
         }
         resolve(result);
       }
-    );
-  });
+      );
+    });
 };
 // end of function
 
@@ -32,6 +32,7 @@ const setRefreshToken = (user) => {
     jwt.sign(
       { sub: user.userName, role: user.isAdmin },
       process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "3d" },
       (err, result) => {
         if (err) {
           reject(err);
@@ -52,7 +53,7 @@ const authorize = (role, key) => (request, response, next) => {
   if (!token) {
     return response
       .status(401)
-      .json({ message: "error", body: "You are not login" });
+      .json("You are not login");
   } 
 
   try {
@@ -62,12 +63,12 @@ const authorize = (role, key) => (request, response, next) => {
     request.user = verified; 
     // verify admin
     if (role === 1 && request.user.role === 0) {
-      return response.status(403).json({ message: "error", body: "not admin" });
+      return response.status(403).json("not admin");
     }
 
     next();
   } catch (err) {
-    response.status(401).json({ message: "error", body: "Token has expired" });
+    response.status(401).json("Token has expired");
   }
 };
 // end of function

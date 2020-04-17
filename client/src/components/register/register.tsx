@@ -70,13 +70,17 @@ export class Register extends Component<any, RegisterState> {
     const url = `http://localhost:3000/api/user`;
     const response = await ServerServices.postRequestAsync(url, user, true);
 
-    // handle server response 
+    // handle server response
     LoginServices.handleSuccessResponse(response, this.props.history);
   };
 
   public handleErrorResponse = (err) => {
-    const serverError = err.response.data;
-    this.setState({ serverError, error: true });
+    if (err.response.status === 409) {
+      const serverError = err.response.data;
+      this.setState({ serverError, error: true });
+    } else {
+      console.log(err);
+    }
   };
 
   render() {

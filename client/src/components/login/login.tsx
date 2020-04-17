@@ -91,9 +91,14 @@ export class Login extends Component<any, LoginState> {
   };
 
   public handleErrorResponse = (err) => {
-    const serverError = err.response.data;
-    this.setState({ serverError, error: true });
+    if (err.response.status === 409) {
+      const serverError = err.response.data;
+      this.setState({ serverError, error: true });
+    } else {
+      console.log(err);
+    }
   };
+
 
   render() {
     const { user, serverError, showPassword, error } = this.state;

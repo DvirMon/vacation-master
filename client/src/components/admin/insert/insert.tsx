@@ -21,6 +21,7 @@ import { AuthServices } from "../../../services/auth-service";
 import { InsertForm } from "./insert-service";
 
 import "./insert.scss";
+import { ValidationService } from "../../../services/validation-service";
 
 interface InsertState {
   vacation: VacationModel;
@@ -44,8 +45,11 @@ export class Insert extends Component<any, InsertState> {
   );
 
   public componentDidMount = async () => {
-    await AuthServices.handleAuth(this.props.history);
-    this.setPreview();
+      await AuthServices.handleAuth(
+        () => ValidationService.verifyAdmin(this.props.history),
+        this.props.history
+      );
+     this.setPreview();
   };
 
   public handleInsertRequest = async () => {

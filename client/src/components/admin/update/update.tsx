@@ -26,6 +26,7 @@ import { UpdateForm } from "./update-service";
 import { store } from "../../../redux/store";
 
 import "./update.scss";
+import { ValidationService } from "../../../services/validation-service";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -53,8 +54,10 @@ export class Update extends Component<any, UpdateState> {
   );
 
   public componentDidMount = async () => {
-    await AuthServices.handleAuth(this.props.history);
-
+    await AuthServices.handleAuth(
+      () => ValidationService.verifyAdmin(this.props.history),
+      this.props.history
+    ); 
     try {
       const vacation = await this.UpdateForm.getVacation();
       this.setState({ vacation });

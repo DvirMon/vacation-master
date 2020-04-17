@@ -9,8 +9,7 @@ const tokenLogic = require("../bll/tokens-logic");
 const jwt = require("jsonwebtoken");
 const auth = require("../services/auth");
 
-const key = process.env.REFRESH_TOKEN_SECRET
-
+const key = process.env.REFRESH_TOKEN_SECRET;
 
 // set refreshToken and first accessToken when login
 router.post("/", async (request, response, next) => {
@@ -26,7 +25,7 @@ router.post("/", async (request, response, next) => {
     // save refreshToken in db
     const dbToken = await tokenLogic.addToken({ refreshToken });
 
-    response.status(201).json({ body: {dbToken, accessToken }, message: "success" });
+    response.status(201).json({ dbToken, accessToken });
   } catch (err) {
     next(err);
   }
@@ -34,18 +33,17 @@ router.post("/", async (request, response, next) => {
 
 // get new token
 router.post("/new", auth.authorize(0, key), async (request, response, next) => {
-  try { 
-
+  try {
     // get refreshToken from client
     const dbToken = request.body;
 
     // validate refreshToken in db
     const refreshToken = await tokenLogic.getDatabaseToken(dbToken.id);
     if (!refreshToken) {
-      response.status(404).json({ message : "error", body : "token is invalid"});
+      response.status(404).json("token is invalid");
       return;
     }
- 
+
     // verify token
     const verify = jwt.verify(
       dbToken.refreshToken,
@@ -62,15 +60,13 @@ router.post("/new", auth.authorize(0, key), async (request, response, next) => {
       isAdmin: verify.role,
     });
 
-    response 
-      .status(201)
-      .json({ message: "success", body: { dbToken, accessToken } });
+    response.status(201).json({ dbToken, accessToken });
   } catch (err) {
-    next(err); 
-  }  
+    next(err);
+  }
 });
 
-// logout 
+// logout
 router.delete("/:id", async (request, response, next) => {
   try {
     // get refreshToken id from client

@@ -8,7 +8,7 @@ export class LoginServices {
   static isUserLogged = (history) => {
     if (store.getState().login.isLoggedIn) {
       LoginServices.handleRouting(store.getState().login.user, history);
-    }
+    } 
   }
   // end of function
 

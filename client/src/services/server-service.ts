@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { store } from "../redux/store";
-import { ActionType } from "../redux/action-type";
 
 export class ServerServices {
 
@@ -44,18 +43,6 @@ export class ServerServices {
     }
   }
   // end of function
-
-
-  // handle server response
-  static handleTokenResponse = (response) => {
-    if (response.message === "success") {
-      store.dispatch({ type: ActionType.addToken, payload: response.body });
-    } else {
-      alert(response)
-    }
-  }
-  // end of function
-
 }
 
 const setOptions = (bool: boolean) => {

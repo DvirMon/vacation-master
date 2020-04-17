@@ -12,7 +12,6 @@ import UpdateToken from "../updateToken/updateToken";
 import { AuthServices } from "../../services/auth-service";
 import { VacationService } from "../../services/vacations-service";
 import { LoginServices } from "../../services/login-service";
-import { invokeConnection } from "../../services/socket-service";
 import { setStyle } from "../../services/style-services";
 
 // import models
@@ -63,11 +62,11 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   public componentDidMount = async () => {
-   
     try {
       // verify login
       if (store.getState().login.isLoggedIn === false) {
-        this.props.history.push("/");
+        console.log("Please Login")
+        this.props.history.push("/login");
         return;
       }
 
@@ -85,7 +84,10 @@ export class Vacations extends Component<any, VacationsState> {
 
       const { user, admin } = this.state;
 
-      await this.handleAuth(user, admin);
+      await AuthServices.handleAuth(
+        () => LoginServices.verifyPath(admin, user, this.props.history),
+        this.props.history
+      );
 
       if (store.getState().vacation.unFollowUp.length === 0) {
         await this.handleRequest();
@@ -100,26 +102,20 @@ export class Vacations extends Component<any, VacationsState> {
 
       this.handleStyle(admin);
     } catch (err) {
-      this.handleError(err)
+      this.handleError(err);
     }
   };
 
   public componentWillUnmount(): void {
-    this.unsubscribeStore();
+    if (this.unsubscribeStore) {
+      this.unsubscribeStore();
+    }
   }
-
-  // invoke socket, verify path, set tokens
-  public handleAuth = async (user, admin) => {
-    LoginServices.verifyPath(admin, user, this.props.history);
-    invokeConnection(); 
-    await AuthServices.getAccessToken()
-  };
-  // end of function
 
   public handleRequest = async () => {
     // send request
     const response = await VacationService.getUserVacationAsync();
-    this.handleServerSuccess(response)
+    this.handleServerSuccess(response);
   };
 
   public handleServerSuccess = (response) => {
@@ -138,7 +134,7 @@ export class Vacations extends Component<any, VacationsState> {
   render() {
     const { followUp, unFollowUp, sliderSetting, admin } = this.state;
 
-    return ( 
+    return (
       <React.Fragment>
         {unFollowUp.length === 0 ? (
           <Loader />

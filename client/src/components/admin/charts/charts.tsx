@@ -7,7 +7,7 @@ import UpdateToken from "../../updateToken/updateToken";
 import { ChartModel } from "../../../models/charts-model";
 
 import { ServerServices } from "../../../services/server-service";
-import { AuthServices } from "../../../services/auth-service"; 
+import { AuthServices } from "../../../services/auth-service";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -15,6 +15,7 @@ import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
 import "./charts.scss";
+import { ValidationService } from "../../../services/validation-service";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -31,41 +32,42 @@ export class Charts extends Component<any, ChartsState> {
     this.state = {
       dataPoints: store.getState().vacation.dataPoints,
     };
-  } 
- 
-  public componentDidMount = async () => {
+  }
 
-    await AuthServices.handleAuth(this.props.history);
+  public componentDidMount = async () => {
+    await AuthServices.handleAuth(
+      () => ValidationService.verifyAdmin(this.props.history),
+      this.props.history
+    );
 
     this.unsubscribeStore = store.subscribe(() => {
       this.setState({
         dataPoints: store.getState().vacation.dataPoints,
       });
     });
-     
+
     try {
       // handle request
       const url = `http://localhost:3000/api/followup`;
       const response = await ServerServices.getRequestAsync(url);
-      this.handleSuccess(response)
+      this.handleSuccess(response);
     } catch (err) {
-      this.handleError(err)
+      this.handleError(err);
     }
   };
-  
+
   public componentWillUnmount(): void {
     this.unsubscribeStore();
   }
-  
+
   public handleSuccess = (dataPoints) => {
     store.dispatch({ type: ActionType.updateChartPoints, payload: dataPoints });
   };
 
   public handleError = (err) => {
-    alert(err);
+    console.log(err);
     this.props.history.push("/admin");
   };
-
 
   render() {
     const { dataPoints } = this.state;
