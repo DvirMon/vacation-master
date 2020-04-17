@@ -8,13 +8,12 @@ export class AuthServices {
 
   // function for getting first accessToken and refreshToken
   static getTokens = async () => {
-
-    const user = store.getState().login.user
-    const url = `http://localhost:3000/api/tokens`;
     try {
-      const response = await ServerServices.postRequestAsync(url, user);
+      const user = store.getState().login.user
+      const url = `http://localhost:3000/api/tokens`;
+      
+      const response = await ServerServices.postRequestAsync(url, user, true);
       ServerServices.handleTokenResponse(response)
-
     } catch (err) {
       console.log(err);
     }
@@ -25,7 +24,9 @@ export class AuthServices {
   static getAccessToken = async () => {
     try {
       const url = `http://localhost:3000/api/tokens/new`;
-      const response = await ServerServices.postRequestTokens(url)
+      const tokens = JSON.parse(sessionStorage.getItem("jwt"))
+
+      const response = await ServerServices.postRequestAsync(url, tokens, false)
       ServerServices.handleTokenResponse(response)
     } catch (err) {
       console.log(err);
@@ -42,7 +43,7 @@ export class AuthServices {
     catch (err) {
       console.log(err)
     }
-  } 
+  }
   // end of function
 
 }

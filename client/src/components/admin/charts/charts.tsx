@@ -47,16 +47,9 @@ export class Charts extends Component<any, ChartsState> {
       // handle request
       const url = `http://localhost:3000/api/followup`;
       const response = await ServerServices.getRequestAsync(url);
-      
-      // handle server request
-      ServerServices.handleServerResponse(
-        response,
-        () => this.handleSuccess(response.body),
-        () => this.handleError(response.body)
-      );
+      this.handleSuccess(response)
     } catch (err) {
-      alert(err);
-      this.props.history.push("/admin");
+      this.handleError(err)
     }
   };
   

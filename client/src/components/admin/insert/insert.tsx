@@ -17,7 +17,6 @@ import {
 
 // import services
 import { VacationService } from "../../../services/vacations-service";
-import { ServerServices } from "../../../services/server-service";
 import { AuthServices } from "../../../services/auth-service";
 import { InsertForm } from "./insert-service";
 
@@ -29,7 +28,6 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
-  
   constructor(props: any) {
     super(props);
 
@@ -63,13 +61,14 @@ export class Insert extends Component<any, InsertState> {
       const response = await this.InsertForm.handleInsertRequest(vacation);
 
       // handle server response
-      ServerServices.handleServerResponse(
-        response,
-        (response) => this.InsertForm.handleInsertSuccess(response),
-        (response) => this.InsertForm.handleError(response)
-      );
-    } catch (err) { 
-      console.log(err);
+      this.InsertForm.handleInsertSuccess(response);
+
+    } catch (err) {
+      if (err.response.status === 500) {
+        this.InsertForm.handleError(
+          "Pay attention! you cant use apostrophe mark"
+        );
+      }
     }
   };
 

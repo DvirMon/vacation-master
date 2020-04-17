@@ -56,7 +56,7 @@ router.post("/", async (request, response, next) => {
     // valid userName in db
     const dbUser = await usersLogic.isUserExist(user.userName);
     if (dbUser) {
-      response.status(409).json({message : "error", body : "username is already taken"});
+      response.status(409).json("username is already taken");
       return;
     }
     // hush password
@@ -68,7 +68,7 @@ router.post("/", async (request, response, next) => {
     // return user without password
     const newUser = await usersLogic.isUserExist(addedUser.userName)
 
-    response.status(201).json({message : "success", body : newUser});
+    response.status(201).json(newUser);
   } catch (err) {
     next(err);
   }
@@ -91,7 +91,7 @@ router.post("/login", async (request, response, next) => {
     // get username and from database
     const dbUser = await usersLogic.isUserExist(user.userName);
     if (!dbUser) {
-      response.status(409).json({message : "error", body : "username or password are incorrect"});
+      response.status(409).json("username or password are incorrect");
       return;
     }
 
@@ -100,12 +100,12 @@ router.post("/login", async (request, response, next) => {
     const validPassword = await bcrypt.compare(user.password, password.password);
     
     if (!validPassword) {
-      response.status(409).json({message : "error", body : "username or password are incorrect"});
+      response.status(409).json("username or password are incorrect");
       return;
     }
 
     // return user info
-    response.json({message : "success", body : dbUser});
+    response.json(dbUser);
   } catch (err) {
     next(err);
   }

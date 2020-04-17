@@ -53,7 +53,7 @@ export class Login extends Component<any, LoginState> {
   public componentDidMount = async () => {
     // set style
     setStyle(LoginMenu, "home");
- 
+
     try {
       // verify if user is already logged
       LoginServices.isUserLogged(this.props.history);
@@ -62,9 +62,8 @@ export class Login extends Component<any, LoginState> {
     }
   };
 
-  // function to handle loign request
+  // function to handle login request
   public handleLogIn = async () => {
-    
     const { user } = this.state;
 
     // disabled request if form is not legal
@@ -73,33 +72,26 @@ export class Login extends Component<any, LoginState> {
       return;
     }
 
-    try {
-      // handle request
-      await this.handleRequest(user);
-    } catch (err) {
-      console.log(err);
-    }
+    // handle request
+    await this.handleRequest(user);
   };
 
   public handleRequest = async (user) => {
-    
     //send login request
-    const url = `http://localhost:3000/api/user/login`;
-    const serverResponse = await ServerServices.postRequestAsync(url, user);
 
-    // handle server response
-    ServerServices.handleServerResponse(
-      serverResponse,
-      () =>
-        LoginServices.handleSuccessResponse(
-          serverResponse.body,
-          this.props.history
-        ),
-      () => this.handleErrorResponse(serverResponse.body)
-    );
+    try {
+      const url = `http://localhost:3000/api/user/login`;
+      const response = await ServerServices.postRequestAsync(url, user, true);
+
+      // handle success
+      LoginServices.handleSuccessResponse(response, this.props.history);
+    } catch (err) {
+      this.handleErrorResponse(err);
+    }
   };
 
-  public handleErrorResponse = (serverError) => {
+  public handleErrorResponse = (err) => {
+    const serverError = err.response.data;
     this.setState({ serverError, error: true });
   };
 

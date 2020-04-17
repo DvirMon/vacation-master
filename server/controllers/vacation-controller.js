@@ -35,7 +35,7 @@ router.get("/user", auth.authorize(0, key), async (request, response, next) => {
     }
 
     const vacations = await vacationsLogic.getUserVacations(user.id);
-    response.json({ message: "success", body: vacations });
+    response.json(vacations);
   } catch (err) {
     next(err);
   }
@@ -68,7 +68,7 @@ router.post("/", auth.authorize(1, key), async (request, response, next) => {
 
   // verify file
   if (!file) {
-    response.status(400).json({ body: "no file was sent", message: "error" });
+    response.status(400).json("no file was sent");
     return;
   }
 
@@ -80,16 +80,16 @@ router.post("/", auth.authorize(1, key), async (request, response, next) => {
   // verify vacation schema
   const error = VacationModel.validation(vacation);
   if (error) {
-    response.status(400).json({ body: error, message: "error" });
+    response.status(400).json(error);
     return;
   }
 
   try {
     const addedVacation = await vacationsLogic.addVacation(vacation);
 
-    response.status(201).json({ body: addedVacation, message: "success" });
+    response.status(201).json(addedVacation);
   } catch (err) {
-    next();
+    next(err);
   }
 });
  
@@ -107,13 +107,13 @@ router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
     } else if (vacation.image === undefined) {
       response
         .status(400)
-        .json({ body: "No image was sent!", message: "error" });
+        .json("No image was sent!");
     } 
 
     //verify schema
     const error = VacationModel.validation(vacation);
     if (error) {
-      response.status(400).send({ body: error, message: "error" });
+      response.status(404).json(error);
       return;
     }
 
@@ -126,16 +126,16 @@ router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
     if (updatedVacation === null) {
       response
         .status(404)
-        .json({ message: "error", body: "Item is not in database" });
+        .json( "Item is not in database");
       return;
     }
 
     // change id from string to number
     updatedVacation.vacationID = +vacationID;
 
-    response.json({ body: updatedVacation, message: "success" });
+    response.json(updatedVacation);
   } catch (err) {
-    next();
+    next(err);
   }
 });
 

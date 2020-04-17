@@ -2,11 +2,8 @@ const path = require("path");
 const followUpLogic = require("../bll/followup-logic");
 
 const findHtmlFile = () => {
-  console.log(process.cwd())
   const root = process.cwd().substring(0, 65);
-  console.log(root)
   const pathToHtml = path.join(root, "client", "public");
-  console.log(pathToHtml)
   return pathToHtml;
 };
 

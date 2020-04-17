@@ -11,7 +11,7 @@ export class LoginServices {
     }
   }
   // end of function
-  
+
   // function to handle login
   static handleSuccessResponse = async (user, history) => {
     store.dispatch({ type: ActionType.Login, payload: user });

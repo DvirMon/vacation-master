@@ -1,4 +1,4 @@
-export class FormService {
+ export class FormService {
 
   constructor(
     public url: string, 
@@ -26,7 +26,6 @@ export class FormService {
 
   // handle success
   public handleSuccess = () => {
-
     alert(this.successMsg);
    this.history.push("/admin");
 

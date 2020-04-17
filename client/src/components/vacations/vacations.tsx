@@ -9,7 +9,6 @@ import Slider from "react-slick";
 import UpdateToken from "../updateToken/updateToken";
 
 // import services
-import { ServerServices } from "../../services/server-service";
 import { AuthServices } from "../../services/auth-service";
 import { VacationService } from "../../services/vacations-service";
 import { LoginServices } from "../../services/login-service";
@@ -64,6 +63,7 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   public componentDidMount = async () => {
+   
     try {
       // verify login
       if (store.getState().login.isLoggedIn === false) {
@@ -100,7 +100,7 @@ export class Vacations extends Component<any, VacationsState> {
 
       this.handleStyle(admin);
     } catch (err) {
-      console.log(err);
+      this.handleError(err)
     }
   };
 
@@ -117,27 +117,21 @@ export class Vacations extends Component<any, VacationsState> {
   // end of function
 
   public handleRequest = async () => {
-
     // send request
     const response = await VacationService.getUserVacationAsync();
-
-    // handle server response
-    ServerServices.handleServerResponse(
-      response,
-      () => this.handleServerSuccess(response),
-      () => this.handleServerError()
-    );
+    this.handleServerSuccess(response)
   };
 
   public handleServerSuccess = (response) => {
     const action = {
       type: ActionType.getAllVacation,
-      payload: response.body,
+      payload: response,
     };
     store.dispatch(action);
   };
 
-  public handleServerError = () => {
+  public handleError = (err) => {
+    console.log(err);
     this.props.history.push("/logout");
   };
 

@@ -29,7 +29,7 @@ export class VacationService {
   static addFollowUpAsync = async (vacationID) => {
     const url = `http://localhost:3000/api/followup`;
     try {
-      const response = await ServerServices.postRequestAsync(url, { vacationID });
+      const response = await ServerServices.postRequestAsync(url, { vacationID }, true);
       return response
     } catch (err) {
       console.log(err);

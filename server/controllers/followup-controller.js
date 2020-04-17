@@ -12,7 +12,7 @@ const key = process.env.ACCESS_TOKEN_SECRET
 router.get("/", auth.authorize(1, key), async (request, response, next) => {
   try {
     const dataPoints = await followUpLogic.getAllFollowUp();
-    response.json({ message: "success", body: dataPoints });
+    response.json(dataPoints);
   } catch (err) {
     next(err);
   }

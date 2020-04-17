@@ -1,9 +1,11 @@
+import { VacationModel } from "../../../models/vacations-model";
+
 import { ServerServices } from "../../../services/server-service";
 import { FormService } from "../../../services/form-service";
-import { VacationModel } from "../../../models/vacations-model";
-import { ActionType } from "../../../redux/action-type";
-import { store } from "../../../redux/store";
 import { handleAdminUpdate } from "../../../services/socket-service";
+
+import { store } from "../../../redux/store";
+import { ActionType } from "../../../redux/action-type";
 
 export class UpdateForm extends FormService {
 
@@ -25,21 +27,20 @@ export class UpdateForm extends FormService {
     }
   }
 
-    // handle put request for vacation
-    public handleIUpdateRequest = async (vacation: VacationModel) => {
-      const myFormData = this.setFormData(vacation);
-      const response = await ServerServices.putRequestAsync(this.url, myFormData)
-      return response;
-    };
-    // end of function
-    
-    // handle success
-    public handleIUpdateSuccess = (vacation: VacationModel) => {
-      
-      store.dispatch({ type: ActionType.updatedVacation, payload: vacation })
-      handleAdminUpdate(vacation)
-      this.handleSuccess()
-    };
-    // end of function
+  // handle put request for vacation
+  public handleIUpdateRequest = async (vacation: VacationModel) => {
+    const myFormData = this.setFormData(vacation);
+    const response = await ServerServices.putRequestAsync(this.url, myFormData)
+    return response;
+  }
+  // end of function
+
+  // handle success
+  public handleIUpdateSuccess = (vacation: VacationModel) => {
+    store.dispatch({ type: ActionType.updatedVacation, payload: vacation })
+    handleAdminUpdate(vacation)
+    this.handleSuccess()
+  };
+  // end of function
 
 }

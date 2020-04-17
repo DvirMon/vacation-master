@@ -36,7 +36,7 @@ server.use("/api/vacations", vacationsController);
 server.use("/api/followup", followupController);
 
 // middleware for errors
-// server.use(errorHandler);
+server.use(errorHandler);
 
 // create upload directory
 imageService.createUploadDir();

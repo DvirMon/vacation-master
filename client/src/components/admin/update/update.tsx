@@ -18,17 +18,16 @@ import {
 } from "../../../models/vac-card-model";
 
 // import services
-import { ServerServices } from "../../../services/server-service";
 import { VacationService } from "../../../services/vacations-service";
 import { AuthServices } from "../../../services/auth-service";
 import { UpdateForm } from "./update-service";
 
-// import redux 
+// import redux
 import { store } from "../../../redux/store";
 
 import "./update.scss";
 
-interface UpdateState { 
+interface UpdateState {
   vacation: VacationModel;
   tokens: TokensModel;
   updated: boolean;
@@ -68,29 +67,27 @@ export class Update extends Component<any, UpdateState> {
   public handleUpdateRequest = async () => {
     const { vacation, updated } = this.state;
 
-    if (this.UpdateForm.verifyChange(updated)) {
+    try {
+
+      if (this.UpdateForm.verifyChange(updated)) {
+        return;
+    }
+
+    // validate form
+    if (VacationService.validVacationForm(vacation)) {
       return;
     }
 
-    try {
-      // validate form
-      if (VacationService.validVacationForm(vacation)) {
-        return;
-      }
-
-      // send update request
-      const response = await this.UpdateForm.handleIUpdateRequest(vacation);
-
-      // handle server response
-      ServerServices.handleServerResponse(
-        response,
-        (response) => 
-          this.UpdateForm.handleIUpdateSuccess(response),
-        (response) => this.UpdateForm.handleError(response)
-      );
-    } catch (err) {
-      alert(err);
+    // send update request
+    const response = await this.UpdateForm.handleIUpdateRequest(vacation);
+    // handle server response
+    this.UpdateForm.handleIUpdateSuccess(response);
+  }
+  catch(err) {
+    if(err.response.status === 500) {
+      this.UpdateForm.handleError("Pay attention! you cant use apostrophe mark")
     }
+  }
   };
 
   render() {

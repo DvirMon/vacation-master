@@ -27,7 +27,7 @@ const deleteImageLocally = (fileName) => {
   const path = `./uploads/${fileName}.jpg`;
 
   fs.unlink(path, (err) => {
-    if (err) {
+    if (err) { 
       console.error(err);
       return;
     }

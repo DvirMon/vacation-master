@@ -25,7 +25,7 @@ interface RegisterState {
   user: RegisterModel;
   password: string;
   serverError: string;
-  serverErrorStyle: boolean;
+  error: boolean;
 }
 export class Register extends Component<any, RegisterState> {
   constructor(props: any) {
@@ -35,7 +35,7 @@ export class Register extends Component<any, RegisterState> {
       user: new RegisterModel(),
       password: "",
       serverError: "",
-      serverErrorStyle: false,
+      error: false,
     };
   }
 
@@ -61,35 +61,26 @@ export class Register extends Component<any, RegisterState> {
       // handle request
       await this.handleRequest(user);
     } catch (err) {
-      console.log(err);
+      this.handleErrorResponse(err);
     }
   };
 
   public handleRequest = async (user) => {
-    
     // send register request
     const url = `http://localhost:3000/api/user`;
-    const serverResponse = await ServerServices.postRequestAsync(url, user);
+    const response = await ServerServices.postRequestAsync(url, user, true);
 
-    // handle server response
-    ServerServices.handleServerResponse(
-      serverResponse,
-      () =>
-        LoginServices.handleSuccessResponse(
-          serverResponse.body,
-          this.props.history
-        ), 
-      () => this.handleErrorResponse(serverResponse.body)
-    );
+    // handle server response 
+    LoginServices.handleSuccessResponse(response, this.props.history);
   };
 
-
-  public handleErrorResponse = (serverError) => {
-    this.setState({ serverError, serverErrorStyle: true });
+  public handleErrorResponse = (err) => {
+    const serverError = err.response.data;
+    this.setState({ serverError, error: true });
   };
 
   render() {
-    const { user, password, serverError, serverErrorStyle } = this.state;
+    const { user, password, serverError, error } = this.state;
 
     return (
       <div className="register">
@@ -128,7 +119,7 @@ export class Register extends Component<any, RegisterState> {
               handleChange={this.handleChange}
               validInput={RegisterModel.validRegistration}
               serverError={serverError}
-              serverErrorStyle={serverErrorStyle}
+              serverErrorStyle={error}
               helperText={"Please choose a username"}
             ></MyInput>
             <MyInput
@@ -175,7 +166,7 @@ export class Register extends Component<any, RegisterState> {
     this.setState({ user });
 
     if (prop === "userName" && serverError.length > 0) {
-      this.setState({ serverError: "", serverErrorStyle: false });
+      this.setState({ serverError: "", error: false });
     }
   };
   // end of function
