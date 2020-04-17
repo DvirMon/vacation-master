@@ -100,9 +100,10 @@ export class CardTopIcons extends Component<
     }
 
     const vacationID = this.props.vacation.vacationID;
+    const fileName = this.props.vacation.image;
 
     // delete from db
-    const url = `http://localhost:3000/api/vacations/${vacationID}`;
+    const url = `http://localhost:3000/api/vacations/${vacationID}/${fileName}`;
     await ServerServices.deleteRequestAsync(url);
 
     store.dispatch({ type: ActionType.deleteVacation, payload: vacationID })

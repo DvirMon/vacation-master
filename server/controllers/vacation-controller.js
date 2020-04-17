@@ -140,11 +140,15 @@ router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
 });
 
 // delete vacation (only admin)
-router.delete("/:id", auth.authorize(1, key), async (request, response) => {
+router.delete("/:id/:fileName", auth.authorize(1, key), async (request, response) => {
   try {
+    
     const id = request.params.id;
+    const fileName = request.params.fileName
+    
     await vacationsLogic.deleteVacation(id);
-    imageService.deleteImageLocally('c6f0dbef-9908-4957-b716-e0498588cc4b')
+    imageService.deleteImageLocally(fileName)
+    
     response.sendStatus(204);
   } catch (err) {
     response.status(500).json(err.message);

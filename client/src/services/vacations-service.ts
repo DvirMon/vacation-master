@@ -48,25 +48,6 @@ export class VacationService {
   };
   //end of function
 
-  // set FormData object for post and put request
-  static setFormData = (vacation) => {
-    const myFormData = new FormData();
-    myFormData.append("description", vacation.description);
-    myFormData.append("destination", vacation.destination);
-    myFormData.append("startDate", vacation.startDate);
-    myFormData.append("endDate", vacation.endDate);
-    myFormData.append("price", vacation.price.toString());
-
-    if (typeof vacation.image === "string") {
-      myFormData.append("image", vacation.image);
-    } else {
-      myFormData.append("image", vacation.image, vacation.image.name);
-    }
-    return myFormData
-  }
-  // end of function
-
-
   // function to handle add followup 
   static handleAddFollowUp = async (vacation) => {
     try {
