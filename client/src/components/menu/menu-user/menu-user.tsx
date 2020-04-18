@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 
+import { v4 as uuidv4 } from 'uuid';
+
+// import components
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Badge from "@material-ui/core/Badge";
@@ -8,6 +11,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import Menu from "@material-ui/core/Menu";
 
+// import models
 import { UserModel } from "../../../models/user-model";
 import { Notification } from "../../../models/vacations-model";
 
@@ -93,7 +97,7 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
         >
           {notification.map((msg) => (
             <MenuItem 
-              key={msg.vacationID}
+              key={this.setKey()}
               className="dropdown-item"
               onClick={this.handleLinkClick(msg.vacationID)}
             >
@@ -127,6 +131,10 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
     this.setState({ anchorEl: null });
     store.dispatch({ type: ActionType.deleteAllNotification });
   };
+
+  public setKey = () => {
+    return uuidv4()
+  }
 }
 
 export default MenuUser;
