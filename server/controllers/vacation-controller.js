@@ -62,9 +62,9 @@ router.get("/:id", async (request, response, next) => {
 
 // add vacation (admin)
 router.post("/", auth.authorize(1, key), async (request, response, next) => {
+  
   const vacation = request.body;
-  console.log(request.body)
-  const file = request.files.image;
+  const file = request.files;
 
   // verify file
   if (!file) {
@@ -73,7 +73,7 @@ router.post("/", auth.authorize(1, key), async (request, response, next) => {
   }
 
   // save file locally
-  const fileName = imageService.saveImageLocally(file);
+  const fileName = imageService.saveImageLocally(file.image);
 
   vacation.image = fileName;
 
@@ -96,9 +96,11 @@ router.post("/", auth.authorize(1, key), async (request, response, next) => {
 // update vacation (admin only)
 router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
   try {
+
     const vacationID = request.params.id;
     const vacation = request.body;
     const file = request.files;
+
 
     // verify file
     if (file) {

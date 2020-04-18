@@ -52,7 +52,7 @@ export class VacationService {
   static handleAddFollowUp = async (vacation) => {
     try {
 
-      // add in database
+      // add to database
       const addedVacation = await VacationService.addFollowUpAsync(vacation.vacationID);
 
       // add follow up ID to new followed vacation

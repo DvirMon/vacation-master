@@ -37,14 +37,14 @@ router.get("/:id", async (request, response, next) => {
 
 router.post("/", auth.authorize(0, key), async (request, response, next) => {
   try {
-    // get vacationID uuid from request
+    // get vacation ID from request
     const followup = request.body;
 
-    // get user uuid from token
-    const userID = request.user.sub;
+    // get username from token
+    const userName = request.user.sub;
  
     // get user id from db
-    const user = await usersLogic.isUserIdExist(userID);
+    const user = await usersLogic.isUserIdExist(userName);
     if (user.length > 0) {
       next("user is not exist in db");
       return;  

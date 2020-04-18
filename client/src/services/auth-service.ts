@@ -45,7 +45,6 @@ export class AuthServices {
 
 
 const handleError = (err) => {
-  console.log(err)
   err.response.status === 401 || err.response.status === 403
     ? console.log(err.response.data)
     : console.log(err)

@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// start function to protect password
+// function to protect password
 const hushPassword = async (password) => {
   const hushPassword = await bcrypt.hash(password, 10);
   return hushPassword;
@@ -59,8 +59,8 @@ const authorize = (role, key) => (request, response, next) => {
   try {
     // verify token 
     verified = jwt.verify(token, key);
-
     request.user = verified; 
+
     // verify admin
     if (role === 1 && request.user.role === 0) {
       return response.status(403).json("not admin");

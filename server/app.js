@@ -12,7 +12,7 @@ const server = express();
 const serverListener = server.listen(3000, () => console.log("Listening To http://localhost:3000"));
 const socketServer = io(serverListener);
  
-// import logic
+// import controller
 const followupController = require("./controllers/followup-controller");
 const usersController = require("./controllers/users-controller");
 const vacationsController = require("./controllers/vacation-controller");
