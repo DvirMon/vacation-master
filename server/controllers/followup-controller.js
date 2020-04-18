@@ -34,10 +34,9 @@ router.get("/:id", async (request, response, next) => {
 });
 
 // add new followup
-
 router.post("/", auth.authorize(0, key), async (request, response, next) => {
   try {
-    // get vacation ID from request
+    // get vacation id from request
     const followup = request.body;
 
     // get username from token

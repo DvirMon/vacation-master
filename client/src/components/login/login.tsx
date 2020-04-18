@@ -57,6 +57,7 @@ export class Login extends Component<any, LoginState> {
     try {
       // verify if user is already logged
       LoginServices.isUserLogged(this.props.history);
+      
     } catch (err) {
       console.log(err);
     }

@@ -29,6 +29,7 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
+ 
   constructor(props: any) {
     super(props);
 
@@ -45,6 +46,7 @@ export class Insert extends Component<any, InsertState> {
   );
 
   public componentDidMount = async () => {
+
       await AuthServices.handleAuth(
         () => ValidationService.verifyAdmin(this.props.history),
         this.props.history
@@ -70,7 +72,7 @@ export class Insert extends Component<any, InsertState> {
     } catch (err) {
       if (err.response.status === 500) {
         this.InsertForm.handleError(
-          "Pay attention! you cant use apostrophe mark"
+          "An error has occurred. it may have happened due to use with an apostrophe mark"
         );
       }
     }

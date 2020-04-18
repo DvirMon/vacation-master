@@ -19,6 +19,7 @@ import {
 
 // import services
 import { VacationService } from "../../../services/vacations-service";
+import { ValidationService } from "../../../services/validation-service";
 import { AuthServices } from "../../../services/auth-service";
 import { UpdateForm } from "./update-service";
 
@@ -26,7 +27,6 @@ import { UpdateForm } from "./update-service";
 import { store } from "../../../redux/store";
 
 import "./update.scss";
-import { ValidationService } from "../../../services/validation-service";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -57,7 +57,7 @@ export class Update extends Component<any, UpdateState> {
     await AuthServices.handleAuth(
       () => ValidationService.verifyAdmin(this.props.history),
       this.props.history
-    ); 
+    );
     try {
       const vacation = await this.UpdateForm.getVacation();
       this.setState({ vacation });
@@ -71,26 +71,26 @@ export class Update extends Component<any, UpdateState> {
     const { vacation, updated } = this.state;
 
     try {
-
       if (this.UpdateForm.verifyChange(updated)) {
         return;
-    }
+      }
 
-    // validate form
-    if (VacationService.validVacationForm(vacation)) {
-      return;
-    }
+      // validate form
+      if (VacationService.validVacationForm(vacation)) {
+        return;
+      }
 
-    // send update request
-    const response = await this.UpdateForm.handleIUpdateRequest(vacation);
-    // handle server response
-    this.UpdateForm.handleIUpdateSuccess(response);
-  }
-  catch(err) {
-    if(err.response.status === 500) {
-      this.UpdateForm.handleError("Pay attention! you cant use apostrophe mark")
+      // send update request
+      const response = await this.UpdateForm.handleIUpdateRequest(vacation);
+      // handle server response
+      this.UpdateForm.handleIUpdateSuccess(response);
+    } catch (err) {
+      if (err.response.status === 500) {
+        this.UpdateForm.handleError(
+          "An error has occurred. it may have happened due to use with an apostrophe mark"
+        );
+      }
     }
-  }
   };
 
   render() {
@@ -128,12 +128,6 @@ export class Update extends Component<any, UpdateState> {
       </React.Fragment>
     );
   }
-  public setPreview = () => {
-    const settings = { ...this.state.settings };
-    const preview = "alt";
-    settings.img = preview;
-    this.setState({ settings });
-  };
 
   public handleImage = (preview: string) => {
     const settings = { ...this.state.settings };

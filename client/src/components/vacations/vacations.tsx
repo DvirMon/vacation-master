@@ -65,7 +65,7 @@ export class Vacations extends Component<any, VacationsState> {
     try {
       // verify login
       if (store.getState().login.isLoggedIn === false) {
-        console.log("Please Login")
+        console.log("Please Login");
         this.props.history.push("/login");
         return;
       }
@@ -84,11 +84,13 @@ export class Vacations extends Component<any, VacationsState> {
 
       const { user, admin } = this.state;
 
+      // handle auth logic
       await AuthServices.handleAuth(
         () => LoginServices.verifyPath(admin, user, this.props.history),
         this.props.history
       );
 
+      // get vacations
       if (store.getState().vacation.unFollowUp.length === 0) {
         await this.handleRequest();
       } else {

@@ -53,10 +53,10 @@ export class VacationService {
     try {
 
       // add to database
-      const addedVacation = await VacationService.addFollowUpAsync(vacation.vacationID);
+      const addedFollowup = await VacationService.addFollowUpAsync(vacation.vacationID);
 
       // add follow up ID to new followed vacation
-      vacation.followUpID = addedVacation.id;
+      vacation.followUpID = addedFollowup.id;
 
       // add to store
       store.dispatch({ type: ActionType.addFollowUp, payload: vacation });
