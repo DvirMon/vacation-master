@@ -43,7 +43,7 @@ router.get("/followup", auth.authorize(0, key),async (request, response, next) =
 // add new user (register)
 router.post("/", async (request, response, next) => {
   try {
-
+    
     const user = request.body;
 
     // valid user format
@@ -54,19 +54,19 @@ router.post("/", async (request, response, next) => {
     }
  
     // valid userName in db
-    const dbUser = await usersLogic.isUserExist(user);
+    const dbUser = await usersLogic.getUserDetails(user);
     if (dbUser) {
       response.status(409).json("username is already taken");
       return;
     }
     // hush password
     user.password = await bcrypt.hash(user.password, 10);
-
+    
     // add new user to db
-    const addedUser = await usersLogic.addUser(user);
-
-    // return user without password
-    delete addedUser.password
+    await usersLogic.addUser(user);
+    
+    // return user from db
+    const addedUser = await usersLogic.getUserDetails(user);
 
     response.status(201).json(addedUser);
   } catch (err) {
@@ -90,7 +90,7 @@ router.post("/login", async (request, response, next) => {
     }
       
     // valid username against database
-    const dbUser = await usersLogic.isUserExist(user);
+    const dbUser = await usersLogic.getUserDetails(user);
     if (!dbUser) {
       response.status(409).json("username or password are incorrect");
       return;

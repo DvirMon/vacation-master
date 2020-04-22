@@ -1,9 +1,9 @@
 const dal = require("../dal/dal");
 
 // validate username (login/registration)
-const isUserExist = async (user) => {
+const getUserDetails = async (user) => {
   const sql = `SELECT uuid, isAdmin, firstName, lastName, userName FROM users 
-  WHERE BINARY userName = '${user.userName.trim()}' AND password = '${user.password.trim()}'`;
+  WHERE BINARY userName = '${user.userName.trim()}'`;
   const dbUser = await dal.executeAsync(sql);
   return dbUser[0];
 };
@@ -27,12 +27,11 @@ const addUser = async (user) => {
   const sql = `INSERT INTO users(uuid, firstName, lastName, userName, password)
   VALUES (UUID(), '${user.firstName}', '${user.lastName}','${user.userName}','${user.password}')`;
   await dal.executeAsync(sql);
-  return user;
 };
 
 module.exports = {
   addUser,
-  isUserExist,
+  getUserDetails,
   isUserIdExist,
   getUserPassword,
 };

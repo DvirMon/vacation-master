@@ -83,6 +83,7 @@ export class Vacations extends Component<any, VacationsState> {
       });
 
       const { user, admin } = this.state;
+      console.log(user)
 
 
       // handle auth logic
