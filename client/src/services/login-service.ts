@@ -25,7 +25,7 @@ export class LoginServices {
   static handleRouting = (user, history) => {
     user.isAdmin === 1 ?
       history.push(`/admin`)
-      : history.push(`/user/${user.userName}`);
+      : history.push(`/user/${user.uuid}`);
   };
   // end of function
 
@@ -40,8 +40,8 @@ export class LoginServices {
 
   // prevent user to navigate to other users route
   static verifyUserPath = (user, history) => {
-    const userName = history.location.pathname.substring(6)
-    if (userName === user.userName) {
+    const uuid = history.location.pathname.substring(6)
+    if (uuid === user.uuid) {
       return
     }
     history.push("/")

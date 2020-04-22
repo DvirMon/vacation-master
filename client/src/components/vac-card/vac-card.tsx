@@ -61,11 +61,11 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
 
     try {
       // update followup icon number only in user
+      if (this.props.vacationSettings.admin === false) {
       const vacation = await VacationService.getFollowersByVacationAsync(
         this.props.vacation.vacationID
-        );
-        this.setState({ followers: vacation.followers });
-              if (this.props.vacationSettings.admin === false) {
+      );
+      this.setState({ followers: vacation.followers });
       }
     } catch (err) {
       console.log(err);
@@ -90,11 +90,11 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             "mr-0": margin,
             "root-hover": settings.hover,
           })}
-        > 
-          {preview 
+        >
+          {preview
             ? this.cardMedia(preview)
             : this.cardMedia(
-                `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`,
+                `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`
               )}
           <CardHeader
             action={
@@ -145,8 +145,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
   }
 
   public cardMedia = (imgURL: string) => {
- 
-    const vacation = {...this.props.vacation}
+    const vacation = { ...this.props.vacation };
 
     return (
       <CardMedia

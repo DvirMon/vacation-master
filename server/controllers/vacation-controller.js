@@ -25,10 +25,9 @@ router.get("/", async (request, response, next) => {
 //get users vacation
 router.get("/user", auth.authorize(0, key), async (request, response, next) => {
   try {
-    const userName = request.user.sub;
-
+    const uuid = request.user.sub;
     // get user id from db
-    const user = await usersLogic.isUserIdExist(userName);
+    const user = await usersLogic.isUserIdExist(uuid);
     if (user.length > 0) {
       next("user is not exist in db");
       return;

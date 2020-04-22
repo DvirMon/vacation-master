@@ -1,13 +1,13 @@
 const Joi = require("@hapi/joi");
 
 class UserModel {
-  constructor(id, userID, firstName, lastName, username, password, isAdmin) {
+  constructor(id, uuid, firstName, lastName, username, password, isAdmin) {
     this.id = id;
-    this.userID = userID;
+    this.uuid = uuid;
     this.firstName = firstName;
     this.lastName = lastName;
     this.username = username;
-    this.password = isAdmin;
+    this.password = password;
     this.isAdmin = isAdmin;
   }
 

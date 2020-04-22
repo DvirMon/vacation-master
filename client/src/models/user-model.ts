@@ -94,6 +94,7 @@ export class UserModel extends RegisterModel {
 
   public constructor(
     public isAdmin?: number,
+    public uuid? : string,
     firstName?: string,
     lastName?: string,
     userName?: string,

@@ -92,7 +92,7 @@ export class Login extends Component<any, LoginState> {
   };
 
   public handleErrorResponse = (err) => {
-    if (err.response.status === 409) {
+    if (err.response?.status === 409) {
       const serverError = err.response.data;
       this.setState({ serverError, error: true });
     } else {

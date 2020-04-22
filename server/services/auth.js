@@ -12,7 +12,7 @@ const hushPassword = async (password) => {
 const setToken = (user) => {
   return new Promise((resolve, reject) => {
     jwt.sign(
-      { sub: user.userName, role: user.isAdmin },
+      { sub: user.uuid, role: user.isAdmin },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "20m" },
       (err, result) => {
@@ -30,7 +30,7 @@ const setToken = (user) => {
 const setRefreshToken = (user) => {
   return new Promise((resolve, reject) => {
     jwt.sign(
-      { sub: user.userName, role: user.isAdmin },
+      { sub: user.uuid, role: user.isAdmin },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "3d" },
       (err, result) => {
@@ -41,12 +41,12 @@ const setRefreshToken = (user) => {
       }
     );
   });
-};
-// end of function
-
+};  
+// end of function   
+   
 // function to handle authorization
 const authorize = (role, key) => (request, response, next) => {
-
+ 
   // verify if token exist
   const token = request.headers["authorization"];
 

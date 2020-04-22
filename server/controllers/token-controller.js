@@ -13,7 +13,7 @@ const key = process.env.REFRESH_TOKEN_SECRET;
 
 // set refreshToken and first accessToken when login
 router.post("/", async (request, response, next) => {
-  const user = request.body;
+  const user = request.body; 
 
   try {
     // create accessToken for user
@@ -56,7 +56,7 @@ router.post("/new", auth.authorize(0, key), async (request, response, next) => {
 
     // generate new accessToken
     const accessToken = await auth.setToken({
-      userName: verify.sub,
+      uuid: verify.sub,
       isAdmin: verify.role,
     });
 

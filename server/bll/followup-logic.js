@@ -7,7 +7,7 @@ const addFollowUp = async followup => {
   followup.id = info.insertId;
   return followup;
 };
-
+ 
 const deleteFollowUp = async id => {
   const sql = `DELETE FROM followers WHERE id = ${id}`;
   await dal.executeAsync(sql);

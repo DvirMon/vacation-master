@@ -66,7 +66,7 @@ router.post("/", async (request, response, next) => {
     const addedUser = await usersLogic.addUser(user);
 
     // return user without password
-    const newUser = await usersLogic.isUserExist(addedUser.userName)
+    const newUser = await usersLogic.isUserExist(addedUser.uuid)
 
     response.status(201).json(newUser);
   } catch (err) {
@@ -96,8 +96,8 @@ router.post("/login", async (request, response, next) => {
       return;
     }
 
-    // validate  password from database
-    const password = await usersLogic.getUserPassword(dbUser.userName)
+    // validate password from database
+    const password = await usersLogic.getUserPassword(dbUser.uuid)
     const validPassword = await bcrypt.compare(user.password, password.password);
     
     if (!validPassword) {
@@ -113,4 +113,5 @@ router.post("/login", async (request, response, next) => {
 });
 
 
-module.exports = router;
+module.exports = router; 
+ 
