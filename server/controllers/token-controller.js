@@ -25,6 +25,7 @@ router.post("/", async (request, response, next) => {
     // save refreshToken in db
     const dbToken = await tokenLogic.addToken({ refreshToken });
 
+    
     response.status(201).json({ dbToken, accessToken });
   } catch (err) {
     next(err);

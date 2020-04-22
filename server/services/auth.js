@@ -7,7 +7,7 @@ const hushPassword = async (password) => {
   return hushPassword;
 };
 // end of function
-
+ 
 // function to create an access token
 const setToken = (user) => {
   return new Promise((resolve, reject) => {
@@ -20,7 +20,7 @@ const setToken = (user) => {
           reject(err);
         }
         resolve(result);
-      }
+      } 
       );
     });
 };
@@ -55,12 +55,12 @@ const authorize = (role, key) => (request, response, next) => {
       .status(401)
       .json("You are not login");
   } 
-
+ 
   try {
     // verify token 
     verified = jwt.verify(token, key);
     request.user = verified; 
-
+  
     // verify admin
     if (role === 1 && request.user.role === 0) {
       return response.status(403).json("not admin");
@@ -68,7 +68,7 @@ const authorize = (role, key) => (request, response, next) => {
 
     next();
   } catch (err) {
-    response.status(401).json("Token has expired");
+    response.status(401).json("token has expired");
   }
 };
 // end of function

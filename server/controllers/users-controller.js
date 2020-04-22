@@ -54,7 +54,7 @@ router.post("/", async (request, response, next) => {
     }
  
     // valid userName in db
-    const dbUser = await usersLogic.isUserExist(user.userName);
+    const dbUser = await usersLogic.isUserExist(user);
     if (dbUser) {
       response.status(409).json("username is already taken");
       return;
@@ -66,9 +66,9 @@ router.post("/", async (request, response, next) => {
     const addedUser = await usersLogic.addUser(user);
 
     // return user without password
-    const newUser = await usersLogic.isUserExist(addedUser.uuid)
+    delete addedUser.password
 
-    response.status(201).json(newUser);
+    response.status(201).json(addedUser);
   } catch (err) {
     next(err);
   }
@@ -89,14 +89,14 @@ router.post("/login", async (request, response, next) => {
       return;
     }
       
-    // get username and from database
-    const dbUser = await usersLogic.isUserExist(user.userName);
+    // valid username against database
+    const dbUser = await usersLogic.isUserExist(user);
     if (!dbUser) {
       response.status(409).json("username or password are incorrect");
       return;
     }
 
-    // validate password from database
+    // validate password against database
     const password = await usersLogic.getUserPassword(dbUser.uuid)
     const validPassword = await bcrypt.compare(user.password, password.password);
     

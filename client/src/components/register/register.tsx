@@ -68,7 +68,7 @@ export class Register extends Component<any, RegisterState> {
   public handleRequest = async (user) => {
     // send register request
     const url = `http://localhost:3000/api/user`;
-    const response = await ServerServices.postRequestAsync(url, user, true);
+    const response = await ServerServices.postRequestAsync(url, user);
 
     // handle server response
     LoginServices.handleSuccessResponse(response, this.props.history);

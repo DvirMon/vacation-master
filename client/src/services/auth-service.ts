@@ -11,7 +11,7 @@ export class AuthServices {
     try {
       const user = store.getState().login.user
       const url = `http://localhost:3000/api/tokens`;
-      const response = await ServerServices.postRequestAsync(url, user, true);
+      const response = await ServerServices.postRequestAsync(url, user);
       store.dispatch({ type: ActionType.addToken, payload: response })
     } catch (err) {
       handleError(err)
@@ -21,9 +21,9 @@ export class AuthServices {
 
   // function for new accessToken
   static getAccessToken = async () => {
-    const tokens = JSON.parse(sessionStorage.getItem("jwt"))
+    const tokens = store.getState().auth.tokens
     const url = `http://localhost:3000/api/tokens/new`;
-    const response = await ServerServices.postRequestAsync(url, tokens, false)
+    const response = await ServerServices.postRequestAsync(url, tokens.dbToken)
     store.dispatch({ type: ActionType.addToken, payload: response })
   };
 
@@ -45,7 +45,7 @@ export class AuthServices {
 
 
 const handleError = (err) => {
-  err.response.status === 401 || err.response.status === 403
+  err.response?.status === 401 || err.response?.status === 403
     ? console.log(err.response.data)
     : console.log(err)
 

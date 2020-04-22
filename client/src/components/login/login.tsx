@@ -82,8 +82,7 @@ export class Login extends Component<any, LoginState> {
 
     try {
       const url = `http://localhost:3000/api/user/login`;
-      const response = await ServerServices.postRequestAsync(url, user, true);
-
+      const response = await ServerServices.postRequestAsync(url, user);
       // handle success
       LoginServices.handleSuccessResponse(response, this.props.history);
     } catch (err) {

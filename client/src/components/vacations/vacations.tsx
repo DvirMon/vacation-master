@@ -84,6 +84,7 @@ export class Vacations extends Component<any, VacationsState> {
 
       const { user, admin } = this.state;
 
+
       // handle auth logic
       await AuthServices.handleAuth(
         () => LoginServices.verifyPath(admin, user, this.props.history),

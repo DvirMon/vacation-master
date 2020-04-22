@@ -1,11 +1,13 @@
 import { TokensModel } from "../../models/tokens.model";
+import { LoginAppState } from "./login-state";
 
-export class AuthAppState  {
+export class AuthAppState extends LoginAppState {
   public tokens: TokensModel = new TokensModel();
   public socket: any
- 
+
   constructor() {
-    if (this.tokens.dbToken) {
+    super()
+    if (this.isLoggedIn) {
       this.tokens.dbToken = JSON.parse(sessionStorage.getItem("jwt"))
     }
   }
