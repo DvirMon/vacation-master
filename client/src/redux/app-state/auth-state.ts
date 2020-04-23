@@ -7,7 +7,7 @@ export class AuthAppState extends LoginAppState {
 
   constructor() {
     super()
-    if (this.isLoggedIn) {
+    if (this.isLoggedIn) { 
       this.tokens.dbToken = JSON.parse(sessionStorage.getItem("jwt"))
     }
   }

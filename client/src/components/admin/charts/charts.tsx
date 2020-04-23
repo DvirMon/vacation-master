@@ -57,7 +57,9 @@ export class Charts extends Component<any, ChartsState> {
   };
 
   public componentWillUnmount(): void {
-    this.unsubscribeStore();
+    if( this.unsubscribeStore) {
+      this.unsubscribeStore();
+    }
   }
 
   public handleSuccess = (dataPoints) => {

@@ -9,8 +9,8 @@ export class ServerServices {
     axios.interceptors.request.use(config => {
       if (store.getState().login.isLoggedIn) {
         config.url === "http://localhost:3000/api/tokens/new"
-          ? config.headers.Authorization = setAuthHeader(false)
-          : config.headers.Authorization = setAuthHeader(true)
+        ? config.headers.Authorization = setAuthHeader(false)
+        : config.headers.Authorization = setAuthHeader(true)
       }
       return config;
     }, error => {
@@ -55,7 +55,7 @@ export class ServerServices {
 const setAuthHeader = (bool: boolean) => {
   const tokens = store.getState().auth.tokens
   if (tokens) {
-    return bool ? tokens.accessToken : tokens.dbToken.refreshToken
+    return bool ? tokens.accessToken : tokens.dbToken?.refreshToken
   }
 }
 

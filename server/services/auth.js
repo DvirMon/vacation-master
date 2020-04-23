@@ -21,9 +21,9 @@ const setToken = (user) => {
         }
         resolve(result);
       }
-    );
-  });
-};
+      );
+    });
+  };
 // end of function
 
 // function to create a refresh token
@@ -55,8 +55,8 @@ const authorize = (role, key) => (request, response, next) => {
 
   try {
     // verify token
-    verified = jwt.verify(token, key);
-    request.user = verified;
+    const payload = jwt.verify(token, key);
+    request.user = payload;
 
     // verify admin
     if (role === 1 && request.user.role === 0) {

@@ -1,6 +1,8 @@
-// connect to env file
-require("dotenv").config();
+// connect to env file and config
 
+require("dotenv").config();
+global.config = require("./config");
+ 
 // import modules
 const express = require("express");
 const cors = require("cors");

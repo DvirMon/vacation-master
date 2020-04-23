@@ -7,12 +7,12 @@ import { store } from "../redux/store";
 export class AuthServices {
 
   // function for getting first accessToken and refreshToken
-  static getTokens = async () => {
+  static getRefreshToken =   async () => {
     try {
       const user = store.getState().login.user
       const url = `http://localhost:3000/api/tokens`;
       const response = await ServerServices.postRequestAsync(url, user);
-      store.dispatch({ type: ActionType.addToken, payload: response })
+      store.dispatch({ type: ActionType.addRefreshToken, payload: response })
     } catch (err) {
       handleError(err)
     }
@@ -24,7 +24,7 @@ export class AuthServices {
     const tokens = store.getState().auth.tokens
     const url = `http://localhost:3000/api/tokens/new`;
     const response = await ServerServices.postRequestAsync(url, tokens.dbToken)
-    store.dispatch({ type: ActionType.addToken, payload: response })
+    store.dispatch({ type: ActionType.addAccessToken, payload: response })
   };
 
   // verify admin role, invoke socket connection, set tokens
@@ -45,8 +45,8 @@ export class AuthServices {
 
 const handleError = (err) => {
   err.response?.status === 401 || err.response?.status === 403
-    ? console.log(err.response.data)
-    : console.log(err)
+  ? console.log(err.response.data)
+  : console.log(err)
 }
 
 

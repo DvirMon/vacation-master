@@ -6,7 +6,7 @@ const connection = mysql.createConnection({
   password: "",
   database: "vacations"
 })
-
+ 
 connection.connect(err => {
   if(err) {
     console.log(err.message)

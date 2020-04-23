@@ -43,31 +43,32 @@ router.get(
 // add new user (register)
 router.post("/", async (request, response, next) => {
   try {
-    const user = request.body;
 
     // valid user format
-    const error = UserModel.validateRegistration(user);
+    const error = UserModel.validateRegistration(request.body);
     if (error) {
       next({ status: 400, error: error });
       return;
     }
-
+    
     // valid userName in db
-    const dbUser = await usersLogic.getUserDetails(user);
+    const dbUser = await usersLogic.getUserDetails(request.body);
     if (dbUser) {
       next({ status: 409 });
       return;
     }
+    console.log(request.body)
     // hush password
-    user.password = await bcrypt.hash(user.password, 10);
-
+    request.body.password = await bcrypt.hash(request.body.password, 10);
+ 
     // add new user to db
-    await usersLogic.addUser(user);
+    await usersLogic.addUser(request.body);
 
     // return user from db
-    const addedUser = await usersLogic.getUserDetails(user);
+    const user = await usersLogic.getUserDetails(request.body);
+    const jwt = await auth.setToken(user);
 
-    response.status(201).json(addedUser);
+    response.status(201).json({user, jwt});
   } catch (err) {
     next(err);
   }
@@ -78,26 +79,25 @@ router.post("/", async (request, response, next) => {
 // user login
 router.post("/login", async (request, response, next) => {
   try {
-    const user = request.body;
 
     // valid user schema
-    const error = UserModel.validateLogin(user);
+    const error = UserModel.validateLogin(request.body);
     if (error) {
       next({ status: 400, error: error });
       return;
     }
 
     // valid username against database
-    const dbUser = await usersLogic.getUserDetails(user);
-    if (!dbUser) {
+    const user = await usersLogic.getUserDetails(request.body);
+    if (!user) {
       next({ status: 409 });
       return;
     }
 
     // validate password against database
-    const password = await usersLogic.getUserPassword(dbUser.uuid);
+    const password = await usersLogic.getUserPassword(user.uuid);
     const validPassword = await bcrypt.compare(
-      user.password,
+      request.body.password,
       password.password
     );
 
@@ -106,9 +106,12 @@ router.post("/login", async (request, response, next) => {
       return;
     }
 
+    const jwt = await auth.setToken(user);
+ 
     // return user info
-    response.json(dbUser);
-  } catch (err) {
+    response.json({ user, jwt });
+
+  } catch (err) { 
     next(err);
   }
 });

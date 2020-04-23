@@ -1,0 +1,13 @@
+{
+  "mysql": {
+      "host": "localhost",
+      "user": "root",
+      "password": "",
+      "database": "vacations"
+  },
+  "jwt": {
+      "secretKey": "MakeThingsGoRight",
+      "accessTokenSecret" : "41f56c92d09822490caf8ddab4b6ded9ceb10e04200d8cdad899a56647b6782fdf303e706b9dad3dffcc59414a42958be9854c4ef6a825d08c009cf63c9bbf04",
+      "refreshTokenSecret" : "fbc3533b0daf92045a319e5d53053f153bbd44ec4aaa62fb3a627c9b443d73a2e3460401558e8ca7a3ad32c07f98ebcc412cd242849aed10e05d21bed76e411d"
+  }
+}

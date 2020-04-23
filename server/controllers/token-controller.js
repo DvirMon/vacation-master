@@ -9,30 +9,28 @@ const tokenLogic = require("../bll/tokens-logic");
 const jwt = require("jsonwebtoken");
 const auth = require("../services/auth");
 
-const key = process.env.REFRESH_TOKEN_SECRET;
+const act = process.env.ACCESS_TOKEN_SECRET;
+const ref = process.env.REFRESH_TOKEN_SECRET;
 
-// set refreshToken and first accessToken when login
-router.post("/", async (request, response, next) => {
-  const user = request.body;
-
+// set refreshToken when login
+router.post("/", auth.authorize(0, act), async (request, response, next) => {
+  const payload = request.user;
   try {
-    // create accessToken for user
-    const accessToken = await auth.setToken(user);
-
     // create refreshToken for user
-    const refreshToken = await auth.setRefreshToken(user);
-
+    const refreshToken = await auth.setRefreshToken({
+      uuid: payload.sub,
+      isAdmin: payload.role,
+    });
     // save refreshToken in db
     const dbToken = await tokenLogic.addToken({ refreshToken });
-
-    response.status(201).json({ dbToken, accessToken });
+    response.status(201).json(dbToken);
   } catch (err) {
     next(err);
   }
 });
 
 // get new token
-router.post("/new", auth.authorize(0, key), async (request, response, next) => {
+router.post("/new", auth.authorize(0, ref), async (request, response, next) => {
   try {
     // get refreshToken from client
     const dbToken = request.body;
@@ -45,22 +43,22 @@ router.post("/new", auth.authorize(0, key), async (request, response, next) => {
     }
 
     // verify token
-    const verify = jwt.verify(
+    const payload = jwt.verify(
       dbToken.refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
-    if (!verify) {
-      next({ status : 403})
+
+    if (!payload) {
+      next({ status: 403 });
       return;
     }
-
     // generate new accessToken
     const accessToken = await auth.setToken({
-      uuid: verify.sub,
-      isAdmin: verify.role,
+      uuid: payload.sub,
+      isAdmin: payload.role,
     });
 
-    response.status(201).json({ dbToken, accessToken });
+    response.status(201).json(accessToken);
   } catch (err) {
     next(err);
   }

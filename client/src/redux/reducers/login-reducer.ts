@@ -12,6 +12,7 @@ export const loginReducer = (oldAppState = new LoginAppState(), action: Action):
       newAppState.isLoggedIn = true;
       newAppState.user = action.payload
       sessionStorage.setItem("user", JSON.stringify(action.payload));
+      (action.payload.isAdmin === 0) ? newAppState.admin = false : newAppState.admin = true 
       break
       case ActionType.isAdmin: 
       (action.payload === 0) ? newAppState.admin = false : newAppState.admin = true 

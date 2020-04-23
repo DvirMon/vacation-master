@@ -5,8 +5,7 @@ const followUpLogic = require("../bll/followup-logic");
 const usersLogic = require("../bll/users-logic");
 const auth = require("../services/auth");
 
-const key = process.env.ACCESS_TOKEN_SECRET
-
+const key = process.env.ACCESS_TOKEN_SECRET;
 
 // get all followup vacation and users for chart dataPoints
 router.get("/", auth.authorize(1, key), async (request, response, next) => {
@@ -23,13 +22,13 @@ router.get("/:id", async (request, response, next) => {
   try {
     const vacationID = request.params.id;
     const followers = await followUpLogic.getFollowUpByVacation(vacationID);
+
     if (!followers) {
-      next({ status: 404 });
-      return;    
+      return response.json(null);
     }
     response.json(followers);
   } catch (err) {
-    next(err); 
+    next(err);
   }
 });
 
@@ -41,13 +40,13 @@ router.post("/", auth.authorize(0, key), async (request, response, next) => {
 
     // get username from token
     const userName = request.user.sub;
- 
+
     // get user id from db
     const user = await usersLogic.isUserIdExist(userName);
     if (user.length > 0) {
       response.status(404).json("user is not exist in db");
-      return;  
-    }  
+      return;
+    }
 
     followup.userID = user.id;
 
@@ -60,14 +59,18 @@ router.post("/", auth.authorize(0, key), async (request, response, next) => {
 });
 
 // delete followup
-router.delete("/:id", auth.authorize(0, key), async (request, response, next) => {
-  try {
-    const id = request.params.id;
-    await followUpLogic.deleteFollowUp(id);
-    response.sendStatus(204);
-  } catch (err) {
-    next(err);
+router.delete(
+  "/:id",
+  auth.authorize(0, key),
+  async (request, response, next) => {
+    try {
+      const id = request.params.id;
+      await followUpLogic.deleteFollowUp(id);
+      response.sendStatus(204);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 module.exports = router;

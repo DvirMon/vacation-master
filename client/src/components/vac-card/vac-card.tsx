@@ -62,13 +62,15 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     try {
       // update followup icon number only in user
       if (this.props.vacationSettings.admin === false) {
-      const vacation = await VacationService.getFollowersByVacationAsync(
-        this.props.vacation.vacationID
-      );
-      this.setState({ followers: vacation.followers });
+        const response = await VacationService.getFollowersByVacationAsync(
+          this.props.vacation.vacationID
+        ); 
+        if (response.followers) {
+          this.setState({ followers: response.followers });
+        }
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
     }
   };
 

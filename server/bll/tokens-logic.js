@@ -6,12 +6,11 @@ const getDatabaseToken = async id => {
   return refreshToken[0];
 };
 
-const addToken = async token => {
-  const sql = `INSERT INTO tokens(refreshToken)
-               VALUES('${token.refreshToken}')`;
+const addToken = async tokens => {
+  const sql = `INSERT INTO tokens(refreshToken) VALUES('${tokens.refreshToken}')`;
   const info = await dal.executeAsync(sql);
-  token.id = info.insertId 
-  return token;
+  tokens.id = info.insertId 
+  return tokens;
 };
 
 const deleteToken = async id => {

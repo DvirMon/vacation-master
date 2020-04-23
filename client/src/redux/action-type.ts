@@ -6,7 +6,8 @@ export enum ActionType {
   isAdmin,  
 
   // auth ActionType
-  addToken,
+  addAccessToken,
+  addRefreshToken,
   updateSocket,
  
   // style ActionType

@@ -1,6 +1,7 @@
 import { store } from "../redux/store";
 import { AuthServices } from "./auth-service";
 import { ActionType } from "../redux/action-type";
+import { ServerServices } from "./server-service";
 
 export class LoginServices {
 
@@ -8,17 +9,24 @@ export class LoginServices {
   static isUserLogged = (history) => {
     if (store.getState().login.isLoggedIn) {
       LoginServices.handleRouting(store.getState().login.user, history);
-    } 
+    }
   }
   // end of function
 
   // function to handle login
-  static handleSuccessResponse = async (user, history) => {
-    store.dispatch({ type: ActionType.Login, payload: user });
-    store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
-    await AuthServices.getTokens()
-    LoginServices.handleRouting(user, history);
-  };
+  static handleSuccessResponse = async (response, history) => {
+    try {
+      const user = response.user
+      const accessToken = response.jwt
+      store.dispatch({ type: ActionType.Login, payload: user });
+      store.dispatch({ type: ActionType.addAccessToken, payload: accessToken });
+      // store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
+      await AuthServices.getRefreshToken() 
+      LoginServices.handleRouting(user, history);
+    } catch (err) {
+      console.log(err)
+    } 
+  }; 
   // end of function
 
   // function to handle rout according to role
@@ -58,6 +66,19 @@ export class LoginServices {
   }
   // end of function
 
+  static handleLogOut = async () => {
 
+    const tokens = store.getState().auth.tokens;
+
+    // clear refreshToken from db
+    const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;
+    await ServerServices.deleteRequestAsync(url);
+
+    // handle logic in store
+    store.dispatch({ type: ActionType.Logout });
+
+    // disconnect from sockets
+    store.getState().auth.socket.disconnect();
+  }
 
 }
