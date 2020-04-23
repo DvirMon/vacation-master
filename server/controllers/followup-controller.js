@@ -24,7 +24,7 @@ router.get("/:id", async (request, response, next) => {
     const vacationID = request.params.id;
     const followers = await followUpLogic.getFollowUpByVacation(vacationID);
     if (!followers) {
-      response.json(0);
+      next({ status: 404 });
       return;    
     }
     response.json(followers);
@@ -45,7 +45,7 @@ router.post("/", auth.authorize(0, key), async (request, response, next) => {
     // get user id from db
     const user = await usersLogic.isUserIdExist(userName);
     if (user.length > 0) {
-      next("user is not exist in db");
+      response.status(404).json("user is not exist in db");
       return;  
     }  
 

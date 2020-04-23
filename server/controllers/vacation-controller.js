@@ -9,7 +9,7 @@ const imageService = require("../services/image");
 
 const VacationModel = require("../models/vacation-model");
 
-const key = process.env.ACCESS_TOKEN_SECRET
+const key = process.env.ACCESS_TOKEN_SECRET;
 
 // get all vacations
 router.get("/", async (request, response, next) => {
@@ -39,7 +39,7 @@ router.get("/user", auth.authorize(0, key), async (request, response, next) => {
     next(err);
   }
 });
-// end of function 
+// end of function
 
 // get  vacations
 router.get("/:id", async (request, response, next) => {
@@ -49,7 +49,7 @@ router.get("/:id", async (request, response, next) => {
     const vacation = await vacationsLogic.getVacation(vacationID);
 
     if (!vacation) {
-      response.sendStatus(404);
+      next({ status: 404 });
     }
 
     response.json(vacation);
@@ -61,7 +61,6 @@ router.get("/:id", async (request, response, next) => {
 
 // add vacation (admin)
 router.post("/", auth.authorize(1, key), async (request, response, next) => {
-  
   const vacation = request.body;
   const file = request.files;
 
@@ -79,7 +78,7 @@ router.post("/", auth.authorize(1, key), async (request, response, next) => {
   // verify vacation schema
   const error = VacationModel.validation(vacation);
   if (error) {
-    response.status(400).json(error);
+    next({ status: 400, error: error });
     return;
   }
 
@@ -91,25 +90,21 @@ router.post("/", auth.authorize(1, key), async (request, response, next) => {
     next(err);
   }
 });
- 
+
 // update vacation (admin only)
 router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
   try {
-
     const vacationID = request.params.id;
     const vacation = request.body;
     const file = request.files;
-
 
     // verify file
     if (file) {
       const fileName = imageService.saveImageLocally(file.image);
       vacation.image = fileName;
     } else if (vacation.image === undefined) {
-      response
-        .status(400)
-        .json("No image was sent!");
-    } 
+      response.status(400).json("No image was sent!");
+    }
 
     //verify schema
     const error = VacationModel.validation(vacation);
@@ -125,9 +120,7 @@ router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
 
     // verify update
     if (updatedVacation === null) {
-      response
-        .status(404)
-        .json( "Item is not in database");
+      response.status(404).json("Item is not in database");
       return;
     }
 
@@ -141,20 +134,23 @@ router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
 });
 
 // delete vacation (only admin)
-router.delete("/:id/:fileName", auth.authorize(1, key), async (request, response) => {
-  try {
-    
-    const id = request.params.id;
-    const fileName = request.params.fileName
-    
-    await vacationsLogic.deleteVacation(id);
-    imageService.deleteImageLocally(fileName)
-    
-    response.sendStatus(204);
-  } catch (err) {
-    response.status(500).json(err.message);
+router.delete(
+  "/:id/:fileName",
+  auth.authorize(1, key),
+  async (request, response) => {
+    try {
+      const id = request.params.id;
+      const fileName = request.params.fileName;
+
+      await vacationsLogic.deleteVacation(id);
+      imageService.deleteImageLocally(fileName);
+
+      response.sendStatus(204);
+    } catch (err) {
+      response.status(500).json(err.message);
+    }
   }
-});
+);
 
 router.get("/update/image/:imgName", async (request, response, next) => {
   try {
@@ -169,7 +165,7 @@ router.get("/update/image/:imgName", async (request, response, next) => {
 // route for  getting images from the server
 router.get("/uploads/:imgName", async (request, response, next) => {
   try {
-    const path = process.cwd()
+    const path = process.cwd();
     response.sendFile(path + "\\uploads\\" + request.params.imgName);
   } catch (err) {
     next(err);

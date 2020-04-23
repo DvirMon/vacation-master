@@ -13,7 +13,7 @@ const key = process.env.REFRESH_TOKEN_SECRET;
 
 // set refreshToken and first accessToken when login
 router.post("/", async (request, response, next) => {
-  const user = request.body; 
+  const user = request.body;
 
   try {
     // create accessToken for user
@@ -25,7 +25,6 @@ router.post("/", async (request, response, next) => {
     // save refreshToken in db
     const dbToken = await tokenLogic.addToken({ refreshToken });
 
-    
     response.status(201).json({ dbToken, accessToken });
   } catch (err) {
     next(err);
@@ -41,7 +40,7 @@ router.post("/new", auth.authorize(0, key), async (request, response, next) => {
     // validate refreshToken in db
     const refreshToken = await tokenLogic.getDatabaseToken(dbToken.id);
     if (!refreshToken) {
-      response.status(404).json("token is invalid");
+      response.status(401).json("token is invalid");
       return;
     }
 
@@ -51,7 +50,7 @@ router.post("/new", auth.authorize(0, key), async (request, response, next) => {
       process.env.REFRESH_TOKEN_SECRET
     );
     if (!verify) {
-      response.sendStatus(403);
+      next({ status : 403})
       return;
     }
 

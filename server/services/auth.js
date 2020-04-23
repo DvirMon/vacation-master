@@ -7,7 +7,7 @@ const hushPassword = async (password) => {
   return hushPassword;
 };
 // end of function
- 
+
 // function to create an access token
 const setToken = (user) => {
   return new Promise((resolve, reject) => {
@@ -20,9 +20,9 @@ const setToken = (user) => {
           reject(err);
         }
         resolve(result);
-      } 
-      );
-    });
+      }
+    );
+  });
 };
 // end of function
 
@@ -41,29 +41,27 @@ const setRefreshToken = (user) => {
       }
     );
   });
-};  
-// end of function   
-   
+};
+// end of function
+
 // function to handle authorization
 const authorize = (role, key) => (request, response, next) => {
- 
   // verify if token exist
   const token = request.headers["authorization"];
 
   if (!token) {
-    return response
-      .status(401)
-      .json("You are not login");
-  } 
- 
+    return response.status(401).json("You are not login");
+  }
+
   try {
-    // verify token 
+    // verify token
     verified = jwt.verify(token, key);
-    request.user = verified; 
-  
+    request.user = verified;
+
     // verify admin
     if (role === 1 && request.user.role === 0) {
-      return response.status(403).json("not admin");
+      next({ status: 403 });
+      return;
     }
 
     next();

@@ -40,7 +40,6 @@ export class AuthServices {
     }
   }
   // end of function
-
 }
 
 
@@ -48,7 +47,6 @@ const handleError = (err) => {
   err.response?.status === 401 || err.response?.status === 403
     ? console.log(err.response.data)
     : console.log(err)
-
 }
 
 

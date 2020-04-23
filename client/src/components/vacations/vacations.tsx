@@ -65,8 +65,7 @@ export class Vacations extends Component<any, VacationsState> {
     try {
       // verify login
       if (store.getState().login.isLoggedIn === false) {
-        console.log("Please Login");
-        this.props.history.push("/login");
+        this.handleError("Please Login")
         return;
       }
 
@@ -83,8 +82,6 @@ export class Vacations extends Component<any, VacationsState> {
       });
 
       const { user, admin } = this.state;
-      console.log(user)
-
 
       // handle auth logic
       await AuthServices.handleAuth(
@@ -119,17 +116,9 @@ export class Vacations extends Component<any, VacationsState> {
   public handleRequest = async () => {
     // send request
     const response = await VacationService.getUserVacationAsync();
-    this.handleServerSuccess(response);
+    store.dispatch({type : ActionType.getAllVacation, payload : response });
   };
-
-  public handleServerSuccess = (response) => {
-    const action = {
-      type: ActionType.getAllVacation,
-      payload: response,
-    };
-    store.dispatch(action);
-  };
-
+  
   public handleError = (err) => {
     console.log(err);
     this.props.history.push("/logout");
