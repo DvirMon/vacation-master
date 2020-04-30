@@ -9,7 +9,7 @@ const imageService = require("../services/image");
 
 const VacationModel = require("../models/vacation-model");
 
-const key = process.env.ACCESS_TOKEN_SECRET;
+const key = config.jwt.actKey;
 
 // get all vacations
 router.get("/", async (request, response, next) => {

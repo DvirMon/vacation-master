@@ -11,7 +11,7 @@ const UserModel = require("../models/user-model");
 const bcrypt = require("bcryptjs");
 const auth = require("../services/auth");
 
-const key = process.env.ACCESS_TOKEN_SECRET;
+const key = config.jwt.actKey;
 
 // get user followup vacations
 router.get(
@@ -57,7 +57,6 @@ router.post("/", async (request, response, next) => {
       next({ status: 409 });
       return;
     }
-    console.log(request.body)
     // hush password
     request.body.password = await bcrypt.hash(request.body.password, 10);
  

@@ -17,7 +17,7 @@ const errorHandler = (err, req, response, next) => {
     response.status(409).json("username is already taken");
   }
 
-  // default to 500 server error
+  // default to 500 server error 
   return response.status(500).json(err.message);
 };
 // end of function

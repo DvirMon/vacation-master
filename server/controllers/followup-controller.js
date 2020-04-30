@@ -5,7 +5,7 @@ const followUpLogic = require("../bll/followup-logic");
 const usersLogic = require("../bll/users-logic");
 const auth = require("../services/auth");
 
-const key = process.env.ACCESS_TOKEN_SECRET;
+const key = config.jwt.actKey;
 
 // get all followup vacation and users for chart dataPoints
 router.get("/", auth.authorize(1, key), async (request, response, next) => {

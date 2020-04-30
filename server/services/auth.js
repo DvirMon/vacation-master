@@ -49,6 +49,7 @@ const authorize = (role, key) => (request, response, next) => {
   // verify if token exist
   const token = request.headers["authorization"];
 
+
   if (!token) {
     return response.status(401).json("You are not login");
   }

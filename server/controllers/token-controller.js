@@ -9,11 +9,11 @@ const tokenLogic = require("../bll/tokens-logic");
 const jwt = require("jsonwebtoken");
 const auth = require("../services/auth");
 
-const act = process.env.ACCESS_TOKEN_SECRET;
-const ref = process.env.REFRESH_TOKEN_SECRET;
+const actKey = config.jwt.actKey;
+const refKey = config.jwt.refKey;
 
 // set refreshToken when login
-router.post("/", auth.authorize(0, act), async (request, response, next) => {
+router.post("/", auth.authorize(0, actKey), async (request, response, next) => {
   const payload = request.user;
   try {
     // create refreshToken for user
@@ -30,7 +30,7 @@ router.post("/", auth.authorize(0, act), async (request, response, next) => {
 });
 
 // get new token
-router.post("/new", auth.authorize(0, ref), async (request, response, next) => {
+router.post("/new", auth.authorize(0, refKey), async (request, response, next) => {
   try {
     // get refreshToken from client
     const dbToken = request.body;
@@ -45,7 +45,7 @@ router.post("/new", auth.authorize(0, ref), async (request, response, next) => {
     // verify token
     const payload = jwt.verify(
       dbToken.refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
+      config.jwt.refKey
     );
 
     if (!payload) {

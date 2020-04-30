@@ -20,7 +20,6 @@ export class LoginServices {
       const accessToken = response.jwt
       store.dispatch({ type: ActionType.Login, payload: user });
       store.dispatch({ type: ActionType.addAccessToken, payload: accessToken });
-      // store.dispatch({ type: ActionType.isAdmin, payload: user.isAdmin });
       await AuthServices.getRefreshToken() 
       LoginServices.handleRouting(user, history);
     } catch (err) {
