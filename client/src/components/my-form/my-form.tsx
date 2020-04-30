@@ -23,7 +23,6 @@ interface MyFormState {
     startDate: string;
     endDate: string;
   };
-  apostrophe: string;
 }
 
 export class MyForm extends Component<MyFormProps, MyFormState> {
@@ -38,7 +37,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
         startDate: this.props.vacation.startDate,
         endDate: this.props.vacation.endDate,
       },
-      apostrophe: `(pay attention! you cant use apostrophe mark)`,
     };
   }
 
@@ -64,7 +62,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               label="Destination"
               handleChange={this.handleChange}
               validInput={VacationModel.validVacation}
-              helperText={"Enter vacation destination " + apostrophe}
+              helperText={"Enter vacation destination"}
             />
             <MyInput
               width={5}
@@ -139,7 +137,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               rows={5}
               handleChange={this.handleChange}
               validInput={VacationModel.validVacation}
-              helperText={"Enter vacation description " + apostrophe}
+              helperText={"Enter vacation description"}
             ></MyInput>
             <Grid
               item

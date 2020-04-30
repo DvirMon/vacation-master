@@ -72,7 +72,7 @@ export class Insert extends Component<any, InsertState> {
     } catch (err) {
       if (err.response.status === 500) {
         this.InsertForm.handleError(
-          "An error has occurred. it may have happened due to use with an apostrophe mark"
+          "An error has occurred."
         );
       }
     }

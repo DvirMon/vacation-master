@@ -10,9 +10,9 @@ connection.connect((err) => {
   console.log("We Are Connected To Vacation MySQL Database");
 });
 
-const executeAsync = (sql) => {
+const executeAsync = (sql, payload) => {
   return new Promise((resolve, reject) => {
-    connection.query(sql, (err, result) => {
+    connection.query(sql, payload, (err, result) => {
       if (err) {
         reject(err.message);
         return;
