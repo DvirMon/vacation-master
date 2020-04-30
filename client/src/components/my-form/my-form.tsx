@@ -42,7 +42,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
 
   render() {
     const { vacation } = this.props;
-    const { date, apostrophe } = this.state;
+    const { date } = this.state;
 
     return (
       <div className="my-form">
