@@ -54,7 +54,7 @@ router.post("/", async (request, response, next) => {
     // valid userName in db
     const dbUser = await usersLogic.getUserDetails(request.body);
     if (dbUser) {
-      next({ status: 409 });
+      next({ status: 409, message : "username is already taken"});
       return;
     }
     // hush password
@@ -89,7 +89,7 @@ router.post("/login", async (request, response, next) => {
     // valid username against database
     const user = await usersLogic.getUserDetails(request.body);
     if (!user) {
-      next({ status: 409 });
+      next({ status: 409 , message : "username or password are incorrect"});
       return;
     }
 
@@ -101,7 +101,7 @@ router.post("/login", async (request, response, next) => {
     );
 
     if (!validPassword) {
-      next({ status: 409 });
+      next({ status: 409 , message : "username or password are incorrect"});
       return;
     }
 
