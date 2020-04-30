@@ -4,10 +4,11 @@ import { ServerServices } from "./server-service";
 
 import { store } from "../redux/store";
 
+
 export class AuthServices {
 
   // function for getting first accessToken and refreshToken
-  static getRefreshToken =   async () => {
+  static getRefreshToken = async () => {
     try {
       const user = store.getState().login.user
       const url = `http://localhost:3000/api/tokens`;
@@ -45,8 +46,8 @@ export class AuthServices {
 
 const handleError = (err) => {
   err.response?.status === 401 || err.response?.status === 403
-  ? console.log(err.response.data)
-  : console.log(err)
+    ? console.log(err.response.data)
+    : console.log(err)
 }
 
 

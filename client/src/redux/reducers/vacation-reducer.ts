@@ -62,7 +62,7 @@ const updateCondition = (newAppState: VacationAppState, prop: string, vacation: 
 
 const updateLogic = (item, vacation, ) => {
   for (const prop in vacation) {
-    if (prop in vacation) {
+    if (prop in item) {
       item[prop] = vacation[prop]
     }
   }

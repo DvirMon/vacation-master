@@ -13,7 +13,7 @@ const setToken = (user) => {
   return new Promise((resolve, reject) => {
     jwt.sign(
       { sub: user.uuid, role: user.isAdmin },
-      process.env.ACCESS_TOKEN_SECRET,
+      config.jwt.actKey,
       { expiresIn: "20m" },
       (err, result) => {
         if (err) {
@@ -25,13 +25,13 @@ const setToken = (user) => {
     });
   };
 // end of function
-
+ 
 // function to create a refresh token
 const setRefreshToken = (user) => {
   return new Promise((resolve, reject) => {
     jwt.sign(
       { sub: user.uuid, role: user.isAdmin },
-      process.env.REFRESH_TOKEN_SECRET,
+      config.jwt.refKey,
       { expiresIn: "3d" },
       (err, result) => {
         if (err) {

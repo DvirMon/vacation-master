@@ -2,18 +2,20 @@
 
 require("dotenv").config();
 global.config = require("./config");
- 
+
 // import modules
 const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const io = require("socket.io");
 
-// invoke server 
-const server = express(); 
-const serverListener = server.listen(3000, () => console.log("Listening To http://localhost:3000"));
+// invoke server
+const server = express();
+const serverListener = server.listen(config.port, () =>
+  console.log(`Listening To http://localhost:${config.port}`)
+);
 const socketServer = io(serverListener);
- 
+
 // import controller
 const followupController = require("./controllers/followup-controller");
 const usersController = require("./controllers/users-controller");
@@ -45,4 +47,3 @@ imageService.createUploadDir();
 
 // invoke function to handle all sockets events
 socketService.handleSockets(socketServer);
-

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2020 at 07:41 PM
+-- Generation Time: Apr 30, 2020 at 08:52 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.1
 
@@ -21,6 +21,111 @@ SET time_zone = "+00:00";
 --
 -- Database: `vacations`
 --
+CREATE DATABASE IF NOT EXISTS `vacations` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `vacations`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `followers`
+--
+
+DROP TABLE IF EXISTS `followers`;
+CREATE TABLE `followers` (
+  `id` int(11) NOT NULL,
+  `vacationID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `followers`
+--
+
+INSERT INTO `followers` (`id`, `vacationID`, `userID`) VALUES
+(1331, 1, 12),
+(1366, 2, 3),
+(1398, 2, 18),
+(1406, 2, 19),
+(1399, 3, 18),
+(1394, 4, 12),
+(1383, 4, 18),
+(1378, 4, 19),
+(1342, 4, 21),
+(1403, 5, 12),
+(1379, 5, 19),
+(1404, 6, 12),
+(1318, 6, 21),
+(1395, 9, 12),
+(1292, 9, 21),
+(1253, 10, 21),
+(1340, 11, 21),
+(1368, 12, 3),
+(1341, 12, 21),
+(1401, 39, 18),
+(1402, 48, 18),
+(1397, 115, 18);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tokens`
+--
+
+DROP TABLE IF EXISTS `tokens`;
+CREATE TABLE `tokens` (
+  `id` int(11) NOT NULL,
+  `refreshToken` varchar(2000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `uuid` char(36) NOT NULL DEFAULT 'uuid()',
+  `isAdmin` tinyint(1) NOT NULL DEFAULT 0,
+  `firstName` varchar(30) NOT NULL,
+  `lastName` varchar(30) NOT NULL,
+  `userName` varchar(10) NOT NULL,
+  `password` varchar(1024) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `uuid`, `isAdmin`, `firstName`, `lastName`, `userName`, `password`) VALUES
+(1, '2fd7fc5a-a2f9-45f1-b02b-8f0806', 1, 'Dvir', 'Monajem', 'DOM', '$2a$10$ANmli6LRIsJ0BC7yH8tJ6.hT2YycQar8q3x6xmUb0Y4NM1vrQ9vl.'),
+(2, '747cf005-a1d1-443c-bae4-88b0d604e825', 0, 'Moshe', 'Ofnic', 'dom', '$2a$10$.wVTd9pfC3FSYbSlyUn0heLa3mC3YHSca0sx9dZEjgUv52Oy/3hVi'),
+(3, '977ab290-4b5c-4aa6-bc26-188a82', 0, 'Isaac ', 'Newton', 'isac1643', '$2a$10$B4x0WXkPAqDGrL2APUgGve6EygY0euQXA35OHNCeRg0mLF6pHFXmW'),
+(4, 'b8893659-584b-4289-a1be-96b259', 0, 'Abraham', 'Lincoln', 'AB1865', '$2a$10$oZplV7eaHx8bRg7HTNjmpOMOx1ay1B.Bp8CsU4QHaPpWBmkXhhks2'),
+(5, 'bb85b4af-a7f1-4464-afe2-61e92f', 0, 'Sherlock', 'Holmes', '221bcOP', '$2a$10$itnIEtc7ZkJttFpH/pOTU.C8xb1BWk26s590MBMEgI15a4d9DZ/ZK'),
+(6, '92185c63-72a4-46f1-9c57-0b0ac9', 0, 'George ', 'Clooney', 'oscar3', '$2a$10$VxNp701m3WIkoq2h6OeoietfNChkm3XBImiPFzZqvMx.uIUPWZpLW'),
+(7, '27a07cfc-a276-4105-a290-583528', 0, 'Shosy', 'Boscila', 'SB1990', '$2a$10$f8fgmo4YmNS3JTttkZMytOVyPoQuTMsVmXZ/.po7nln5ggCRYQ8My'),
+(8, 'dd1049a3-8d3d-48d1-806a-704806', 0, 'Moshe', 'Lavi', 'prophit', '$2a$10$bADM6AMHvbii.DHd4hZXC.vztr4uUF650q6jRx8jTtGTp0P59pxYC'),
+(11, 'be5181b3-e1ac-482e-a208-69fb59', 0, 'Mahatma', 'Gandhi', 'MG09WT', '$2a$10$0gFNXIEg9Pplr.cNbP7RI.wXTqbJ5WUoxqKFCuv8VAjooOZC201Ie'),
+(12, '9ea8f7a0-c091-465a-9a14-563278', 0, 'Adam', 'Prime', 'apple666', '$2a$10$X3MtWmXHSsYlOon8hrsZM.sh9v/UaBwabEKZ/wvN50VbKFh4NboY2'),
+(13, '24bfdb2e-2dde-4306-8cc6-2521e9', 0, 'Eve', 'Prime', 'apple333', '$2a$10$PQ7MXATNf1ZYpm/JAejC5eLtUwma.iLNVgbr1UhVZKxPBDzJAVIPa'),
+(14, 'd8959539-4198-4548-bf58-3b5cc8', 0, 'Prince', 'Carming', 'happyAfter', '$2a$10$24oiYPyfjKnbNDJq7n46s.Ldxv/c01FM1oeTeoCNHPvc1FITvD22a'),
+(15, '3de475e6-4639-40df-a514-bca824', 0, 'Mogley', 'Wolfs', 'mogf66fkdl', '$2a$10$OGFC.7mjlXiu0eNHAcXWueO0VmEjqe5la5/86/Ba3w0.XLyzucW/2'),
+(16, '9ec0d4f0-3167-4c84-a81e-0ff76c', 0, 'Cristofer', 'Nolen', 'BAT54KL0', '$2a$10$kpqxH.elxjNFY5Njl5kwJuRD73rMXCKh5ayCFQbw0Q59bUcM6xdcG'),
+(17, '0e908784-5d2b-49de-8bd6-a70a7b', 0, 'James', 'Bond', 'w07lctk', '$2a$10$MkLMwBjRWmnNubgTvd/USebTdt7vtkwb7dBrJGlR0NryeqRVPshsC'),
+(18, '30c6a407-bb3e-4e45-95d0-3b99a0', 0, 'Victor', 'Frank', 'theBeast62', '$2a$10$k1XFgjd3P4ni/5Q5nBk4KeA4a7nUMsgB2MjuOUTgVl6Cx9MZh03Mu'),
+(19, 'c4105341-e24f-4c22-ba9b-283280', 0, 'Lusifer', 'Morning-Star', 'hellKing6', '$2a$10$VAwqvxXuF6xSmtbS30nyCOCOYzdfb5g4EZFfEcVUFqu4eU/..tpfu'),
+(20, '0cf6c90f-20db-43bf-a780-f89157', 0, 'Alon', 'Musk', 'taslad2020', '$2a$10$E3hAsvRSaVYHK1MleF7By.18m9ibQi8n/6tBYGMyQj0xxE0Un460C'),
+(21, '09e48f4a-8ec8-4c7d-a23f-811a58', 0, 'Gabrial', 'Alon', 'PaimtFO542', '$2a$10$E001BiMZRAksR5evBKyqM.7FANtot6XK2hAXH.a8w0zJTzX9DpmWa'),
+(22, '489adff7-4769-414f-9d98-4e828c', 0, 'Piter', 'Pen', '4EverYoung', '$2a$10$gPRjXv2qAoXbArOjuZY7SeoZLLoX82Hhpjj57vpl6PKCAr9Gs5wC2'),
+(23, '5265125a-47e2-4a9d-ae08-1ce4a6', 0, 'Barak', 'Obama', 'uesIcant', '$2a$10$w/H5et0zIAExrIUOEViHiOhWfzcwVxlR9Q3ssxAXVTCj1foNyE9nu'),
+(24, '7f246779-ebcf-4b9e-b07f-01fa7f', 0, 'Clarck', 'Kent', 'JUS5lough', '$2a$10$mCuNtQOyFakP5R.Jld3/0ODHRxB4kzi5hZWyTP7x52ltMKY7PkHXS'),
+(25, '9adf6619-85c7-48b4-b249-75fc8a', 0, 'Bruce', 'Wayne', 'betMen324', '$2a$10$UlUGFLKpdS7DveG0A4Q1oe9qlElvpp2OFQpBg8XkGj0Pt8OVUNTaK'),
+(26, '140e3707-66ca-43e8-b4ab-9d2f41', 0, 'Thomas', 'Addisn', 'ring4Money', '$2a$10$fzwvA.Ip.dWGKhjFE85Q7.eo775DFPtHNH/.BFhAsQdOjgjKWDHrW'),
+(27, '59551884-2970-49ea-afdd-949d7a', 0, 'Christ', 'James', 'cross4rome', '$2a$10$hIBPOm678A0D2qotNzH01uj9UoasTtHiaxZKM8f5ih5ugwhlQiM32'),
+(53, '9aed6782-66c0-11ea-9ad4-507b9d178fd1', 0, 'Chris', 'Evens', 'captainA', '$2a$10$iA3yNGabT25xuRfxZ1JrPeSFhqhn5hPoe0Fev6S170jESnLwb6iK2'),
+(54, '655f434e-66c3-11ea-9ad4-507b9d178fd1', 0, 'William', 'Shax', 'rome4love', '$2a$10$1BxQQVF3uwZXZAyg1QGXYepraC.unDd5DY00JCVymqzMpd7gZMhYe');
 
 -- --------------------------------------------------------
 
@@ -28,6 +133,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `vacations`
 --
 
+DROP TABLE IF EXISTS `vacations`;
 CREATE TABLE `vacations` (
   `vacationID` int(11) NOT NULL,
   `description` varchar(1000) NOT NULL,
@@ -85,6 +191,27 @@ INSERT INTO `vacations` (`vacationID`, `description`, `destination`, `image`, `s
 --
 
 --
+-- Indexes for table `followers`
+--
+ALTER TABLE `followers`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `vacationID_2` (`vacationID`,`userID`),
+  ADD KEY `vacationID` (`vacationID`),
+  ADD KEY `userID` (`userID`);
+
+--
+-- Indexes for table `tokens`
+--
+ALTER TABLE `tokens`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `vacations`
 --
 ALTER TABLE `vacations`
@@ -95,10 +222,39 @@ ALTER TABLE `vacations`
 --
 
 --
+-- AUTO_INCREMENT for table `followers`
+--
+ALTER TABLE `followers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1407;
+
+--
+-- AUTO_INCREMENT for table `tokens`
+--
+ALTER TABLE `tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9204;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+
+--
 -- AUTO_INCREMENT for table `vacations`
 --
 ALTER TABLE `vacations`
   MODIFY `vacationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `followers`
+--
+ALTER TABLE `followers`
+  ADD CONSTRAINT `followers_ibfk_1` FOREIGN KEY (`vacationID`) REFERENCES `vacations` (`vacationID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `followers_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import clsx from "clsx";
 
 // import components
@@ -37,7 +38,6 @@ export class Layout extends Component<any, LayoutState> {
   }
 
   public componentDidMount = () => {
-  
     this.unsubscribeStore = store.subscribe(() =>
       this.setState({
         backgroundImage: store.getState().style.backgroundImage,
@@ -50,39 +50,55 @@ export class Layout extends Component<any, LayoutState> {
   }
 
   render() {
-
     const { backgroundImage } = this.state;
- 
+
     return (
-        <div className={clsx("layout", "bg", `${backgroundImage}`)}>
-          <BrowserRouter>
-            <nav>
-              <Menu />
-            </nav>
-            <main> 
+      <div className={clsx("layout", "bg", `${backgroundImage}`)}>
+        <BrowserRouter>
+          <nav>
+            <Menu />
+          </nav>
+          <main>
               <Switch>
                 <Route path="/login" component={Login} exact></Route>
                 <Route path="/register" component={Register} exact></Route>
                 <Route path="/logout" component={Logout} exact></Route>
-                <Route path="/user/:id" component={Vacations} exact></Route>
-                <Route path="/admin" component={Vacations} exact></Route>
-                <Route path="/admin/charts" component={Charts} exact></Route>
+                <Route
+                  path="/user/:id"
+                  component={Vacations}
+                  meta={{ auth: true }}
+                  exact
+                ></Route>
+                <Route
+                  path="/admin"
+                  component={Vacations}
+                  meta={{ auth: true }}
+                  exact
+                ></Route>
+                <Route
+                  path="/admin/charts"
+                  component={Charts}
+                  meta={{ auth: true }}
+                  exact
+                ></Route>
                 <Route
                   path="/admin/vacation/new"
                   component={Insert}
+                  meta={{ auth: true }}
                   exact
                 ></Route>
                 <Route
                   path="/admin/vacation/:id"
+                  meta={{ auth: true }}
                   component={Update}
                   exact
                 ></Route>
                 <Redirect from="/" to="/login" exact></Redirect>
                 <Route component={PageNotFound} exact />
               </Switch>
-            </main>
-          </BrowserRouter>
-        </div>
+          </main>
+        </BrowserRouter>
+      </div>
     );
   }
 }

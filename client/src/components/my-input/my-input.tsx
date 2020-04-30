@@ -8,7 +8,7 @@ import { ValidationService } from "../../services/validation-service";
 import "./my-input.scss";
 
 export interface MyInputProps {
-  width?: number;
+  width: boolean | 'auto' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 
   value?: string | number;
   schema?: {};
   type: string;
