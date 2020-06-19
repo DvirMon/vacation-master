@@ -6,7 +6,7 @@ import UpdateToken from "../../updateToken/updateToken";
 
 import { ChartModel } from "../../../models/charts-model";
 
-import { ServerServices } from "../../../services/server-service";
+import { HttpService } from "../../../services/server-service";
 import { AuthServices } from "../../../services/auth-service";
 
 // import redux
@@ -21,9 +21,14 @@ const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 interface ChartsState {
   dataPoints: ChartModel[];
+  authService : AuthServices
 }
 
 export class Charts extends Component<any, ChartsState> {
+
+  private http : HttpService = new HttpService()
+  private validationService : ValidationService = new ValidationService()
+
   private unsubscribeStore: Unsubscribe;
 
   constructor(props: any) {
@@ -31,12 +36,13 @@ export class Charts extends Component<any, ChartsState> {
 
     this.state = {
       dataPoints: store.getState().vacation.dataPoints,
+      authService : new AuthServices()
     };
   }
 
   public componentDidMount = async () => {
-    await AuthServices.handleAuth(
-      () => ValidationService.verifyAdmin(this.props.history),
+    await this.state.authService.handleAuth(
+      () => this.validationService.verifyAdmin(this.props.history),
       this.props.history
     );
 
@@ -49,7 +55,7 @@ export class Charts extends Component<any, ChartsState> {
     try {
       // handle request
       const url = `http://localhost:3000/api/followup`;
-      const response = await ServerServices.getRequestAsync(url);
+      const response = await this.http.getRequestAsync(url);
       this.handleSuccess(response);
     } catch (err) {
       this.handleError(err);

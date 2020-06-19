@@ -46,6 +46,9 @@ interface VacationsState {
 export class Vacations extends Component<any, VacationsState> {
   // unsubscribe to store
   private unsubscribeStore: Unsubscribe;
+  private authService: AuthServices = new AuthServices();
+  private loginService: LoginServices = new LoginServices();
+  private vacationService: VacationService = new VacationService();
 
   constructor(props: any) {
     super(props);
@@ -69,23 +72,14 @@ export class Vacations extends Component<any, VacationsState> {
         return;
       }
 
-      // subscribe to store
-      this.unsubscribeStore = store.subscribe(() => {
-        this.setState({
-          user: store.getState().login.user,
-          admin: store.getState().login.admin,
-          tokens: store.getState().auth.tokens,
-          followUp: store.getState().vacation.followUp,
-          unFollowUp: store.getState().vacation.unFollowUp,
-          sliderSetting: store.getState().style.sliderSetting,
-        });
-      });
+      // subscribe to store 
+      this.unsubscribeStore = this.subscribeToStore()
 
       const { user, admin } = this.state;
 
       // handle auth logic
-      await AuthServices.handleAuth(
-        () => LoginServices.verifyPath(admin, user, this.props.history),
+      await this.authService.handleAuth(
+        () => this.loginService.verifyPath(admin, user, this.props.history),
         this.props.history
       );
 
@@ -113,14 +107,27 @@ export class Vacations extends Component<any, VacationsState> {
     }
   }
 
+  private subscribeToStore = () => {
+    return store.subscribe(() => {
+      this.setState({
+        user: store.getState().login.user,
+        admin: store.getState().login.admin,
+        tokens: store.getState().auth.tokens,
+        followUp: store.getState().vacation.followUp,
+        unFollowUp: store.getState().vacation.unFollowUp,
+        sliderSetting: store.getState().style.sliderSetting,
+      });
+    });
+  };
+
   public handleRequest = async () => {
     // send request
-    const response = await VacationService.getUserVacationAsync();
+    const response = await this.vacationService.getUserVacationAsync();
     store.dispatch({ type: ActionType.getAllVacation, payload: response });
   };
 
   public handleError = (err) => {
-    console.log(err); 
+    console.log(err);
     this.props.history.push("/logout");
   };
 

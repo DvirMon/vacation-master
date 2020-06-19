@@ -11,7 +11,7 @@ import Grid from "@material-ui/core/Grid";
 // import models
 import { VacationModel } from "../../../models/vacations-model";
 import {
-  VacationCardModel,
+  VacationCardModel, 
   formAdminSetting,
 } from "../../../models/vac-card-model";
 
@@ -29,7 +29,12 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
- 
+
+  private authService : AuthServices = new AuthServices()
+  private vacationService : VacationService = new VacationService()
+  private validationService : ValidationService = new ValidationService()
+
+
   constructor(props: any) {
     super(props);
 
@@ -46,12 +51,11 @@ export class Insert extends Component<any, InsertState> {
   );
 
   public componentDidMount = async () => {
-
-      await AuthServices.handleAuth(
-        () => ValidationService.verifyAdmin(this.props.history),
-        this.props.history
-      );
-     this.setPreview();
+    await this.authService.handleAuth(
+      () => this.validationService.verifyAdmin(this.props.history),
+      this.props.history
+    );
+    this.setPreview();
   };
 
   public handleInsertRequest = async () => {
@@ -59,7 +63,7 @@ export class Insert extends Component<any, InsertState> {
 
     try {
       // validate vacation
-      if (VacationService.validVacationForm(vacation)) {
+      if (this.vacationService.validVacationForm(vacation)) {
         return;
       }
 
@@ -68,12 +72,9 @@ export class Insert extends Component<any, InsertState> {
 
       // handle server response
       this.InsertForm.handleInsertSuccess(response);
-
     } catch (err) {
       if (err.response.status === 500) {
-        this.InsertForm.handleError(
-          "An error has occurred."
-        );
+        this.InsertForm.handleError("An error has occurred.");
       }
     }
   };

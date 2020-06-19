@@ -36,6 +36,10 @@ export interface MyInputState {
 }
 
 class MyInput extends Component<MyInputProps, MyInputState> {
+
+  private validationService : ValidationService = new ValidationService()
+
+  
   constructor(props: MyInputProps) {
     super(props);
 
@@ -123,7 +127,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
 
     // invoke only after blur
     if (on === true) {
-      const errorMessage = ValidationService.isRequired(input);
+      const errorMessage = this.validationService.isRequired(input);
 
       if (errorMessage) {
         this.setState({ errorMessage });
@@ -132,7 +136,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
       }
     }
 
-    // update object values in parent
+    // update object values in parent 
     this.props.handleChange(prop, input);
   };
 
@@ -140,7 +144,7 @@ class MyInput extends Component<MyInputProps, MyInputState> {
   public validInput = (input: string, prop: string) => {
     
     const schema = {};
-    const validSchema = ValidationService.setObjectForSchema(
+    const validSchema = this.validationService.setObjectForSchema(
       schema,
       prop,
       input

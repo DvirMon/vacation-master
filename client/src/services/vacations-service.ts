@@ -1,59 +1,67 @@
 import { VacationModel } from "../models/vacations-model";
 
-import { ServerServices } from "./server-service";
+import { HttpService } from "./server-service";
 import { ValidationService } from "./validation-service";
 
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 
+import { environment } from "../environments/environment"
+
 // class to handle all vacation logic
 export class VacationService {
 
-  // get user vacations
-  static getUserVacationAsync = async () => {
-    const url = `http://localhost:3000/api/vacations/user`;
-    const response = await ServerServices.getRequestAsync(url)
+  private vacationUrl: string = `${environment.server}/api/vacations`
+  private followUpUrl: string = `${environment.server}/api/followup`
+
+  private http: HttpService = new HttpService()
+  private validationService: ValidationService = new ValidationService()
+
+  // request section
+
+  // GET user vacation : http://localhost:3000/api/vacations/user
+  public getUserVacationAsync = async () => {
+    const response = await this.http.getRequestAsync(this.vacationUrl + "/user")
     return response
   }
-  //end of function
 
-  // get all the users following a vacation
-  static getFollowersByVacationAsync = async (vacationID) => {
-    const url = `http://localhost:3000/api/followup/${vacationID}`;
-    const response = await ServerServices.getRequestAsync(url)
+  // GET all the users following a vacation : http://localhost:3000/api/followup/:vacationID;
+  public getFollowersByVacationAsync = async (vacationID) => {
+    const response = await this.http.getRequestAsync(this.followUpUrl + `/${vacationID}`)
     return response
   }
-  //end of function
 
-  // add new followup vacation 
-  static addFollowUpAsync = async (vacationID) => {
-    const url = `http://localhost:3000/api/followup`;
+  // POST new followup vacation : http://localhost:3000/api/followup`
+  public addFollowUpAsync = async (vacationID) => {
     try {
-      const response = await ServerServices.postRequestAsync(url, { vacationID });
+      const response = await this.http.postRequestAsync(this.followUpUrl, { vacationID });
       return response
     } catch (err) {
       console.log(err);
     }
   };
-  //end of function
 
-  // delete followup vacation
-  static deleteFollowUpAsync = async (id) => {
-    const url = `http://localhost:3000/api/followup/${id}`;
+  // DELETE followup vacation : http://localhost:3000/api/followup/:id
+  public deleteFollowUpAsync = async (id) => {
     try {
-      await ServerServices.deleteRequestAsync(url);
+      await this.http.deleteRequestAsync(this.followUpUrl + `/${id}`);
     } catch (err) {
       console.log(err);
     }
   };
-  //end of function
+
+
+
+
+
+
 
   // function to handle add followup 
-  static handleAddFollowUp = async (vacation) => {
+  public handleAddFollowUp = async (vacation) => {
     try {
 
       // add to database
-      const addedFollowup = await VacationService.addFollowUpAsync(vacation.vacationID);
+      const addedFollowup = await this.addFollowUpAsync(vacation.vacationID);
 
       // add follow up ID to new followed vacation
       vacation.followUpID = addedFollowup.id;
@@ -68,11 +76,11 @@ export class VacationService {
   // end of function
 
   // function to handle delete followup logic
-  static handleDeleteFollowUp = async (vacation) => {
+  public handleDeleteFollowUp = async (vacation) => {
     try {
 
       // delete in database
-      await VacationService.deleteFollowUpAsync(vacation.followUpID);
+      await this.deleteFollowUpAsync(vacation.followUpID);
 
       delete vacation.followUpID;
 
@@ -88,18 +96,18 @@ export class VacationService {
   // end of function
 
   // function to handle icon followup click
-  static handleIconClick = async (vacation) => {
+  public handleIconClick = async (vacation) => {
     if (vacation.followUpID) {
-      await VacationService.handleDeleteFollowUp(vacation)
+      await this.handleDeleteFollowUp(vacation)
     } else {
-      await VacationService.handleAddFollowUp(vacation);
+      await this.handleAddFollowUp(vacation);
     }
   };
   // end of function
 
 
-  static validVacationForm = (vacation) => {
-    const valid = ValidationService.formLegal(
+  public validVacationForm = (vacation) => {
+    const valid = this.validationService.formLegal(
       vacation,
       VacationModel.validVacation
     );

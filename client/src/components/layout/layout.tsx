@@ -27,6 +27,7 @@ interface LayoutState {
 }
 
 export class Layout extends Component<any, LayoutState> {
+
   private unsubscribeStore: Unsubscribe;
 
   constructor(props) {
@@ -43,6 +44,9 @@ export class Layout extends Component<any, LayoutState> {
         backgroundImage: store.getState().style.backgroundImage,
       })
     );
+ 
+
+
   };
 
   public componentWillUnmount(): void {
@@ -59,43 +63,43 @@ export class Layout extends Component<any, LayoutState> {
             <Menu />
           </nav>
           <main>
-              <Switch>
-                <Route path="/login" component={Login} exact></Route>
-                <Route path="/register" component={Register} exact></Route>
-                <Route path="/logout" component={Logout} exact></Route>
-                <Route
-                  path="/user/:id"
-                  component={Vacations}
-                  meta={{ auth: true }}
-                  exact
-                ></Route>
-                <Route
-                  path="/admin"
-                  component={Vacations}
-                  meta={{ auth: true }}
-                  exact
-                ></Route>
-                <Route
-                  path="/admin/charts"
-                  component={Charts}
-                  meta={{ auth: true }}
-                  exact
-                ></Route>
-                <Route
-                  path="/admin/vacation/new"
-                  component={Insert}
-                  meta={{ auth: true }}
-                  exact
-                ></Route>
-                <Route
-                  path="/admin/vacation/:id"
-                  meta={{ auth: true }}
-                  component={Update}
-                  exact
-                ></Route>
-                <Redirect from="/" to="/login" exact></Redirect>
-                <Route component={PageNotFound} exact />
-              </Switch>
+            <Switch>
+              <Route path="/login" component={Login} exact></Route>
+              <Route path="/register" component={Register} exact></Route>
+              <Route path="/logout" component={Logout} exact></Route>
+              <Route
+                path="/user/:id"
+                component={Vacations}
+                meta={{ auth: true }}
+                exact
+              ></Route>
+              <Route
+                path="/admin"
+                component={Vacations}
+                meta={{ auth: true }}
+                exact
+              ></Route>
+              <Route
+                path="/admin/charts"
+                component={Charts}
+                meta={{ auth: true }}
+                exact
+              ></Route>
+              <Route
+                path="/admin/vacation/new"
+                component={Insert}
+                meta={{ auth: true }}
+                exact
+              ></Route>
+              <Route
+                path="/admin/vacation/:id"
+                meta={{ auth: true }}
+                component={Update}
+                exact
+              ></Route>
+              <Redirect from="/" to="/login" exact></Redirect>
+              <Route component={PageNotFound} exact />
+            </Switch>
           </main>
         </BrowserRouter>
       </div>

@@ -90,6 +90,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
             <Grid item xs={5} className="justify-content-center">
               <DatePicker
                 dateNow={vacation.endDate || ""}
+                disabledDate={vacation.startDate || ""}
                 prop="endDate"
                 label="Returning"
                 schema={date}

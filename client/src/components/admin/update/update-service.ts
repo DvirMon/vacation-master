@@ -1,6 +1,4 @@
 import { VacationModel } from "../../../models/vacations-model";
-
-import { ServerServices } from "../../../services/server-service";
 import { FormService } from "../../../services/form-service";
 import { handleAdminUpdate } from "../../../services/socket-service";
 
@@ -9,8 +7,9 @@ import { ActionType } from "../../../redux/action-type";
 
 export class UpdateForm extends FormService {
 
+
   public getVacation = async () => {
-    const vacation = await ServerServices.getRequestAsync(this.url);
+    const vacation = await this.http.getRequestAsync(this.url);
     return vacation
   }
 
@@ -30,10 +29,11 @@ export class UpdateForm extends FormService {
   // handle put request for vacation
   public handleIUpdateRequest = async (vacation: VacationModel) => {
     const myFormData = this.setFormData(vacation);
-    const response = await ServerServices.putRequestAsync(this.url, myFormData)
+    const response = await this.http.putRequestAsync(this.url, myFormData)
     return response;
   }
   // end of function
+
 
   // handle success
   public handleIUpdateSuccess = (vacation: VacationModel) => {

@@ -19,7 +19,7 @@ const executeAsync = (sql, payload) => {
       }
       resolve(result);
     });
-  });
+  }); 
 };
 
 module.exports = {

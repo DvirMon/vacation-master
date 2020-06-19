@@ -26,7 +26,6 @@ import { LoginMenu } from "../../models/menu-model";
 // import services
 import { ValidationService } from "../../services/validation-service";
 import { LoginServices } from "../../services/login-service";
-import { ServerServices } from "../../services/server-service";
 import { setStyle } from "../../services/style-services";
 
 import "./login.scss";
@@ -39,6 +38,10 @@ interface LoginState {
 }
 
 export class Login extends Component<any, LoginState> {
+
+  private loginService : LoginServices = new LoginServices()
+  private validationService : ValidationService = new ValidationService()
+
   constructor(props: any) {
     super(props);
 
@@ -56,7 +59,7 @@ export class Login extends Component<any, LoginState> {
 
     try {
       // verify if user is already logged
-      LoginServices.isUserLogged(this.props.history);
+      this.loginService.isUserLogged(this.props.history);
       
     } catch (err) {
       console.log(err);
@@ -68,7 +71,7 @@ export class Login extends Component<any, LoginState> {
     const { user } = this.state;
 
     // disabled request if form is not legal
-    const valid = ValidationService.formLegal(user, LoginModel.validLogin);
+    const valid = this.validationService.formLegal(user, LoginModel.validLogin);
     if (valid.msg) {
       return;
     }
@@ -79,12 +82,8 @@ export class Login extends Component<any, LoginState> {
 
   public handleRequest = async (user) => {
     //send login request
-
     try {
-      const url = `http://localhost:3000/api/user/login`;
-      const response = await ServerServices.postRequestAsync(url, user);
-      // handle success 
-      LoginServices.handleSuccessResponse(response, this.props.history);
+      await this.loginService.login(user, this.props.history)
     } catch (err) {
       this.handleErrorResponse(err);
     }

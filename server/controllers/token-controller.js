@@ -29,7 +29,7 @@ router.post("/", auth.authorize(0, actKey), async (request, response, next) => {
   }
 });
 
-// get new token
+// get new access token
 router.post("/new", auth.authorize(0, refKey), async (request, response, next) => {
   try {
     // get refreshToken from client

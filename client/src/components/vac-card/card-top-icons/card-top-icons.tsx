@@ -14,7 +14,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import { UserVacationModel } from "../../../models/vacations-model";
 
 // import services
-import { ServerServices } from "../../../services/server-service";
+import { HttpService } from "../../../services/server-service";
 import { VacationService } from "../../../services/vacations-service";
 import {
   handleAdminDelete,
@@ -24,7 +24,6 @@ import {
 // import redux
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
-
 
 interface CardTopIconsProps {
   vacation: UserVacationModel;
@@ -37,10 +36,11 @@ interface CardTopIconsState {
   clickEvent: boolean;
 }
 
-export class CardTopIcons extends Component<
-  CardTopIconsProps,
-  CardTopIconsState
-> {
+export class CardTopIcons extends Component< CardTopIconsProps, CardTopIconsState> {
+
+  private http : HttpService = new HttpService()
+  private vacationService : VacationService = new VacationService () 
+
   constructor(props: CardTopIconsProps) {
     super(props);
 
@@ -83,10 +83,9 @@ export class CardTopIcons extends Component<
   }
 
   public handleIconClick = async () => {
-  
     // handle user click
     const vacation = this.props.vacation;
-    await VacationService.handleIconClick(vacation);
+    await this.vacationService.handleIconClick(vacation);
 
     // update admin chart
     updateChart();
@@ -104,12 +103,11 @@ export class CardTopIcons extends Component<
 
     // delete from db
     const url = `http://localhost:3000/api/vacations/${vacationID}/${fileName}`;
-    await ServerServices.deleteRequestAsync(url);
+    await this.http.deleteRequestAsync(url);
 
-    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID })
+    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID });
 
-
-    // update real-time 
+    // update real-time
     handleAdminDelete(this.props.vacation);
   };
   // end of function

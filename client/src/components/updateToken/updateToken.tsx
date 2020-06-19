@@ -1,20 +1,38 @@
 import React, { Component } from "react";
 import { AuthServices } from "../../services/auth-service";
- 
-export class UpdateToken extends Component<any, any> {
 
-  public componentDidMount = () => {
+interface UpdateTokenState {
+  update: boolean;
+  updateToken: NodeJS.Timeout;
+}
 
-    const updateToken = setInterval(this.timer, 660000);
-    this.setState({ updateToken });
-  };
+export class UpdateToken extends Component<any, UpdateTokenState> {
+
+  public authService : AuthServices = new AuthServices()
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      update: false,
+      updateToken: setInterval(this.timer, 660000),
+    };
+  }
+
 
   public componentWillUnmount = () => {
-    clearInterval(this.state.updateToken);
+    try {
+      if (this.state.update) {
+        clearInterval(this.state.updateToken);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
-
+   
   public timer = async () => {
-    await AuthServices.getAccessToken();
+    this.setState({ update: true });
+    await this.authService.getAccessToken();
   };
 
   render() {

@@ -13,7 +13,7 @@ import { RegisterMenu } from "../../models/menu-model";
 
 // import services
 import { LoginServices } from "../../services/login-service";
-import { ServerServices } from "../../services/server-service";
+import { HttpService } from "../../services/server-service";
 import { ValidationService } from "../../services/validation-service";
 import { setStyle } from "../../services/style-services";
 
@@ -26,8 +26,15 @@ interface RegisterState {
   password: string;
   serverError: string;
   error: boolean;
-}
+} 
+
 export class Register extends Component<any, RegisterState> {
+
+  private http : HttpService = new HttpService() 
+  private loginService : LoginServices = new LoginServices()
+  private validationService : ValidationService = new ValidationService()
+
+
   constructor(props: any) {
     super(props);
 
@@ -47,7 +54,7 @@ export class Register extends Component<any, RegisterState> {
   public disabledButton = (): boolean => {
     const user = this.state.user;
 
-    const valid = ValidationService.formLegal(
+    const valid = this.validationService.formLegal(
       user,
       RegisterModel.validRegistration
     );
@@ -68,10 +75,10 @@ export class Register extends Component<any, RegisterState> {
   public handleRequest = async (user) => {
     // send register request
     const url = `http://localhost:3000/api/user`;
-    const response = await ServerServices.postRequestAsync(url, user);
+    const response = await this.http.postRequestAsync(url, user);
 
     // handle server response
-    LoginServices.handleSuccessResponse(response, this.props.history);
+    this.loginService.handleSuccessResponse(response, this.props.history);
   };
 
   public handleErrorResponse = (err) => {

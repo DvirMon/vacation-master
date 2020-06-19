@@ -1,4 +1,8 @@
+import { HttpService } from "./server-service";
+
  export class FormService {
+
+  public http : HttpService = new HttpService()
 
   constructor(
     public url: string, 

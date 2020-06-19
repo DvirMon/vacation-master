@@ -23,9 +23,10 @@ import { VacationCardModel } from "../../models/vac-card-model";
 
 import { VacationService } from "../../services/vacations-service";
 
-// import redux
 
 import "./vac-card.scss";
+import { environment } from "../../environments/environment"
+
 
 interface VacCardProps {
   vacation?: UserVacationModel;
@@ -43,6 +44,10 @@ interface VacCardState {
 }
 
 export class VacCard extends Component<VacCardProps, VacCardState> {
+
+  private vacationService : VacationService = new VacationService()
+  
+
   constructor(props: VacCardProps) {
     super(props);
 
@@ -62,7 +67,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     try {
       // update followup icon number only in user
       if (this.props.vacationSettings.admin === false) {
-        const response = await VacationService.getFollowersByVacationAsync(
+        const response = await this.vacationService.getFollowersByVacationAsync(
           this.props.vacation.vacationID
         ); 
         if (response.followers) {
@@ -70,7 +75,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
         }
       }
     } catch (err) {
-      console.log(err.response);
     }
   };
 
@@ -94,9 +98,9 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
           })}
         >
           {preview
-            ? this.cardMedia(preview)
+            ? this.cardMedia(preview) 
             : this.cardMedia(
-                `http://localhost:3000/api/vacations/uploads/${vacation.image}.jpg`
+                `${environment.server}/api/vacations/uploads/${vacation.image}.jpg`
               )}
           <CardHeader
             action={

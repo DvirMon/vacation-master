@@ -8,11 +8,14 @@ const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const io = require("socket.io");
+const morgan = require("morgan")
+
+const PORT = process.env.PORT || 3000
 
 // invoke server
 const server = express();
-const serverListener = server.listen(config.port, () =>
-  console.log(`Listening To http://localhost:${config.port}`)
+const serverListener = server.listen(PORT, () =>
+  console.log(`server running!`)
 );
 const socketServer = io(serverListener);
 
@@ -33,6 +36,8 @@ server.use(cors());
 server.use(fileUpload());
 server.use(express.static(socketService.findHtmlFile()));
 
+// server.use(morgan("common"))
+
 // middleware for controllers
 server.use("/api/user", usersController);
 server.use("/api/tokens", tokensController);
@@ -41,6 +46,17 @@ server.use("/api/followup", followupController);
 
 // middleware for errors
 server.use(errorHandler);
+
+// use static files in production
+if (process.env.NODE_ENV === "production") {
+  
+  server.use(express.static("public/client"));
+
+  server.get("*", (request, response) => {
+    response.sendFile(path.join(__dirname, "public/client", "index.html"));
+  });
+}
+
 
 // create upload directory
 imageService.createUploadDir();

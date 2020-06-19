@@ -33,9 +33,15 @@ interface UpdateState {
   tokens: TokensModel;
   updated: boolean;
   settings: VacationCardModel;
+
 }
 
 export class Update extends Component<any, UpdateState> {
+  
+  private vacationService : VacationService = new VacationService()
+  private authService : AuthServices = new AuthServices()
+  private validationService : ValidationService = new ValidationService()
+
   constructor(props: any) {
     super(props);
 
@@ -45,7 +51,7 @@ export class Update extends Component<any, UpdateState> {
       updated: true,
       settings: formAdminSetting,
     };
-  }
+  } 
 
   private UpdateForm = new UpdateForm(
     `http://localhost:3000/api/vacations/${this.props.match.params.id}`,
@@ -54,8 +60,8 @@ export class Update extends Component<any, UpdateState> {
   );
 
   public componentDidMount = async () => {
-    await AuthServices.handleAuth(
-      () => ValidationService.verifyAdmin(this.props.history),
+    await this.authService.handleAuth(
+      () => this.validationService.verifyAdmin(this.props.history),
       this.props.history
     );
     try {
@@ -76,7 +82,7 @@ export class Update extends Component<any, UpdateState> {
       }
 
       // validate form
-      if (VacationService.validVacationForm(vacation)) {
+      if (this.vacationService.validVacationForm(vacation)) {
         return;
       }
 

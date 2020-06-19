@@ -1,35 +1,52 @@
 import { store } from "../redux/store";
 import { AuthServices } from "./auth-service";
 import { ActionType } from "../redux/action-type";
-import { ServerServices } from "./server-service";
+import { HttpService } from "./server-service";
+import { environment } from "../environments/environment"
 
 export class LoginServices {
 
+  private server : string = `${environment.server}/api/user`
+  private authService : AuthServices = new AuthServices()
+  private http : HttpService = new HttpService()
+
+  // request section
+
+  public login = async (user, history) => {
+    const response = await this.http.postRequestAsync( this.server + "/login", user);
+    this.handleSuccessResponse(response, history);
+  }
+
+  public register = async (user, history) => {
+    const response = await this.http.postRequestAsync(this.server, user);
+    this.handleSuccessResponse(response, history);
+  }
+
   // function to check if user is logged
-  static isUserLogged = (history) => {
+  public isUserLogged = (history) => {
     if (store.getState().login.isLoggedIn) {
-      LoginServices.handleRouting(store.getState().login.user, history);
+      this.handleRouting(store.getState().login.user, history);
     }
   }
   // end of function
 
   // function to handle login
-  static handleSuccessResponse = async (response, history) => {
+  public handleSuccessResponse = async (response, history) => {
     try {
       const user = response.user
       const accessToken = response.jwt
       store.dispatch({ type: ActionType.Login, payload: user });
       store.dispatch({ type: ActionType.addAccessToken, payload: accessToken });
-      await AuthServices.getRefreshToken() 
-      LoginServices.handleRouting(user, history);
+      await  this.authService.getTokens()
+      this.handleRouting(user, history);
     } catch (err) {
       console.log(err)
-    } 
-  }; 
+    }
+  };
   // end of function
 
   // function to handle rout according to role
-  static handleRouting = (user, history) => {
+  public handleRouting = (user, history) => {
     user.isAdmin === 1 ?
       history.push(`/admin`)
       : history.push(`/user/${user.uuid}`);
@@ -37,7 +54,7 @@ export class LoginServices {
   // end of function
 
   // prevent admin to navigate to users route
-  static verifyAdminPath = (history) => {
+  public verifyAdminPath = (history) => {
     if (history.location.pathname === "/admin") {
       return
     }
@@ -46,7 +63,7 @@ export class LoginServices {
   // end of function
 
   // prevent user to navigate to other users route
-  static verifyUserPath = (user, history) => {
+  public verifyUserPath = (user, history) => {
     const uuid = history.location.pathname.substring(6)
     if (uuid === user.uuid) {
       return
@@ -56,22 +73,22 @@ export class LoginServices {
   // end of function
 
   // main function for navigation control
-  static verifyPath = (admin, user, history) => {
+  public verifyPath = (admin, user, history) => {
     if (admin) {
-      LoginServices.verifyAdminPath(history);
+      this.verifyAdminPath(history);
     } else {
-      LoginServices.verifyUserPath(user, history);
+      this.verifyUserPath(user, history);
     }
   }
   // end of function
 
-  static handleLogOut = async () => {
+  public handleLogOut = async () => {
 
     const tokens = store.getState().auth.tokens;
 
     // clear refreshToken from db
-    const url = `http://localhost:3000/api/tokens/${tokens.dbToken.id}`;
-    await ServerServices.deleteRequestAsync(url);
+    const url = `${environment.server}/api/tokens/${tokens.dbToken.id}`;
+    await this.http.deleteRequestAsync(url);
 
     // handle logic in store
     store.dispatch({ type: ActionType.Logout });

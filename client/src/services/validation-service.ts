@@ -5,7 +5,7 @@ import { store } from "../redux/store"
 export class ValidationService {
 
     //verify admin 
-    static verifyAdmin = (history) => {
+    public verifyAdmin = (history) => {
       const admin = store.getState().login.admin;
       if (!admin) {
         alert("Not Admin");
@@ -16,7 +16,7 @@ export class ValidationService {
     // end of function
 
   // function for required input validation
-  static isRequired = (prop: string) => {
+  public isRequired = (prop: string) => {
     const error = Joi.validate(prop, Joi.required()).error
     if (error) {
       return error.details[0].message
@@ -27,14 +27,14 @@ export class ValidationService {
 
 
   // function to generate an object for joi
-  static setObjectForSchema = (schema: {}, prop: string, input: string) => {
+  public setObjectForSchema = (schema: {}, prop: string, input: string) => {
     schema[prop] = input;
     return schema;
   };
   // end of function
 
   // function to check if form's object contain all his values
-  static formLegalValues = (obj) => {
+  public formLegalValues = (obj) => {
     for (const value in obj) {
       if (obj[value] === undefined) {
         return value
@@ -48,9 +48,9 @@ export class ValidationService {
   // end of function
 
   // function for legal form
-  static formLegal = (obj, callback) => {
+  public formLegal = (obj, callback) => {
 
-    const value = ValidationService.formLegalValues(obj);
+    const value = this.formLegalValues(obj);
     if (value) {
       return { body: `Filed ${value} is required`, msg: true }
     }
