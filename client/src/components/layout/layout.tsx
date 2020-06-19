@@ -3,14 +3,14 @@ import React, { Component } from "react";
 import clsx from "clsx";
 
 // import components
-import Login from "../login/login";
-import Register from "../register/register";
+import Login from "../auth/login/login";
+import Register from "../auth/register/register";
 import Menu from "../menu/menu/menu";
 import Vacations from "../vacations/vacations";
 import Insert from "../admin/insert/insert";
 import Charts from "../admin/charts/charts";
 import Update from "../admin/update/update";
-import Logout from "../logout/logout";
+import Logout from "../auth/logout/logout";
 import PageNotFound from "../page-not-found/page-not-found";
 
 // import router
@@ -27,7 +27,6 @@ interface LayoutState {
 }
 
 export class Layout extends Component<any, LayoutState> {
-
   private unsubscribeStore: Unsubscribe;
 
   constructor(props) {
@@ -38,15 +37,14 @@ export class Layout extends Component<any, LayoutState> {
     };
   }
 
-  public componentDidMount = () => {
+  public componentDidMount = async () => {
     this.unsubscribeStore = store.subscribe(() =>
       this.setState({
         backgroundImage: store.getState().style.backgroundImage,
       })
     );
+
  
-
-
   };
 
   public componentWillUnmount(): void {

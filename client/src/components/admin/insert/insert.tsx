@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 // import my components
 import VacCard from "../../vac-card/vac-card";
-import MyForm from "../../my-form/my-form";
-import UpdateToken from "../../updateToken/updateToken";
+import MyForm from "../../my-components/my-form/my-form";
+import UpdateToken from "../../auth/updateToken/updateToken";
 
 // import material-ui
 import Grid from "@material-ui/core/Grid";
@@ -33,8 +33,6 @@ export class Insert extends Component<any, InsertState> {
   private authService : AuthServices = new AuthServices()
   private vacationService : VacationService = new VacationService()
   private validationService : ValidationService = new ValidationService()
-
-
 
   constructor(props: any) {
     super(props);

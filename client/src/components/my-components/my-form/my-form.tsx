@@ -5,9 +5,10 @@ import DatePicker from "../date-picker/date-picker";
 import Button from "@material-ui/core/Button";
 import Form from "react-bootstrap/Form";
 
+// import my components
 import MyInput from "../my-input/my-input";
 
-import { VacationModel } from "../../models/vacations-model";
+import { VacationModel } from "../../../models/vacations-model";
 
 import "./my-form.scss";
 

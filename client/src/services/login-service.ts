@@ -22,6 +22,8 @@ export class LoginServices {
     this.handleSuccessResponse(response, history);
   }
 
+
+
   // function to check if user is logged
   public isUserLogged = (history) => {
     if (store.getState().login.isLoggedIn) {
@@ -30,7 +32,7 @@ export class LoginServices {
   }
   // end of function
 
-  // function to handle login
+  // function to handle login Success
   public handleSuccessResponse = async (response, history) => {
     try {
       const user = response.user
@@ -52,6 +54,7 @@ export class LoginServices {
       : history.push(`/user/${user.uuid}`);
   };
   // end of function
+
 
   // prevent admin to navigate to users route
   public verifyAdminPath = (history) => {
@@ -81,20 +84,5 @@ export class LoginServices {
     }
   }
   // end of function
-
-  public handleLogOut = async () => {
-
-    const tokens = store.getState().auth.tokens;
-
-    // clear refreshToken from db
-    const url = `${environment.server}/api/tokens/${tokens.dbToken.id}`;
-    await this.http.deleteRequestAsync(url);
-
-    // handle logic in store
-    store.dispatch({ type: ActionType.Logout });
-
-    // disconnect from sockets
-    store.getState().auth.socket.disconnect();
-  }
 
 }

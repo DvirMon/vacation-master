@@ -4,9 +4,9 @@ import React, { Component } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import VacCard from "../vac-card/vac-card";
-import Loader from "../loader/loader";
+import Loader from "../my-components/loader/loader";
 import Slider from "react-slick";
-import UpdateToken from "../updateToken/updateToken";
+import UpdateToken from "../auth/updateToken/updateToken";
 
 // import services
 import { AuthServices } from "../../services/auth-service";
@@ -29,7 +29,6 @@ import {
 // import redux
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
-import { ActionType } from "../../redux/action-type";
 
 import "./vacations.scss";
 
@@ -44,7 +43,7 @@ interface VacationsState {
 }
 
 export class Vacations extends Component<any, VacationsState> {
-  // unsubscribe to store
+
   private unsubscribeStore: Unsubscribe;
   private authService: AuthServices = new AuthServices();
   private loginService: LoginServices = new LoginServices();
@@ -72,8 +71,8 @@ export class Vacations extends Component<any, VacationsState> {
         return;
       }
 
-      // subscribe to store 
-      this.unsubscribeStore = this.subscribeToStore()
+      // subscribe to store
+      this.unsubscribeStore = this.subscribeToStore();
 
       const { user, admin } = this.state;
 
@@ -84,16 +83,7 @@ export class Vacations extends Component<any, VacationsState> {
       );
 
       // get vacations
-      if (store.getState().vacation.unFollowUp.length === 0) {
-        await this.handleRequest();
-      } else {
-        this.unsubscribeStore = store.subscribe(() => {
-          this.setState({
-            followUp: store.getState().vacation.followUp,
-            unFollowUp: store.getState().vacation.unFollowUp,
-          });
-        });
-      }
+      await this.getVacations();
 
       this.handleStyle(admin);
     } catch (err) {
@@ -120,14 +110,19 @@ export class Vacations extends Component<any, VacationsState> {
     });
   };
 
-  public handleRequest = async () => {
-    // send request
-    const response = await this.vacationService.getUserVacationAsync();
-    store.dispatch({ type: ActionType.getAllVacation, payload: response });
+  private getVacations = async () => {
+    if (store.getState().vacation.unFollowUp.length === 0) {
+      await this.vacationService.getUserVacationAsync();
+    } else {
+      this.setState({
+        followUp: store.getState().vacation.followUp,
+        unFollowUp: store.getState().vacation.unFollowUp,
+      });
+    }
   };
 
-  public handleError = (err) => {
-    console.log(err);
+  private handleError = (err) => {
+    console.log(err)
     this.props.history.push("/logout");
   };
 
@@ -181,7 +176,7 @@ export class Vacations extends Component<any, VacationsState> {
     );
   }
 
-  public handleStyle = (admin) => {
+  private handleStyle = (admin) => {
     setStyle(MenuModel.setMenu(admin), admin ? "admin" : "user");
   };
 }

@@ -17,16 +17,16 @@ import IconButton from "@material-ui/core/IconButton";
 import Image from "react-bootstrap/Image";
 
 // import my components
-import MyInput from "../my-input/my-input";
+import MyInput from "../../my-components/my-input/my-input";
 
 // import models
-import { LoginModel } from "../../models/user-model";
-import { LoginMenu } from "../../models/menu-model";
+import { LoginModel } from "../../../models/user-model";
+import { LoginMenu } from "../../../models/menu-model";
 
 // import services
-import { ValidationService } from "../../services/validation-service";
-import { LoginServices } from "../../services/login-service";
-import { setStyle } from "../../services/style-services";
+import { ValidationService } from "../../../services/validation-service";
+import { LoginServices } from "../../../services/login-service";
+import { setStyle } from "../../../services/style-services";
 
 import "./login.scss";
 
@@ -38,9 +38,8 @@ interface LoginState {
 }
 
 export class Login extends Component<any, LoginState> {
-
-  private loginService : LoginServices = new LoginServices()
-  private validationService : ValidationService = new ValidationService()
+  private loginService: LoginServices = new LoginServices();
+  private validationService: ValidationService = new ValidationService();
 
   constructor(props: any) {
     super(props);
@@ -60,7 +59,6 @@ export class Login extends Component<any, LoginState> {
     try {
       // verify if user is already logged
       this.loginService.isUserLogged(this.props.history);
-      
     } catch (err) {
       console.log(err);
     }
@@ -68,6 +66,7 @@ export class Login extends Component<any, LoginState> {
 
   // function to handle login request
   public handleLogIn = async () => {
+    
     const { user } = this.state;
 
     // disabled request if form is not legal
@@ -77,13 +76,8 @@ export class Login extends Component<any, LoginState> {
     }
 
     // handle request
-    await this.handleRequest(user);
-  };
-
-  public handleRequest = async (user) => {
-    //send login request
     try {
-      await this.loginService.login(user, this.props.history)
+      await this.loginService.login(user, this.props.history);
     } catch (err) {
       this.handleErrorResponse(err);
     }
@@ -97,7 +91,6 @@ export class Login extends Component<any, LoginState> {
       console.log(err);
     }
   };
-
 
   render() {
     const { user, serverError, showPassword, error } = this.state;

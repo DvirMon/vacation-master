@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-import Loader from "../../loader/loader";
+import Loader from "../../my-components/loader/loader";
 import CanvasJSReact from "../../../assets/canvasjs.react";
-import UpdateToken from "../../updateToken/updateToken";
+import UpdateToken from "../../auth/updateToken/updateToken";
 
 import { ChartModel } from "../../../models/charts-model";
 

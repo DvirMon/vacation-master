@@ -22,7 +22,9 @@ export class VacationService {
   // GET user vacation : http://localhost:3000/api/vacations/user
   public getUserVacationAsync = async () => {
     const response = await this.http.getRequestAsync(this.vacationUrl + "/user")
-    return response
+    store.dispatch({ type: ActionType.getAllVacation, payload: response });
+
+    // return response
   }
 
   // GET all the users following a vacation : http://localhost:3000/api/followup/:vacationID;

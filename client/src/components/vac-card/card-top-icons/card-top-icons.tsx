@@ -14,7 +14,6 @@ import EditIcon from "@material-ui/icons/Edit";
 import { UserVacationModel } from "../../../models/vacations-model";
 
 // import services
-import { HttpService } from "../../../services/http-service";
 import { VacationService } from "../../../services/vacations-service";
 import { SocketService } from "../../../services/socket-service";
 

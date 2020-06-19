@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 
 // import my components
-import MyForm from "../../my-form/my-form";
-import Loader from "../../loader/loader";
-import UpdateToken from "../../updateToken/updateToken";
+import MyForm from "../../my-components/my-form/my-form";
+import Loader from "../../my-components/loader/loader";
+import UpdateToken from "../../auth/updateToken/updateToken";
 import VacCard from "../../vac-card/vac-card";
 
 // import materiel-ui

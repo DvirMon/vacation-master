@@ -15,7 +15,7 @@ export class InsertForm extends FormService{
     const myFormData = this.setFormData(vacation);
     const response = await this.http.postRequestAsync(this.url, myFormData)
     return response;
-  };
+  };   
   // end of function
   
   // handle success

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AuthServices } from "../../services/auth-service";
+import { AuthServices } from "../../../services/auth-service";
 
 interface UpdateTokenState {
   update: boolean;

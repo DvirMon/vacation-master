@@ -4,18 +4,20 @@ import React, { Component } from "react";
 import { Grid, Tooltip, IconButton } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Button from "@material-ui/core/Button";
-import MyInput from "../my-input/my-input";
 import Form from "react-bootstrap/Form";
 
+// import my components
+import MyInput from "../../my-components/my-input/my-input";
+
 // import models
-import { RegisterModel } from "../../models/user-model";
-import { RegisterMenu } from "../../models/menu-model";
+import { RegisterModel } from "../../../models/user-model";
+import { RegisterMenu } from "../../../models/menu-model";
 
 // import services
-import { LoginServices } from "../../services/login-service";
-import { HttpService } from "../../services/http-service";
-import { ValidationService } from "../../services/validation-service";
-import { setStyle } from "../../services/style-services";
+import { LoginServices } from "../../../services/login-service";
+import { HttpService } from "../../../services/http-service";
+import { ValidationService } from "../../../services/validation-service";
+import { setStyle } from "../../../services/style-services";
 
 import generator from "generate-password";
 
@@ -66,20 +68,12 @@ export class Register extends Component<any, RegisterState> {
 
     try {
       // handle request
-      await this.handleRequest(user);
+      await this.loginService.register(user, this.props.history);
     } catch (err) {
       this.handleErrorResponse(err);
     }
-  };
+  }; 
 
-  public handleRequest = async (user) => {
-    // send register request
-    const url = `http://localhost:3000/api/user`;
-    const response = await this.http.postRequestAsync(url, user);
-
-    // handle server response
-    this.loginService.handleSuccessResponse(response, this.props.history);
-  };
 
   public handleErrorResponse = (err) => {
     if (err.response.status === 409) {
