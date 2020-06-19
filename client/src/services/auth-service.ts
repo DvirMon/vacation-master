@@ -1,6 +1,6 @@
 import { ActionType } from "../redux/action-type";
-import { invokeConnection } from "./socket-service";
-import { HttpService } from "./server-service";
+import { SocketService } from "./socket-service";
+import { HttpService } from "./http-service";
 
 import { environment } from "../environments/environment"
 import { store } from "../redux/store";
@@ -12,6 +12,7 @@ export class AuthServices {
 
   private server: string = environment.server + "/api/tokens"
   private http: HttpService = new HttpService()
+  private socketService : SocketService = new SocketService()
 
   // function for getting first accessToken and refreshToken
   public getTokens = async () => {
@@ -36,7 +37,7 @@ export class AuthServices {
   public handleAuth = async (callback, history) => {
     try {
       callback()
-      invokeConnection();
+      this.socketService.invokeConnection();
       await this.getAccessToken()
     }
     catch (err) {

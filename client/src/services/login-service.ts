@@ -1,7 +1,7 @@
 import { store } from "../redux/store";
 import { AuthServices } from "./auth-service";
 import { ActionType } from "../redux/action-type";
-import { HttpService } from "./server-service";
+import { HttpService } from "./http-service";
 import { environment } from "../environments/environment"
 
 export class LoginServices {

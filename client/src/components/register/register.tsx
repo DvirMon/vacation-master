@@ -13,7 +13,7 @@ import { RegisterMenu } from "../../models/menu-model";
 
 // import services
 import { LoginServices } from "../../services/login-service";
-import { HttpService } from "../../services/server-service";
+import { HttpService } from "../../services/http-service";
 import { ValidationService } from "../../services/validation-service";
 import { setStyle } from "../../services/style-services";
 

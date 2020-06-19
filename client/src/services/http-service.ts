@@ -26,7 +26,7 @@ export class HttpService {
     return data
   }
   // end of function
-
+ 
   // template of delete request with authorization
   public deleteRequestAsync = async (url: string) => {
     const response = await axios.delete(url)

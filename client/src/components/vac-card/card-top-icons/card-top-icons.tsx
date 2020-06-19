@@ -14,16 +14,10 @@ import EditIcon from "@material-ui/icons/Edit";
 import { UserVacationModel } from "../../../models/vacations-model";
 
 // import services
-import { HttpService } from "../../../services/server-service";
+import { HttpService } from "../../../services/http-service";
 import { VacationService } from "../../../services/vacations-service";
-import {
-  handleAdminDelete,
-  updateChart,
-} from "../../../services/socket-service";
+import { SocketService } from "../../../services/socket-service";
 
-// import redux
-import { store } from "../../../redux/store";
-import { ActionType } from "../../../redux/action-type";
 
 interface CardTopIconsProps {
   vacation: UserVacationModel;
@@ -36,10 +30,13 @@ interface CardTopIconsState {
   clickEvent: boolean;
 }
 
-export class CardTopIcons extends Component< CardTopIconsProps, CardTopIconsState> {
+export class CardTopIcons extends Component<
+  CardTopIconsProps,
+  CardTopIconsState
+> {
+  private vacationService: VacationService = new VacationService();
+  private socketService : SocketService = new SocketService()
 
-  private http : HttpService = new HttpService()
-  private vacationService : VacationService = new VacationService () 
 
   constructor(props: CardTopIconsProps) {
     super(props);
@@ -81,14 +78,13 @@ export class CardTopIcons extends Component< CardTopIconsProps, CardTopIconsStat
       </div>
     );
   }
-
+ 
   public handleIconClick = async () => {
-    // handle user click
-    const vacation = this.props.vacation;
-    await this.vacationService.handleIconClick(vacation);
+    // handle user click 
+    await this.vacationService.handleIconClick(this.props.vacation);
 
     // update admin chart
-    updateChart();
+    this.socketService.updateChart();
   };
 
   // function to delete vacation (for admin)
@@ -97,18 +93,14 @@ export class CardTopIcons extends Component< CardTopIconsProps, CardTopIconsStat
     if (!answer) {
       return;
     }
-
-    const vacationID = this.props.vacation.vacationID;
-    const fileName = this.props.vacation.image;
-
-    // delete from db
-    const url = `http://localhost:3000/api/vacations/${vacationID}/${fileName}`;
-    await this.http.deleteRequestAsync(url);
-
-    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID });
+ 
+    this.vacationService.deleteVacationAsync(
+      this.props.vacation.vacationID.toString(),
+      this.props.vacation.image 
+    );
 
     // update real-time
-    handleAdminDelete(this.props.vacation);
+   this.socketService.handleAdminDelete(this.props.vacation);
   };
   // end of function
 }

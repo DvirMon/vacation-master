@@ -1,6 +1,6 @@
 import { VacationModel } from "../models/vacations-model";
 
-import { HttpService } from "./server-service";
+import { HttpService } from "./http-service";
 import { ValidationService } from "./validation-service";
 
 import { store } from "../redux/store";
@@ -50,7 +50,13 @@ export class VacationService {
     }
   };
 
+  // DELETE vacation (admin) : http://localhost:3000/api/vacations/${vacationID}/${fileName}
 
+  public deleteVacationAsync = async (vacationID : string, fileName : string | File) => {
+    await this.http.deleteRequestAsync(this.vacationUrl + `/${vacationID}/${fileName}`);
+    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID });
+
+  };
 
 
 

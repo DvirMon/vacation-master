@@ -1,8 +1,11 @@
-import { HttpService } from "./server-service";
+import { HttpService } from "./http-service";
+import { SocketService } from "./socket-service";
 
  export class FormService {
 
   public http : HttpService = new HttpService()
+  public socketService : SocketService = new SocketService()
+
 
   constructor(
     public url: string, 

@@ -6,7 +6,7 @@ import UpdateToken from "../../updateToken/updateToken";
 
 import { ChartModel } from "../../../models/charts-model";
 
-import { HttpService } from "../../../services/server-service";
+import { HttpService } from "../../../services/http-service";
 import { AuthServices } from "../../../services/auth-service";
 
 // import redux

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { HttpService } from "../../services/server-service";
+import { HttpService } from "../../services/http-service";
 
 // import redux
 import { store } from "../../redux/store";

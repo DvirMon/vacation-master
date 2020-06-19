@@ -1,7 +1,6 @@
 import { VacationModel } from "../../../models/vacations-model";
 
 import { FormService } from "../../../services/form-service";
-import { handleAdminInsert } from "../../../services/socket-service";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -23,7 +22,7 @@ export class InsertForm extends FormService{
   public handleInsertSuccess = (vacation: VacationModel) => {
     
     store.dispatch({ type: ActionType.addVacation, payload: vacation })
-    handleAdminInsert(vacation)
+    this.socketService.handleAdminInsert(vacation)
     this.handleSuccess()
   };
   // end of function
