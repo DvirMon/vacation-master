@@ -20,7 +20,7 @@ export class VacationService {
   // request section
 
   // GET user vacation : http://localhost:3000/api/vacations/user
-  public getUserVacationAsync = async () => {
+  public getUserVacationAsync = async (): Promise<void> => {
     const response = await this.http.getRequestAsync(this.vacationUrl + "/user")
     store.dispatch({ type: ActionType.getAllVacation, payload: response });
 
@@ -28,13 +28,13 @@ export class VacationService {
   }
 
   // GET all the users following a vacation : http://localhost:3000/api/followup/:vacationID;
-  public getFollowersByVacationAsync = async (vacationID) => {
+  public getFollowersByVacationAsync = async (vacationID): Promise<any> => {
     const response = await this.http.getRequestAsync(this.followUpUrl + `/${vacationID}`)
     return response
   }
 
   // POST new followup vacation : http://localhost:3000/api/followup`
-  public addFollowUpAsync = async (vacationID) => {
+  public addFollowUpAsync = async (vacationID): Promise<any> => {
     try {
       const response = await this.http.postRequestAsync(this.followUpUrl, { vacationID });
       return response
@@ -44,7 +44,7 @@ export class VacationService {
   };
 
   // DELETE followup vacation : http://localhost:3000/api/followup/:id
-  public deleteFollowUpAsync = async (id) => {
+  public deleteFollowUpAsync = async (id): Promise<void> => {
     try {
       await this.http.deleteRequestAsync(this.followUpUrl + `/${id}`);
     } catch (err) {
@@ -54,18 +54,15 @@ export class VacationService {
 
   // DELETE vacation (admin) : http://localhost:3000/api/vacations/${vacationID}/${fileName}
 
-  public deleteVacationAsync = async (vacationID : string, fileName : string | File) => {
+  public deleteVacationAsync = async (vacationID: string, fileName: string | File): Promise<void> => {
     await this.http.deleteRequestAsync(this.vacationUrl + `/${vacationID}/${fileName}`);
     store.dispatch({ type: ActionType.deleteVacation, payload: vacationID });
 
   };
 
 
-
-
-
   // function to handle add followup 
-  public handleAddFollowUp = async (vacation) => {
+  public handleAddFollowUp = async (vacation) : Promise<void> => {
     try {
 
       // add to database

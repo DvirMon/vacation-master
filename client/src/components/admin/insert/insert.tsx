@@ -11,17 +11,17 @@ import Grid from "@material-ui/core/Grid";
 // import models
 import { VacationModel } from "../../../models/vacations-model";
 import {
-  VacationCardModel, 
+  VacationCardModel,
   formAdminSetting,
 } from "../../../models/vac-card-model";
 
 // import services
 import { VacationService } from "../../../services/vacations-service";
+import { ValidationService } from "../../../services/validation-service";
 import { AuthServices } from "../../../services/auth-service";
 import { InsertForm } from "./insert-service";
 
 import "./insert.scss";
-import { ValidationService } from "../../../services/validation-service";
 
 interface InsertState {
   vacation: VacationModel;
@@ -29,10 +29,10 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
-
-  private authService : AuthServices = new AuthServices()
-  private vacationService : VacationService = new VacationService()
-  private validationService : ValidationService = new ValidationService()
+   
+  private authService: AuthServices = new AuthServices();
+  private vacationService: VacationService = new VacationService();
+  private validationService: ValidationService = new ValidationService();
 
   constructor(props: any) {
     super(props);
@@ -42,12 +42,14 @@ export class Insert extends Component<any, InsertState> {
       settings: formAdminSetting,
     };
   }
-
-  private InsertForm = new InsertForm(
+ 
+  private insertForm = new InsertForm(
     `http://localhost:3000/api/vacations`,
     "New Vacation has been added!",
     this.props.history
   );
+
+
 
   public componentDidMount = async () => {
     await this.authService.handleAuth(
@@ -67,13 +69,13 @@ export class Insert extends Component<any, InsertState> {
       }
 
       // send request
-      const response = await this.InsertForm.handleInsertRequest(vacation);
+      const response = await this.insertForm.handleInsertRequest(vacation);
 
       // handle server response
-      this.InsertForm.handleInsertSuccess(response);
+      this.insertForm.handleInsertSuccess(response);
     } catch (err) {
       if (err.response.status === 500) {
-        this.InsertForm.handleError("An error has occurred.");
+        this.insertForm.handleError("An error has occurred.");
       }
     }
   };

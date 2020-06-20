@@ -1,17 +1,17 @@
 import { VacationModel } from "../../../models/vacations-model";
 import { FormService } from "../../../services/form-service";
- 
+
 import { store } from "../../../redux/store";
 import { ActionType } from "../../../redux/action-type";
 
 export class UpdateForm extends FormService {
 
-  public getVacation = async () => {
+  public getVacation = async (): Promise<VacationModel> => {
     const vacation = await this.http.getRequestAsync(this.url);
     return vacation
   }
 
-  public verifyChange = (updated: boolean) => {
+  public verifyChange = (updated: boolean): boolean => {
 
     if (updated) {
       const answer = window.confirm(
@@ -25,9 +25,9 @@ export class UpdateForm extends FormService {
   }
 
   // handle put request for vacation
-  public handleIUpdateRequest = async (vacation: VacationModel) => {
-    const myFormData = this.setFormData(vacation);
-    const response = await this.http.putRequestAsync(this.url, myFormData)
+  public handleIUpdateRequest = async (vacation: VacationModel): Promise<VacationModel> => {
+    const formData = this.setFormData(vacation);
+    const response = await this.http.putRequestAsync(this.url, formData)
     return response;
   }
   // end of function
