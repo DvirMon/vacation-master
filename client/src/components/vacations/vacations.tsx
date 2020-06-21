@@ -64,6 +64,7 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   public componentDidMount = async () => {
+    
     try {
       // verify login
       if (store.getState().login.isLoggedIn === false) {

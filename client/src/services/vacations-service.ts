@@ -52,7 +52,7 @@ export class VacationService {
     }
   };
 
-  // DELETE vacation (admin) : http://localhost:3000/api/vacations/${vacationID}/${fileName}
+  // DELETE vacation (admin) : http://localhost:3000/api/vacations/:vacationID/:fileName
 
   public deleteVacationAsync = async (vacationID: string, fileName: string | File): Promise<void> => {
     await this.http.deleteRequestAsync(this.vacationUrl + `/${vacationID}/${fileName}`);

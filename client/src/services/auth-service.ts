@@ -3,10 +3,10 @@ import { SocketService } from "./socket-service";
 import { HttpService } from "./http-service";
 
 import { environment } from "../environments/environment"
-import { store } from "../redux/store";
 import { UserModel } from "../models/user-model";
 import { TokensModel } from "../models/tokens.model";
 
+import { store } from "../redux/store";
 
 export class AuthServices {
 
@@ -72,6 +72,19 @@ export class AuthServices {
     err.response?.status === 401 || err.response?.status === 403
       ? console.log(err.response.data)
       : console.log(err)
+  }
+
+  public handleAuthError = (err) => {
+
+    // const isLogin = store.getState().a
+
+    if(err.response?.status === 401 ) {
+      
+    }
+    if( err.response?.status === 403 ) {
+
+    }
+
   }
 
 

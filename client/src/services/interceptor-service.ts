@@ -6,7 +6,7 @@ export class InterceptorService {
 
   private tokenUrl: string = `${environment.server}/api/tokens`
 
-  public handleRequestInterceptor = (): AxiosRequestConfig | any => {
+  public tokenInterceptor = (): AxiosRequestConfig | any => {
     axios.interceptors.request.use(request => {
       if (store.getState().login.isLoggedIn) {
         request.url === this.tokenUrl + "/new"
@@ -15,6 +15,7 @@ export class InterceptorService {
       }
       return request;
     }, error => {
+      console.log(error)
       return Promise.reject(error);
     });
   }
@@ -25,4 +26,7 @@ export class InterceptorService {
       return bool ? tokens.accessToken : tokens.dbToken?.refreshToken
     }
   }
+
+
+  
 }
