@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const followUpLogic = require("../bll/followup-logic");
-const usersLogic = require("../bll/users-logic");
+const followUpLogic = require("../business-logic-layer/followup-logic");
+const usersLogic = require("../business-logic-layer/users-logic");
 const auth = require("../services/auth");
 
 const key = config.jwt.actKey;

@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 // import logic
-const tokenLogic = require("../bll/tokens-logic");
+const tokenLogic = require("../business-logic-layer/tokens-logic");
 
 // import auth
 const jwt = require("jsonwebtoken");

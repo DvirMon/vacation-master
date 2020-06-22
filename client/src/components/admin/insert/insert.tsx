@@ -19,7 +19,6 @@ import {
 import { VacationService } from "../../../services/vacations-service";
 import { ValidationService } from "../../../services/validation-service";
 import { AuthServices } from "../../../services/auth-service";
-import { InsertForm } from "./insert-service";
 
 import "./insert.scss";
 
@@ -29,7 +28,6 @@ interface InsertState {
 }
 
 export class Insert extends Component<any, InsertState> {
-   
   private authService: AuthServices = new AuthServices();
   private vacationService: VacationService = new VacationService();
   private validationService: ValidationService = new ValidationService();
@@ -42,14 +40,6 @@ export class Insert extends Component<any, InsertState> {
       settings: formAdminSetting,
     };
   }
- 
-  private insertForm = new InsertForm(
-    `http://localhost:3000/api/vacations`,
-    "New Vacation has been added!",
-    this.props.history
-  );
-
-
 
   public componentDidMount = async () => {
     await this.authService.handleAuth(
@@ -62,22 +52,13 @@ export class Insert extends Component<any, InsertState> {
   public handleInsertRequest = async () => {
     const { vacation } = this.state;
 
-    try {
-      // validate vacation
-      if (this.vacationService.validVacationForm(vacation)) {
-        return;
-      }
-
-      // send request
-      const response = await this.insertForm.handleInsertRequest(vacation);
-
-      // handle server response
-      this.insertForm.handleInsertSuccess(response);
-    } catch (err) {
-      if (err.response.status === 500) {
-        this.insertForm.handleError("An error has occurred.");
-      }
+    if (this.vacationService.validVacationForm(vacation)) {
+      return;
     }
+
+    // handle request
+    await this.vacationService.addNewVacation(vacation, this.props.history);
+
   };
 
   render() {

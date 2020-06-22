@@ -100,7 +100,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
           {preview
             ? this.cardMedia(preview) 
             : this.cardMedia(
-                `${environment.server}/api/vacations/uploads/${vacation.image}.jpg`
+                `${environment.server}/uploads/${vacation.image}.jpg`
               )}
           <CardHeader
             action={

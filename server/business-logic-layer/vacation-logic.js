@@ -1,5 +1,5 @@
 const dal = require("../dal/dal");
-const followUpLogic = require("../bll/followup-logic");
+const followUpLogic = require("../business-logic-layer/followup-logic");
 
 const vacationFormat = `v.vacationID, description, destination, image,
 DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 

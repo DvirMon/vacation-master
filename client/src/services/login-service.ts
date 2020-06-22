@@ -2,6 +2,9 @@ import { store } from "../redux/store";
 import { AuthServices } from "./auth-service";
 import { ActionType } from "../redux/action-type";
 import { HttpService } from "./http-service";
+
+import { UserModel} from "../models/user-model"
+
 import { environment } from "../environments/environment"
 
 export class LoginServices {
@@ -12,12 +15,13 @@ export class LoginServices {
 
   // request section
 
-  public login = async (user, history): Promise<void> => {
+  public login = async (user : UserModel, history): Promise<void> => {
     const response = await this.http.postRequestAsync(this.userUrl + "/login", user);
     this.handleSuccessResponse(response, history);
   }
-
-  public register = async (user, history): Promise<void> => {
+ 
+  public register = async (user : UserModel, history): Promise<void> => {
+    console.log(user)
     const response = await this.http.postRequestAsync(this.userUrl, user);
     this.handleSuccessResponse(response, history);
   }
@@ -33,23 +37,19 @@ export class LoginServices {
   }
   // end of function
 
-  // function to handle login Success
+  // function to handle login Success 
   public handleSuccessResponse = async (response, history): Promise<void> => {
-    try {
-      const user = response.user
-      const accessToken = response.jwt
-      store.dispatch({ type: ActionType.Login, payload: user });
-      store.dispatch({ type: ActionType.addAccessToken, payload: accessToken });
-      await this.authService.getTokens()
-      this.handleRouting(user, history);
-    } catch (err) {
-      console.log(err)
-    }
+    const user = response.user
+    const accessToken = response.jwt
+    store.dispatch({ type: ActionType.Login, payload: user });
+    store.dispatch({ type: ActionType.addAccessToken, payload: accessToken });
+    await this.authService.getTokens()
+    this.handleRouting(user, history);
   };
   // end of function
 
   // function to handle rout according to role
-  public handleRouting = (user, history): void => {
+  public handleRouting = (user : UserModel, history): void => {
     user.isAdmin === 1 ?
       history.push(`/admin`)
       : history.push(`/user/${user.uuid}`);
@@ -85,5 +85,6 @@ export class LoginServices {
     }
   }
   // end of function
+
 
 }

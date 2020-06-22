@@ -8,9 +8,9 @@ export class FormService {
 
 
   constructor(
-    public url: string,
-    public successMsg: string,
-    public history: any
+    public url?: string,
+    public successMsg?: string,
+    public history?: any
   ) { }
 
   // set FormData object for post and put request
@@ -31,10 +31,10 @@ export class FormService {
   }
   // end of function
 
-  // handle success
-  public handleSuccess = (): void => {
-    alert(this.successMsg);
-    this.history.push("/admin");
+  // handle success 
+  public handleSuccess = (history?, successMsg? : string): void => {
+    alert(successMsg);
+    history.push("/admin");
 
   };
   // end of function

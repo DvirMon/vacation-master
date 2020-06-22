@@ -28,14 +28,12 @@ interface RegisterState {
   password: string;
   serverError: string;
   error: boolean;
-} 
+}
 
 export class Register extends Component<any, RegisterState> {
-
-  private http : HttpService = new HttpService() 
-  private loginService : LoginServices = new LoginServices()
-  private validationService : ValidationService = new ValidationService()
-
+  private http: HttpService = new HttpService();
+  private loginService: LoginServices = new LoginServices();
+  private validationService: ValidationService = new ValidationService();
 
   constructor(props: any) {
     super(props);
@@ -49,33 +47,20 @@ export class Register extends Component<any, RegisterState> {
   }
 
   public componentDidMount = () => {
-    // set style
     setStyle(RegisterMenu, "home");
   };
 
-  public disabledButton = (): boolean => {
-    const user = this.state.user;
 
-    const valid = this.validationService.formLegal(
-      user,
-      RegisterModel.validRegistration
-    );
-    return valid.msg;
-  };
 
-  public handleRegister = async () => {
-    const { user } = this.state;
-
-    try {
-      // handle request
-      await this.loginService.register(user, this.props.history);
+  private handleRegister = async () => {
+    try { 
+      await this.loginService.register(this.state.user, this.props.history);
     } catch (err) {
       this.handleErrorResponse(err);
     }
-  }; 
+  };
 
-
-  public handleErrorResponse = (err) => {
+  private handleErrorResponse = (err) => {
     if (err.response.status === 409) {
       const serverError = err.response.data;
       this.setState({ serverError, error: true });
@@ -164,8 +149,16 @@ export class Register extends Component<any, RegisterState> {
     );
   }
 
+  private disabledButton = (): boolean => {
+    const valid = this.validationService.formLegal(
+      this.state.user,
+      RegisterModel.validRegistration
+    );
+    return valid.msg;
+  };
+
   // update user state
-  public handleChange = (prop: string, input: string) => {
+  private handleChange = (prop: string, input: string) => {
     const { user, serverError } = this.state;
     user[prop] = input;
     this.setState({ user });
@@ -177,7 +170,7 @@ export class Register extends Component<any, RegisterState> {
   // end of function
 
   // function to generate strong password
-  public getPassword = () => {
+  private getPassword = () => {
     const password = generator.generate({
       length: 10,
       numbers: true,

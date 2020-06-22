@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const vacationsLogic = require("../bll/vacation-logic");
-const usersLogic = require("../bll/users-logic");
+const vacationsLogic = require("../business-logic-layer/vacation-logic");
+const usersLogic = require("../business-logic-layer/users-logic");
 
 const auth = require("../services/auth");
 const imageService = require("../services/image");

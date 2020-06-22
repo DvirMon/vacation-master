@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import logic
-const usersLogic = require("../bll/users-logic");
-const followUpLogic = require("../bll/followup-logic");
+const usersLogic = require("../business-logic-layer/users-logic");
+const followUpLogic = require("../business-logic-layer/followup-logic");
 
 // import auth
 const UserModel = require("../models/user-model");
@@ -14,7 +14,7 @@ const auth = require("../services/auth");
 const key = config.jwt.actKey;
 
 // get user followup vacations
-router.get(
+router.get( 
   "/followup",
   auth.authorize(0, key),
   async (request, response, next) => {
@@ -43,7 +43,8 @@ router.get(
 // add new user (register)
 router.post("/", async (request, response, next) => {
   try {
-
+    console.log(1)
+     
     // valid user format
     const error = UserModel.validateRegistration(request.body);
     if (error) {
@@ -78,7 +79,7 @@ router.post("/", async (request, response, next) => {
 // user login
 router.post("/login", async (request, response, next) => {
   try {
-
+    console.log(1)
     // valid user schema
     const error = UserModel.validateLogin(request.body);
     if (error) {

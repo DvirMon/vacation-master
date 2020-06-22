@@ -8,9 +8,8 @@ const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const io = require("socket.io");
-const morgan = require("morgan")
-
-const PORT = process.env.PORT || 3000
+const path = require("path");
+const PORT = process.env.PORT || 3000;
 
 // invoke server
 const server = express();
@@ -35,8 +34,7 @@ server.use(express.json());
 server.use(cors());
 server.use(fileUpload());
 server.use(express.static(socketService.findHtmlFile()));
-
-// server.use(morgan("common"))
+server.use("/uploads", express.static("uploads"));
 
 // middleware for controllers
 server.use("/api/user", usersController);
@@ -49,14 +47,12 @@ server.use(errorHandler);
 
 // use static files in production
 if (process.env.NODE_ENV === "production") {
-  
-  server.use(express.static("public/client"));
+  server.use(express.static("build"));
 
   server.get("*", (request, response) => {
-    response.sendFile(path.join(__dirname, "public/client", "index.html"));
+    response.sendFile(path.join(__dirname, "build", "index.html"));
   });
 }
-
 
 // create upload directory
 imageService.createUploadDir();

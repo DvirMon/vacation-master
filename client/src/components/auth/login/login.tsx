@@ -53,20 +53,12 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
-    // set style
     setStyle(LoginMenu, "home");
-
-    try {
-      // verify if user is already logged
-      this.loginService.isUserLogged(this.props.history);
-    } catch (err) {
-      console.log(err);
-    }
+    this.loginService.isUserLogged(this.props.history);
   };
 
   // function to handle login request
   public handleLogIn = async () => {
-    
     const { user } = this.state;
 
     // disabled request if form is not legal
@@ -78,7 +70,7 @@ export class Login extends Component<any, LoginState> {
     // handle request
     try {
       await this.loginService.login(user, this.props.history);
-    } catch (err) {
+    } catch (err) {  
       this.handleErrorResponse(err);
     }
   };

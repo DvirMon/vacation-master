@@ -7,6 +7,8 @@ import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 
 import { environment } from "../environments/environment"
+import { FormService } from "./form-service";
+import { SocketService } from "./socket-service";
 
 // class to handle all vacation logic
 export class VacationService {
@@ -16,8 +18,16 @@ export class VacationService {
 
   private http: HttpService = new HttpService()
   private validationService: ValidationService = new ValidationService()
+  private formService: FormService = new FormService()
+  private socketService: SocketService = new SocketService()
 
   // request section
+
+  // GET vacation : http://localhost:3000/api/vacations/:id
+  public getVacation = async (vacationId: string): Promise<VacationModel> => {
+    const vacation = await this.http.getRequestAsync(this.vacationUrl + `/${vacationId}`);
+    return vacation
+  }
 
   // GET user vacation : http://localhost:3000/api/vacations/user
   public getUserVacationAsync = async (): Promise<void> => {
@@ -25,6 +35,47 @@ export class VacationService {
     store.dispatch({ type: ActionType.getAllVacation, payload: response });
 
     // return response
+  }
+
+  //POST - new vacation : http://localhost:3000/api/vacations
+  public addNewVacation = async (vacation: VacationModel, history) => {
+
+    // handle request
+    const formData = this.formService.setFormData(vacation);
+    const response = await this.http.postRequestAsync(this.vacationUrl, formData)
+
+    // handle response
+    store.dispatch({ type: ActionType.addVacation, payload: response })
+    this.socketService.handleAdminInsert(vacation)
+    this.formService.handleSuccess(history, "add new vacation!")
+  }
+
+  //PUT - update vacation : http://localhost:3000/api/vacations/:id
+  public updateVacation = async (vacation: VacationModel, vacationId: string, history) => {
+
+    // handle request
+    const formData = this.formService.setFormData(vacation);
+    const response = await this.http.putRequestAsync(this.vacationUrl + `/${vacationId}`, formData)
+
+    // handle response
+    store.dispatch({ type: ActionType.updatedVacation, payload: response })
+    this.socketService.handleAdminUpdate(vacation)
+    this.formService.handleSuccess(history, "updated vacation!")
+  }
+
+  // DELETE vacation (admin) : http://localhost:3000/api/vacations/:vacationID/:fileName
+
+  public deleteVacationAsync = async (vacationID: string, fileName: string | File): Promise<void> => {
+    await this.http.deleteRequestAsync(this.vacationUrl + `/${vacationID}/${fileName}`);
+    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID });
+
+  };
+
+  //GET all vacation anf followers-  http://localhost:3000/api/followup
+
+  public getChartInfo = async () => {
+    const response = await this.http.getRequestAsync(this.followUpUrl);
+    store.dispatch({ type: ActionType.updateChartPoints, payload: response });
   }
 
   // GET all the users following a vacation : http://localhost:3000/api/followup/:vacationID;
@@ -35,34 +86,19 @@ export class VacationService {
 
   // POST new followup vacation : http://localhost:3000/api/followup`
   public addFollowUpAsync = async (vacationID): Promise<any> => {
-    try {
-      const response = await this.http.postRequestAsync(this.followUpUrl, { vacationID });
-      return response
-    } catch (err) {
-      console.log(err);
-    }
+    const response = await this.http.postRequestAsync(this.followUpUrl, { vacationID });
+    return response
   };
 
   // DELETE followup vacation : http://localhost:3000/api/followup/:id
   public deleteFollowUpAsync = async (id): Promise<void> => {
-    try {
-      await this.http.deleteRequestAsync(this.followUpUrl + `/${id}`);
-    } catch (err) {
-      console.log(err);
-    }
+    await this.http.deleteRequestAsync(this.followUpUrl + `/${id}`);
   };
 
-  // DELETE vacation (admin) : http://localhost:3000/api/vacations/:vacationID/:fileName
-
-  public deleteVacationAsync = async (vacationID: string, fileName: string | File): Promise<void> => {
-    await this.http.deleteRequestAsync(this.vacationUrl + `/${vacationID}/${fileName}`);
-    store.dispatch({ type: ActionType.deleteVacation, payload: vacationID });
-
-  };
 
 
   // function to handle add followup 
-  public handleAddFollowUp = async (vacation) : Promise<void> => {
+  public handleAddFollowUp = async (vacation): Promise<void> => {
     try {
 
       // add to database

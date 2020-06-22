@@ -6,28 +6,26 @@ import UpdateToken from "../../auth/updateToken/updateToken";
 
 import { ChartModel } from "../../../models/charts-model";
 
-import { HttpService } from "../../../services/http-service";
 import { AuthServices } from "../../../services/auth-service";
+import { ValidationService } from "../../../services/validation-service";
+import { VacationService } from "../../../services/vacations-service";
 
 // import redux
 import { store } from "../../../redux/store";
-import { ActionType } from "../../../redux/action-type";
 import { Unsubscribe } from "redux";
 
 import "./charts.scss";
-import { ValidationService } from "../../../services/validation-service";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 interface ChartsState {
   dataPoints: ChartModel[];
-  authService : AuthServices
+  authService: AuthServices;
 }
 
 export class Charts extends Component<any, ChartsState> {
-
-  private http : HttpService = new HttpService()
-  private validationService : ValidationService = new ValidationService()
+  private vacationService: VacationService = new VacationService();
+  private validationService: ValidationService = new ValidationService();
 
   private unsubscribeStore: Unsubscribe;
 
@@ -36,7 +34,7 @@ export class Charts extends Component<any, ChartsState> {
 
     this.state = {
       dataPoints: store.getState().vacation.dataPoints,
-      authService : new AuthServices()
+      authService: new AuthServices(),
     };
   }
 
@@ -52,25 +50,14 @@ export class Charts extends Component<any, ChartsState> {
       });
     });
 
-    try {
-      // handle request
-      const url = `http://localhost:3000/api/followup`;
-      const response = await this.http.getRequestAsync(url);
-      this.handleSuccess(response);
-    } catch (err) {
-      this.handleError(err);
-    }
+    this.vacationService.getChartInfo();
   };
 
   public componentWillUnmount(): void {
-    if( this.unsubscribeStore) {
+    if (this.unsubscribeStore) {
       this.unsubscribeStore();
     }
   }
-
-  public handleSuccess = (dataPoints) => {
-    store.dispatch({ type: ActionType.updateChartPoints, payload: dataPoints });
-  };
 
   public handleError = (err) => {
     console.log(err);
