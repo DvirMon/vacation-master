@@ -14,7 +14,7 @@ const setToken = (user) => {
     jwt.sign(
       { sub: user.uuid, role: user.isAdmin },
       config.jwt.actKey,
-      { expiresIn: "5s" },
+      { expiresIn: "15s" },
       (err, result) => {
         if (err) {
           reject(err);
@@ -32,7 +32,7 @@ const setRefreshToken = (user) => {
     jwt.sign(
       { sub: user.uuid, role: user.isAdmin },
       config.jwt.refKey,
-      { expiresIn: "3d" },
+      { expiresIn: "5s" },
       (err, result) => {
         if (err) {
           reject(err);

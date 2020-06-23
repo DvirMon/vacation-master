@@ -11,22 +11,22 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
 
   switch (action.type) {
 
-    case ActionType.getAllVacation:
+    case ActionType.GetAllVacation:
       newAppState.unFollowUp = action.payload.unFollowUp
       newAppState.followUp = action.payload.followUp
       break
-    case ActionType.addVacation:
+    case ActionType.AddVacation:
       newAppState.unFollowUp.push(action.payload)
       break
-    case ActionType.addFollowUp:
+    case ActionType.AddFollowUp:
       newAppState.followUp.push(action.payload)
       deleteLogic(newAppState, "unFollowUp", action.payload.vacationID)
       break
-    case ActionType.deleteFollowUp:
+    case ActionType.DeleteFollowUp:
       newAppState.unFollowUp.push(action.payload)
       deleteLogic(newAppState, "followUp", action.payload.vacationID)
       break
-    case ActionType.updatedVacation:
+    case ActionType.UpdatedVacation:
       const item = updateCondition(newAppState, "unFollowUp", action.payload)
       if (item) {
         updateLogic(item, action.payload)
@@ -34,18 +34,18 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
         updateLogic(updateCondition(newAppState, "followUp", action.payload), action.payload)
       }
       break
-    case ActionType.deleteVacation:
+    case ActionType.DeleteVacation:
       deleteLogic(newAppState, "unFollowUp", action.payload)
       deleteLogic(newAppState, "followUp", action.payload)
       deleteLogic(newAppState, "notification", action.payload)
       break
-    case ActionType.updateChartPoints:
+    case ActionType.UpdateChartPoints:
       newAppState.dataPoints = action.payload
       break
-    case ActionType.updateNotification:
+    case ActionType.UpdateNotification:
       newAppState.notification.push(action.payload)
       break
-    case ActionType.deleteAllNotification:
+    case ActionType.DeleteAllNotification:
       newAppState.notification = []
       break
     case ActionType.Logout:

@@ -13,8 +13,8 @@ const actKey = config.jwt.actKey;
 const refKey = config.jwt.refKey;
 
 // set refreshToken when login
-router.post("/", auth.authorize(0, actKey), async (request, response, next) => {
-  const payload = request.user;
+router.get("/", auth.authorize(0, actKey), async (request, response, next) => {
+  const payload = request.user
   try {
     // create refreshToken for user
     const refreshToken = await auth.setRefreshToken({
@@ -27,7 +27,7 @@ router.post("/", auth.authorize(0, actKey), async (request, response, next) => {
   } catch (err) {
     next(err);
   }
-});
+}); 
 
 // get new access token
 router.post("/new", auth.authorize(0, refKey), async (request, response, next) => {

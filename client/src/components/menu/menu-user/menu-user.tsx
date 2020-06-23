@@ -129,7 +129,7 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
 
   public handleClose = () => {
     this.setState({ anchorEl: null });
-    store.dispatch({ type: ActionType.deleteAllNotification });
+    store.dispatch({ type: ActionType.DeleteAllNotification });
   };
 
   public setKey = () => {

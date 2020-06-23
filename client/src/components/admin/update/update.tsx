@@ -77,8 +77,7 @@ export class Update extends Component<any, UpdateState> {
     // send update request 
     await this.vacationService.updateVacation(
       vacation,
-      this.props.match.params.id,
-      this.props.history
+      this.props.match.params.id, 
     );
   };
 

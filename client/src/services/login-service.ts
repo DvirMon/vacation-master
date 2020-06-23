@@ -31,8 +31,8 @@ export class LoginServices {
 
   // function to check if user is logged
   public isUserLogged = (history): void => {
-    if (store.getState().login.isLoggedIn) {
-      this.handleRouting(store.getState().login.user, history);
+    if (store.getState().auth.isLoggedIn) {
+      this.handleRouting(store.getState().auth.user, history);
     }
   }
   // end of function
@@ -42,7 +42,7 @@ export class LoginServices {
     const user = response.user
     const accessToken = response.jwt
     store.dispatch({ type: ActionType.Login, payload: user });
-    store.dispatch({ type: ActionType.addAccessToken, payload: accessToken });
+    store.dispatch({ type: ActionType.AddAccessToken, payload: accessToken });
     await this.authService.getTokens()
     this.handleRouting(user, history);
   };

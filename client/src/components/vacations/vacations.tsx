@@ -53,8 +53,8 @@ export class Vacations extends Component<any, VacationsState> {
     super(props);
 
     this.state = {
-      user: store.getState().login.user,
-      admin: store.getState().login.admin,
+      user: store.getState().auth.user,
+      admin: store.getState().auth.admin,
       tokens: store.getState().auth.tokens,
       followUp: store.getState().vacation.followUp,
       unFollowUp: store.getState().vacation.unFollowUp,
@@ -67,7 +67,7 @@ export class Vacations extends Component<any, VacationsState> {
     
     try {
       // verify login
-      if (store.getState().login.isLoggedIn === false) {
+      if (store.getState().auth.isLoggedIn === false) {
         this.handleError("Please Login");
         return;
       }
@@ -101,8 +101,8 @@ export class Vacations extends Component<any, VacationsState> {
   private subscribeToStore = () => {
     return store.subscribe(() => {
       this.setState({
-        user: store.getState().login.user,
-        admin: store.getState().login.admin,
+        user: store.getState().auth.user,
+        admin: store.getState().auth.admin,
         tokens: store.getState().auth.tokens,
         followUp: store.getState().vacation.followUp,
         unFollowUp: store.getState().vacation.unFollowUp,

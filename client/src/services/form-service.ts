@@ -1,17 +1,7 @@
-import { HttpService } from "./http-service";
-import { SocketService } from "./socket-service";
+import history from '../history';
+
 
 export class FormService {
-
-  public http: HttpService = new HttpService()
-  public socketService: SocketService = new SocketService()
-
-
-  constructor(
-    public url?: string,
-    public successMsg?: string,
-    public history?: any
-  ) { }
 
   // set FormData object for post and put request
   public setFormData = (vacation): FormData => {
@@ -32,7 +22,7 @@ export class FormService {
   // end of function
 
   // handle success 
-  public handleSuccess = (history?, successMsg? : string): void => {
+  public handleSuccess = (successMsg? : string): void => {
     alert(successMsg);
     history.push("/admin");
 

@@ -7,13 +7,13 @@ export const styleReducer = (oldAppState = new StyleAppState(), action: Action):
   const newAppState = { ...oldAppState }
 
   switch (action.type) {
-    case ActionType.updateMenu:
+    case ActionType.UpdateMenu:
       newAppState.menu = action.payload
       break
-    case ActionType.updateBackground:
+    case ActionType.UpdateBackground:
       newAppState.backgroundImage = action.payload
       break
-    case ActionType.updateSliderSetting:
+    case ActionType.UpdateSliderSetting:
       newAppState.sliderSetting = action.payload
       break
   

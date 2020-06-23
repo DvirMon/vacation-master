@@ -17,9 +17,9 @@ export class SocketService {
 
       const socket = io.connect("http://localhost:3000");
 
-      store.dispatch({ type: ActionType.updateSocket, payload: socket });
+      store.dispatch({ type: ActionType.UpdateSocket, payload: socket });
 
-      if (store.getState().login.admin) {
+      if (store.getState().auth.admin) {
         // updates for admin
         this.chartRealTimeUpdate(socket)
       } else {
@@ -59,29 +59,29 @@ export class SocketService {
     socket.on("server-add-vacation", (vacation: UserVacationModel) => {
 
       const msg = `New vacation added! : ${vacation.destination}`
-      store.dispatch({ type: ActionType.addVacation, payload: vacation })
-      store.dispatch({ type: ActionType.updateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
+      store.dispatch({ type: ActionType.AddVacation, payload: vacation })
+      store.dispatch({ type: ActionType.UpdateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
     })
 
     // admin updated vacation
     socket.on("server-update-vacation", (vacation: UserVacationModel) => {
       const msg = `Check new Updates! : ${vacation.destination}`
-      store.dispatch({ type: ActionType.updatedVacation, payload: vacation })
-      store.dispatch({ type: ActionType.updateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
+      store.dispatch({ type: ActionType.UpdatedVacation, payload: vacation })
+      store.dispatch({ type: ActionType.UpdateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
     })
 
     // admin deleted vacation 
     socket.on("server-delete-vacation", (vacation) => {
       const msg = `${vacation.destination} has been deleted!`
-      store.dispatch({ type: ActionType.deleteVacation, payload: vacation.vacationID })
-      store.dispatch({ type: ActionType.updateNotification, payload: { msg: msg, vacationID: "" } })
+      store.dispatch({ type: ActionType.DeleteVacation, payload: vacation.vacationID })
+      store.dispatch({ type: ActionType.UpdateNotification, payload: { msg: msg, vacationID: "" } })
     })
 
   }
 
   public chartRealTimeUpdate = (socket) => {
     socket.on("server-update-chart", (dataPoints: ChartModel) => {
-      store.dispatch({ type: ActionType.updateChartPoints, payload: dataPoints })
+      store.dispatch({ type: ActionType.UpdateChartPoints, payload: dataPoints })
     })
   }
   // end of section

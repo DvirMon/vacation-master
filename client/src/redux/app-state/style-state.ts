@@ -1,8 +1,8 @@
 import { MenuModel, AdminMenu } from "../../models/menu-model"
 import { SliderModel } from "../../models/slider-model"
-import { LoginAppState } from "./login-state"
+import { AuthAppState } from "./auth-state"
  
-export class StyleAppState extends LoginAppState {
+export class StyleAppState extends AuthAppState {
   public menu: MenuModel = new MenuModel()
   public backgroundImage: string
   public sliderSetting: SliderModel

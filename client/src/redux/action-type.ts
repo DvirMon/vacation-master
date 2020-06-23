@@ -1,29 +1,27 @@
 export enum ActionType {
-    
-  // Login ActionType
-  Login,
-  Logout,
-  isAdmin,  
 
   // auth ActionType
-  addAccessToken,
-  addRefreshToken,
-  updateSocket,
- 
-  // style ActionType
-  updateMenu,
-  updateBackground,
-  updateSliderSetting,
-  updateNotification,
-  
+  Login,
+  Logout,
+  IsAdmin,
+  AddAccessToken,
+  AddRefreshToken,
+  UpdateSocket,
+
   // vacations ActionType
-  getAllVacation,
-  addVacation,
-  updatedVacation,
-  deleteVacation,
-  addFollowUp,
-  deleteFollowUp,
-  updateChartPoints,
-  deleteAllNotification
-  
+  GetAllVacation,
+  AddVacation,
+  AddFollowUp,
+  UpdatedVacation,
+  UpdateChartPoints,
+  DeleteVacation,
+  DeleteFollowUp,
+  DeleteAllNotification,
+
+  // style ActionType
+  UpdateMenu,
+  UpdateBackground,
+  UpdateSliderSetting,
+  UpdateNotification,
+
 } 

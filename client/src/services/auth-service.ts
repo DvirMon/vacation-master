@@ -6,7 +6,6 @@ import { environment } from "../environments/environment"
 import { TokensModel } from "../models/tokens.model";
 
 import { store } from "../redux/store";
-import { AxiosError } from "axios";
 
 export class AuthServices {
 
@@ -17,7 +16,7 @@ export class AuthServices {
   // function for getting first accessToken and refreshToken
   public getTokens = async (): Promise<void> => {
     const response = await this.http.getRequestAsync(this.tokenUrl);
-    store.dispatch({ type: ActionType.addRefreshToken, payload: response })
+    store.dispatch({ type: ActionType.AddRefreshToken, payload: response })
   };
   //end of function
 
@@ -25,7 +24,7 @@ export class AuthServices {
   public getAccessToken = async (): Promise<void> => {
     const tokens: TokensModel = store.getState().auth.tokens
     const response = await this.http.postRequestAsync(this.tokenUrl + "/new", tokens.dbToken)
-    store.dispatch({ type: ActionType.addAccessToken, payload: response })
+    store.dispatch({ type: ActionType.AddAccessToken, payload: response })
   };
 
   // verify admin role, invoke socket connection, set tokens
@@ -45,7 +44,7 @@ export class AuthServices {
     if (id) {
       await this.http.deleteRequestAsync(this.tokenUrl + `/${id}`);
     }
-
+    console.log(1)
     // handle logic in store
     store.dispatch({ type: ActionType.Logout });
 
@@ -55,12 +54,5 @@ export class AuthServices {
     // redirect to login page
     history.push("/login");
   }
-
-  private handleError = (err: AxiosError): void => {
-    err.response?.status === 401 || err.response?.status === 403
-      ? console.log(err.response.data)
-      : console.log(err)
-  }
-
 
 }

@@ -12,9 +12,10 @@ import Charts from "../admin/charts/charts";
 import Update from "../admin/update/update";
 import Logout from "../auth/logout/logout";
 import PageNotFound from "../page-not-found/page-not-found";
+import history from '../../history';
 
 // import router
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, Router } from "react-router-dom";
 
 // import redux
 import { Unsubscribe } from "redux";
@@ -56,7 +57,7 @@ export class Layout extends Component<any, LayoutState> {
 
     return (
       <div className={clsx("layout", "bg", `${backgroundImage}`)}>
-        <BrowserRouter>
+        <Router history={history}>
           <nav>
             <Menu />
           </nav>
@@ -99,7 +100,7 @@ export class Layout extends Component<any, LayoutState> {
               <Route component={PageNotFound} exact />
             </Switch>
           </main>
-        </BrowserRouter>
+        </Router>
       </div>
     );
   }

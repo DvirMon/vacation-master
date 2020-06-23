@@ -9,7 +9,8 @@ export class Logout extends Component<any, any> {
   private authService: AuthServices = new AuthServices();
 
   public componentDidMount = async () => {
-    if (store.getState().login.isLoggedIn === false) {
+    
+    if (store.getState().auth.isLoggedIn === false) {
       this.props.history.push("/login");
       return;
     }

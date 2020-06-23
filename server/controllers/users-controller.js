@@ -43,7 +43,6 @@ router.get(
 // add new user (register)
 router.post("/", async (request, response, next) => {
   try {
-    console.log(1)
      
     // valid user format
     const error = UserModel.validateRegistration(request.body);
@@ -79,7 +78,6 @@ router.post("/", async (request, response, next) => {
 // user login
 router.post("/login", async (request, response, next) => {
   try {
-    console.log(1)
     // valid user schema
     const error = UserModel.validateLogin(request.body);
     if (error) {

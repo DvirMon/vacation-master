@@ -6,7 +6,7 @@ export class ValidationService {
 
     //verify admin 
     public verifyAdmin = (history) => {
-      const admin = store.getState().login.admin;
+      const admin = store.getState().auth.admin;
       if (!admin) {
         alert("Not Admin");
         history.push("/login");

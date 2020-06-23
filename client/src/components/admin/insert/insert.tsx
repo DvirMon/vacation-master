@@ -57,7 +57,7 @@ export class Insert extends Component<any, InsertState> {
     }
 
     // handle request
-    await this.vacationService.addNewVacation(vacation, this.props.history);
+    await this.vacationService.addNewVacation(vacation);
 
   };
 
