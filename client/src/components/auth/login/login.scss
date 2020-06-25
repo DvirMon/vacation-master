@@ -1,22 +1,14 @@
 @import "../../../style/variables";
 
 .login {
+
   @include default();
 
   .fade-up {
     animation: fade-up 2s;
   }
 
-  @keyframes fade-up {
-    from {
-      top: 15%;
-      opacity: 0;
-    }
-    to {
-      top: 0%;
-      opacity: 1;
-    }
-  }
+
 
   .login-text {
     @include auth-form(80%, #000000, 0.4);
@@ -52,7 +44,7 @@
 }
 
 @media screen and (min-width: 992px) {
-  form {
+  .auth-form {
     @include auth-form(75%, #ffffff, 0.9);
   }
 
@@ -63,7 +55,7 @@
 }
 
 @media screen and (max-width: 600px) {
-  form {
+  .auth-form {
     @include auth-form(95%, #ffffff, 0.9);
   }
   .text-center {

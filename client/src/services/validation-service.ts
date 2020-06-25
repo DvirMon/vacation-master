@@ -1,11 +1,12 @@
 
 import Joi from "joi"
 import { store } from "../redux/store"
+import history from "../history"
 
 export class ValidationService {
 
     //verify admin 
-    public verifyAdmin = (history) => {
+    public verifyAdmin = () => {
       const admin = store.getState().auth.admin;
       if (!admin) {
         alert("Not Admin");

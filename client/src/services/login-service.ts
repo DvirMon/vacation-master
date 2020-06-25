@@ -5,7 +5,8 @@ import { HttpService } from "./http-service";
 
 import { UserModel} from "../models/user-model"
 
-import { environment } from "../environments/environment"
+import history from "../history"
+import { environment } from "../environment"
 
 export class LoginServices {
 
@@ -15,41 +16,40 @@ export class LoginServices {
 
   // request section
 
-  public login = async (user : UserModel, history): Promise<void> => {
+  public login = async (user : UserModel): Promise<void> => {
     const response = await this.http.postRequestAsync(this.userUrl + "/login", user);
-    this.handleSuccessResponse(response, history);
+    this.handleSuccessResponse(response);
   }
  
-  public register = async (user : UserModel, history): Promise<void> => {
-    console.log(user)
+  public register = async (user : UserModel): Promise<void> => {
     const response = await this.http.postRequestAsync(this.userUrl, user);
-    this.handleSuccessResponse(response, history);
+    this.handleSuccessResponse(response);
   }
 
 
   // enf od request section
 
   // function to check if user is logged
-  public isUserLogged = (history): void => {
+  public isUserLogged = (): void => {
     if (store.getState().auth.isLoggedIn) {
-      this.handleRouting(store.getState().auth.user, history);
+      this.handleRouting(store.getState().auth.user);
     }
   }
   // end of function
 
   // function to handle login Success 
-  public handleSuccessResponse = async (response, history): Promise<void> => {
+  public handleSuccessResponse = async (response): Promise<void> => {
     const user = response.user
     const accessToken = response.jwt
     store.dispatch({ type: ActionType.Login, payload: user });
     store.dispatch({ type: ActionType.AddAccessToken, payload: accessToken });
     await this.authService.getTokens()
-    this.handleRouting(user, history);
+    this.handleRouting(user);
   };
   // end of function
 
   // function to handle rout according to role
-  public handleRouting = (user : UserModel, history): void => {
+  public handleRouting = (user : UserModel): void => {
     user.isAdmin === 1 ?
       history.push(`/admin`)
       : history.push(`/user/${user.uuid}`);
@@ -58,7 +58,7 @@ export class LoginServices {
 
 
   // prevent admin to navigate to users route
-  public verifyAdminPath = (history): void => {
+  public verifyAdminPath = (): void => {
     if (history.location.pathname === "/admin") {
       return
     }
@@ -67,7 +67,7 @@ export class LoginServices {
   // end of function
 
   // prevent user to navigate to other users route
-  public verifyUserPath = (user, history): void => {
+  public verifyUserPath = (user): void => {
     const uuid = history.location.pathname.substring(6)
     if (uuid === user.uuid) {
       return
@@ -77,11 +77,11 @@ export class LoginServices {
   // end of function
 
   // main function for navigation control
-  public verifyPath = (admin, user, history): void => {
+  public verifyPath = (admin, user): void => {
     if (admin) {
-      this.verifyAdminPath(history);
+      this.verifyAdminPath();
     } else {
-      this.verifyUserPath(user, history);
+      this.verifyUserPath(user);
     }
   }
   // end of function

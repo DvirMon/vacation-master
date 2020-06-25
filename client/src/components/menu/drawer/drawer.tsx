@@ -33,6 +33,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { NotificationModel } from "../../../models/notification-model";
 import "./drawer.scss";
+import { AuthServices } from "../../../services/auth-service";
 
 interface AppDrawerProps {
   admin: boolean;
@@ -53,6 +54,8 @@ interface AppDrawerState {
 
 export class AppDrawer extends Component<AppDrawerProps, AppDrawerState> {
   private unsubscribeStore: Unsubscribe;
+  private authService: AuthServices = new AuthServices();
+
   private logout: ListNavItem = new ListNavItem(
     "Logout",
     <ExitToAppIcon />,
@@ -217,7 +220,7 @@ export class AppDrawer extends Component<AppDrawerProps, AppDrawerState> {
 
   public handleLogout = (): void => {
     this.handleDrawerToggle();
-    history.push("/logout");
+    this.authService.logout();
   };
 }
 

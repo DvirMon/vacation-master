@@ -3,7 +3,7 @@ import { HttpService } from "./http-service";
 
 import { TokensModel } from "../models/tokens.model";
 
-import { environment } from "../environments/environment"
+import { environment } from "../environment"
 import history from "../history"
 
 import { store } from "../redux/store";
@@ -30,30 +30,36 @@ export class AuthServices {
   };
 
   // verify admin role, invoke socket connection, set tokens
-  public handleAuth = async (callback, history): Promise<void> => {
+  public handleAuth = async (callback): Promise<void> => {
     callback()
     this.socketService.invokeConnection();
     await this.getAccessToken()
   }
-  // end of function
+  // end of function 
 
 
   public logout = async (): Promise<void> => {
 
-    const tokens = store.getState().auth.tokens;
-    const id = tokens.dbToken?.id;
-
-    if (id) {
-      await this.http.deleteRequestAsync(this.tokenUrl + `/${id}`);
+    if (store.getState().auth.isLoggedIn === false) {
+      history.push("/login");
     }
-    // handle logic in store
-    store.dispatch({ type: ActionType.Logout });
+    else {
+ 
+      const tokens = store.getState().auth.tokens;
+      const id = tokens.dbToken?.id;
 
-    // disconnect from sockets
-    store.getState().auth.socket.disconnect();
+      if (id) {
+        await this.http.deleteRequestAsync(this.tokenUrl + `/${id}`);
+      }
+      // handle logic in store
+      store.dispatch({ type: ActionType.Logout });
 
-    // redirect to login page
-    history.push("/login");
+      // disconnect from sockets
+      store.getState().auth.socket.disconnect();
+
+      // redirect to login page
+      history.push("/login");
+    }
   }
 
 }

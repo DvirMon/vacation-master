@@ -2,7 +2,6 @@ import React, { Component } from "react";
 
 import Loader from "../../my-components/loader/loader";
 import CanvasJSReact from "../../../assets/canvasjs.react";
-import UpdateToken from "../../auth/updateToken/updateToken";
 
 import { ChartModel } from "../../../models/charts-model";
 
@@ -40,8 +39,7 @@ export class Charts extends Component<any, ChartsState> {
 
   public componentDidMount = async () => {
     await this.state.authService.handleAuth(
-      () => this.validationService.verifyAdmin(this.props.history),
-      this.props.history
+      () => this.validationService.verifyAdmin(),
     );
 
     this.unsubscribeStore = store.subscribe(() => {
@@ -98,7 +96,6 @@ export class Charts extends Component<any, ChartsState> {
             </div>
           </div>
         )}
-        <UpdateToken />
       </React.Fragment>
     );
   }

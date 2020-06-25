@@ -22,6 +22,7 @@ import { store } from "../../../redux/store";
 import { Unsubscribe } from "redux/";
 
 import "./menu.scss";
+import { AuthServices } from "../../../services/auth-service";
 
 interface MenuProps {
   handleLogOut?(): void;
@@ -33,6 +34,7 @@ interface MenuState {
 }
 
 export class Menu extends Component<MenuProps, MenuState> {
+  private authService: AuthServices = new AuthServices();
   private unsubscribeStore: Unsubscribe;
 
   constructor(props: MenuProps) {
@@ -80,10 +82,11 @@ export class Menu extends Component<MenuProps, MenuState> {
                 <Hidden smDown>
                   <ListItem>
                     <Typography variant="h5" className="tim-note">
-                      Hay
-                      {menu.user
-                        ? ` ${menu.user.firstName} ${menu.user.lastName}!`
-                        : " Guest!"}
+                      {menu.admin
+                        ? "Admin Panel"
+                        : menu.user
+                        ? `Hi ${menu.user.firstName} ${menu.user.lastName}!`
+                        : "Hi Guest!"}
                     </Typography>
                   </ListItem>
                 </Hidden>
@@ -109,10 +112,9 @@ export class Menu extends Component<MenuProps, MenuState> {
                       <Button
                         className="btn btn-danger text-buttons"
                         variant="contained"
+                        onClick={this.handleLogout}
                       >
-                        <NavLink to="/logout" exact>
-                          Logout
-                        </NavLink>
+                        Logout
                       </Button>
                     </MenuItem>
                   )}
@@ -136,7 +138,7 @@ export class Menu extends Component<MenuProps, MenuState> {
               </Grid>
             )
           )}
-        </AppBar> 
+        </AppBar>
         <AppDrawer
           drawerOpen={drawerOpen}
           admin={menu.admin}
@@ -146,9 +148,13 @@ export class Menu extends Component<MenuProps, MenuState> {
     );
   }
 
-  public handleDrawerToggle = () => {
+  public handleDrawerToggle = () : void => {
     const drawerOpen = !this.state.drawerOpen;
     this.setState({ drawerOpen });
+  };
+ 
+  public handleLogout = (): void => {
+    this.authService.logout();
   };
 }
 

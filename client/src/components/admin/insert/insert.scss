@@ -1,6 +1,14 @@
+@import "../../../style/variables";
+
 .insert {
-  height: 100%;
-  padding: 0;
-  margin: 0;
+  @include default();
   background-color: #fafafa7e;
+}
+
+@media screen and (max-width: 800px) {
+  .insert > .insert-form {
+    margin: auto;
+    position: relative;
+    height: 90%;
+  }
 }

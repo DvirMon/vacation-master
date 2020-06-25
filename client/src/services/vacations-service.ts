@@ -8,7 +8,7 @@ import { ValidationService } from "./validation-service";
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 
-import { environment } from "../environments/environment"
+import { environment } from "../environment"
 
 
 

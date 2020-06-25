@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 // import components
 import Hidden from "@material-ui/core/Hidden";
- 
+
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
@@ -17,7 +17,7 @@ import Slider from "react-slick";
 import { AuthServices } from "../../services/auth-service";
 import { VacationService } from "../../services/vacations-service";
 import { LoginServices } from "../../services/login-service";
-import { setStyle } from "../../services/style-services";
+import { StyleService } from "../../services/style-service";
 
 // import models
 import { UserVacationModel } from "../../models/vacations-model";
@@ -52,6 +52,7 @@ export class Vacations extends Component<any, VacationsState> {
   private authService: AuthServices = new AuthServices();
   private loginService: LoginServices = new LoginServices();
   private vacationService: VacationService = new VacationService();
+  private styleService: StyleService = new StyleService();
 
   constructor(props: any) {
     super(props);
@@ -69,6 +70,8 @@ export class Vacations extends Component<any, VacationsState> {
 
   public componentDidMount = async () => {
     try {
+      const { user, admin } = this.state;
+
       // verify login
       if (store.getState().auth.isLoggedIn === false) {
         this.authService.logout();
@@ -78,12 +81,9 @@ export class Vacations extends Component<any, VacationsState> {
       // subscribe to store
       this.unsubscribeStore = this.subscribeToStore();
 
-      const { user, admin } = this.state;
-
       // handle auth logic
-      await this.authService.handleAuth(
-        () => this.loginService.verifyPath(admin, user, this.props.history),
-        this.props.history
+      await this.authService.handleAuth(() =>
+        this.loginService.verifyPath(admin, user)
       );
 
       // get vacations
@@ -139,7 +139,7 @@ export class Vacations extends Component<any, VacationsState> {
                 <h1 className="card-title">My Wish List</h1>
               )}
             </Row>
-            <Row> 
+            <Row>
               <Hidden smDown>
                 <Slider {...sliderSetting}>
                   {followUp.map((vacation) => (
@@ -152,12 +152,14 @@ export class Vacations extends Component<any, VacationsState> {
                   ))}
                 </Slider>
               </Hidden>
-              <Hidden smUp>
-                <AppCarousel 
-                  followUp={followUp}
-                  followSetting={followSetting}
-                ></AppCarousel>
-              </Hidden>
+              {!admin && (
+                <Hidden mdUp>
+                  <AppCarousel
+                    followUp={followUp}
+                    followSetting={followSetting}
+                  ></AppCarousel>
+                </Hidden>
+              )}
             </Row>
             <Row>
               {!admin && <h1 className="card-title">Explore Our Vacations</h1>}
@@ -166,8 +168,8 @@ export class Vacations extends Component<any, VacationsState> {
               {unFollowUp.map((vacation) => (
                 <Col
                   key={vacation.vacationID}
-                  xl={3}
-                  lg={4}
+                  xl={4}
+                  lg={4} 
                   md={6}
                   sm={6}
                   xs={12}
@@ -189,7 +191,7 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   private handleStyle = (admin) => {
-    setStyle(MenuModel.setMenu(admin), admin ? "admin" : "user");
+    this.styleService.style(MenuModel.setMenu(admin), admin ? "admin" : "user");
   };
 }
 

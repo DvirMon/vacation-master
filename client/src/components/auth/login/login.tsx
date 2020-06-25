@@ -3,16 +3,19 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 
 //import materiel ui components
-import FormControl from "@material-ui/core/FormControl";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 import withWidth from "@material-ui/core/withWidth";
+
+import Avatar  from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import FormControl from "@material-ui/core/FormControl";
+import InputAdornment from "@material-ui/core/InputAdornment";
+
+import Visibility from "@material-ui/icons/Visibility";
+import IconButton from "@material-ui/core/IconButton";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+
 
 // import bootstrap components
 import Image from "react-bootstrap/Image";
@@ -27,10 +30,9 @@ import { LoginMenu } from "../../../models/menu-model";
 // import services
 import { ValidationService } from "../../../services/validation-service";
 import { LoginServices } from "../../../services/login-service";
-import { setStyle } from "../../../services/style-services";
+import { StyleService } from "../../../services/style-service";
 
 import "./login.scss";
-import { Avatar } from "@material-ui/core";
 
 interface LoginState {
   user: LoginModel;
@@ -40,8 +42,10 @@ interface LoginState {
 }
 
 export class Login extends Component<any, LoginState> {
+  
   private loginService: LoginServices = new LoginServices();
   private validationService: ValidationService = new ValidationService();
+  private styleService: StyleService = new StyleService();
 
   constructor(props: any) {
     super(props);
@@ -55,8 +59,8 @@ export class Login extends Component<any, LoginState> {
   }
 
   public componentDidMount = async () => {
-    setStyle(LoginMenu, "home");
-    this.loginService.isUserLogged(this.props.history);
+    this.styleService.style(LoginMenu, "home");
+    this.loginService.isUserLogged();
   };
 
   // function to handle login request
@@ -71,7 +75,7 @@ export class Login extends Component<any, LoginState> {
 
     // handle request
     try {
-      await this.loginService.login(user, this.props.history);
+      await this.loginService.login(user, );
     } catch (err) {
       this.handleErrorResponse(err);
     }
@@ -100,7 +104,7 @@ export class Login extends Component<any, LoginState> {
           </Grid>
         </Hidden>
         <Grid item xs className="login-form">
-          <FormControl component="form" className="my-form">
+          <FormControl component="form" className="auth-form">
             <Grid className="row-header" spacing={2} container>
               <Hidden smDown>
                 <Grid item xs={1} md={4}>

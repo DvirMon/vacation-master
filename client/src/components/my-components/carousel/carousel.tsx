@@ -6,22 +6,21 @@ import VacCard from "../../vac-card/vac-card/vac-card";
 import { UserVacationModel } from "../../../models/vacations-model";
 import { VacationCardModel } from "../../../models/vac-card-model";
 
-import "./carousel.scss"
+import "./carousel.scss";
 
-  
 interface AppCarouselProps {
   followUp: UserVacationModel[];
-  followSetting : VacationCardModel;
-} 
+  followSetting: VacationCardModel;
+}
 
 export class AppCarousel extends Component<AppCarouselProps, any> {
   render() {
     const { followUp, followSetting } = this.props;
 
     return (
-      <Carousel controls={false} >
+      <Carousel controls={false} interval={null} touch={true} slide={true}>
         {followUp.map((vacation: UserVacationModel) => {
-          return ( 
+          return (
             <Carousel.Item key={vacation.vacationID}>
               <VacCard
                 vacation={vacation}

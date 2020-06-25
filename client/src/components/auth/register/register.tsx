@@ -15,9 +15,8 @@ import { RegisterMenu } from "../../../models/menu-model";
 
 // import services
 import { LoginServices } from "../../../services/login-service";
-import { HttpService } from "../../../services/http-service";
 import { ValidationService } from "../../../services/validation-service";
-import { setStyle } from "../../../services/style-services";
+import { StyleService } from "../../../services/style-service";
 
 import generator from "generate-password";
 
@@ -31,9 +30,10 @@ interface RegisterState {
 }
 
 export class Register extends Component<any, RegisterState> {
-  private http: HttpService = new HttpService();
+  
   private loginService: LoginServices = new LoginServices();
   private validationService: ValidationService = new ValidationService();
+  private styleService: StyleService = new StyleService();
 
   constructor(props: any) {
     super(props);
@@ -47,14 +47,14 @@ export class Register extends Component<any, RegisterState> {
   }
 
   public componentDidMount = () => {
-    setStyle(RegisterMenu, "home");
+    this.styleService.style(RegisterMenu, "home");
   };
 
 
 
   private handleRegister = async () => {
     try { 
-      await this.loginService.register(this.state.user, this.props.history);
+      await this.loginService.register(this.state.user);
     } catch (err) {
       this.handleErrorResponse(err);
     }

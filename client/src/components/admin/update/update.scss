@@ -4,3 +4,11 @@
   margin: 0;
   background-color: #fafafa7e;
 }
+
+@media screen and (max-width: 800px) {
+  .update > .update-form {
+    margin: auto;
+    position: relative;
+    height: 90%;
+  }
+}

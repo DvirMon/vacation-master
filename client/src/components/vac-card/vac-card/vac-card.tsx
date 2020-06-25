@@ -25,7 +25,7 @@ import { VacationService } from "../../../services/vacations-service";
 
 
 import "./vac-card.scss";
-import { environment } from "../../../environments/environment"
+import { environment } from "../../../environment"
 
 
 interface VacCardProps {

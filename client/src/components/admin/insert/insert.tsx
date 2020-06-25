@@ -3,7 +3,6 @@ import React, { Component } from "react";
 // import my components
 import VacCard from "../../vac-card/vac-card/vac-card";
 import MyForm from "../../my-components/my-form/my-form";
-import UpdateToken from "../../auth/updateToken/updateToken";
 
 // import material-ui
 import Grid from "@material-ui/core/Grid";
@@ -21,6 +20,7 @@ import { ValidationService } from "../../../services/validation-service";
 import { AuthServices } from "../../../services/auth-service";
 
 import "./insert.scss";
+import { Hidden } from "@material-ui/core";
 
 interface InsertState {
   vacation: VacationModel;
@@ -42,9 +42,8 @@ export class Insert extends Component<any, InsertState> {
   }
 
   public componentDidMount = async () => {
-    await this.authService.handleAuth(
-      () => this.validationService.verifyAdmin(this.props.history),
-      this.props.history
+    await this.authService.handleAuth(() =>
+      this.validationService.verifyAdmin()
     );
     this.setPreview();
   };
@@ -58,7 +57,6 @@ export class Insert extends Component<any, InsertState> {
 
     // handle request
     await this.vacationService.addNewVacation(vacation);
-
   };
 
   render() {
@@ -66,7 +64,7 @@ export class Insert extends Component<any, InsertState> {
     return (
       <React.Fragment>
         <Grid container className="insert">
-          <Grid item xs={8}>
+          <Grid className="insert-form" item md={8} xs={11}>
             <MyForm
               vacation={vacation}
               handleChange={this.handleChange}
@@ -74,16 +72,17 @@ export class Insert extends Component<any, InsertState> {
               handleImage={this.handleImage}
             />
           </Grid>
-          <Grid item xs={4}>
-            <VacCard
-              vacation={vacation}
-              margin={false}
-              preview={settings.img}
-              vacationSettings={settings}
-            />
-          </Grid>
+          <Hidden smDown>
+            <Grid item sm={4}>
+              <VacCard
+                vacation={vacation}
+                margin={false}
+                preview={settings.img}
+                vacationSettings={settings}
+              />
+            </Grid>
+          </Hidden>
         </Grid>
-        <UpdateToken />
       </React.Fragment>
     );
   }

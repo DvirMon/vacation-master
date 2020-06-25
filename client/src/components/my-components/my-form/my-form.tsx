@@ -55,7 +55,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
         >
           <Grid container spacing={2} className="pos">
             <MyInput
-              width={5}
+              width={6}
               value={vacation.destination || ""}
               fullWidth={true}
               type="text"

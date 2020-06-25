@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import { AuthServices } from './auth-service';
 
-import { environment } from "../environments/environment"
-import history from '../history';
+import { environment } from "../environment"
 import { store } from "../redux/store";
 
 export class InterceptorService {
@@ -36,7 +35,7 @@ export class InterceptorService {
         console.log(request.url)
         if(request.url === this.tokenUrl + "/new") {
           console.log("please login")
-          history.push("/logout")
+          this.authService.logout()
           return
         }
 

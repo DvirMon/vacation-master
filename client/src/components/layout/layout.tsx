@@ -10,7 +10,6 @@ import Vacations from "../vacations/vacations";
 import Insert from "../admin/insert/insert";
 import Charts from "../admin/charts/charts";
 import Update from "../admin/update/update";
-import Logout from "../auth/logout/logout";
 import PageNotFound from "../my-components/page-not-found/page-not-found";
 import history from '../../history';
 
@@ -65,7 +64,6 @@ export class Layout extends Component<any, LayoutState> {
             <Switch>
               <Route path="/login" component={Login} exact></Route>
               <Route path="/register" component={Register} exact></Route>
-              <Route path="/logout" component={Logout} exact></Route>
               <Route
                 path="/user/:id"
                 component={Vacations}

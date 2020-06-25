@@ -3,7 +3,6 @@ import React, { Component } from "react";
 // import my components
 import MyForm from "../../my-components/my-form/my-form";
 import Loader from "../../my-components/loader/loader";
-import UpdateToken from "../../auth/updateToken/updateToken";
 import VacCard from "../../vac-card/vac-card/vac-card";
 
 // import materiel-ui
@@ -26,6 +25,7 @@ import { AuthServices } from "../../../services/auth-service";
 import { store } from "../../../redux/store";
 
 import "./update.scss";
+import { Hidden } from "@material-ui/core";
 
 interface UpdateState {
   vacation: VacationModel;
@@ -51,10 +51,10 @@ export class Update extends Component<any, UpdateState> {
   }
 
   public componentDidMount = async () => {
-    await this.authService.handleAuth(
-      () => this.validationService.verifyAdmin(this.props.history),
-      this.props.history
+    await this.authService.handleAuth(() =>
+      this.validationService.verifyAdmin()
     );
+    
     const vacation = await this.vacationService.getVacation(
       this.props.match.params.id
     );
@@ -74,10 +74,10 @@ export class Update extends Component<any, UpdateState> {
       return;
     }
 
-    // send update request 
+    // send update request
     await this.vacationService.updateVacation(
       vacation,
-      this.props.match.params.id, 
+      this.props.match.params.id
     );
   };
 
@@ -90,7 +90,7 @@ export class Update extends Component<any, UpdateState> {
           <Loader />
         ) : (
           <Grid container className="update">
-            <Grid item xs={8}>
+            <Grid className="update-form" item md={8} xs={11}>
               {vacation && (
                 <MyForm
                   vacation={vacation}
@@ -100,19 +100,20 @@ export class Update extends Component<any, UpdateState> {
                 />
               )}
             </Grid>
-            <Grid item xs={4}>
-              {vacation && (
-                <VacCard
-                  vacation={vacation}
-                  margin={false}
-                  preview={settings.img}
-                  vacationSettings={settings}
-                />
-              )}
-            </Grid>
+            <Hidden smDown>
+              <Grid item xs={4}>
+                {vacation && (
+                  <VacCard
+                    vacation={vacation}
+                    margin={false}
+                    preview={settings.img}
+                    vacationSettings={settings}
+                  />
+                )}
+              </Grid>
+            </Hidden>
           </Grid>
         )}
-        <UpdateToken />
       </React.Fragment>
     );
   }
