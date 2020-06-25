@@ -9,7 +9,7 @@
     }
   }
 
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 820px) {
     .register-form {
       @include auth-form(95%, #ffffff, 0.9);
       height: 80vh;

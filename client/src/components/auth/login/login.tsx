@@ -106,7 +106,7 @@ export class Login extends Component<any, LoginState> {
         <Grid item xs className="login-form">
           <FormControl component="form" className="auth-form">
             <Grid className="row-header" spacing={2} container>
-              <Hidden smDown>
+              <Hidden xsDown>
                 <Grid item xs={1} md={4}>
                   <Image
                     src="assets/img/logo.png"
@@ -114,7 +114,7 @@ export class Login extends Component<any, LoginState> {
                     alt="Logo"
                     roundedCircle
                   />
-                </Grid>
+                </Grid> 
               </Hidden>
               <Hidden smUp>
                 <Grid item xs={1} md={4}>

@@ -33,8 +33,6 @@ export class InterceptorService {
       if (error.response?.status === 401 && store.getState().auth.isLoggedIn) {
         const request = error.config
 
-        console.log(request.url)
-
         if (request.url === this.tokenUrl + "/new") {
           console.log("You have been disconnected, Please login again")
           this.authService.logout()
