@@ -1,12 +1,17 @@
 import React, { Component } from "react";
 
 // import components
+import Hidden from "@material-ui/core/Hidden";
+ 
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import VacCard from "../vac-card/vac-card";
+
+import VacCard from "../vac-card/vac-card/vac-card";
+
 import Loader from "../my-components/loader/loader";
+import AppCarousel from "../my-components/carousel/carousel";
+
 import Slider from "react-slick";
-import UpdateToken from "../auth/updateToken/updateToken";
 
 // import services
 import { AuthServices } from "../../services/auth-service";
@@ -43,7 +48,6 @@ interface VacationsState {
 }
 
 export class Vacations extends Component<any, VacationsState> {
-
   private unsubscribeStore: Unsubscribe;
   private authService: AuthServices = new AuthServices();
   private loginService: LoginServices = new LoginServices();
@@ -64,11 +68,10 @@ export class Vacations extends Component<any, VacationsState> {
   }
 
   public componentDidMount = async () => {
-    
     try {
       // verify login
       if (store.getState().auth.isLoggedIn === false) {
-        this.handleError("Please Login");
+        this.authService.logout();
         return;
       }
 
@@ -88,7 +91,7 @@ export class Vacations extends Component<any, VacationsState> {
 
       this.handleStyle(admin);
     } catch (err) {
-      this.handleError(err);
+      this.authService.logout();
     }
   };
 
@@ -122,11 +125,6 @@ export class Vacations extends Component<any, VacationsState> {
     }
   };
 
-  private handleError = (err) => {
-    console.log(err)
-    this.props.history.push("/logout");
-  };
-
   render() {
     const { followUp, unFollowUp, sliderSetting, admin } = this.state;
 
@@ -141,24 +139,39 @@ export class Vacations extends Component<any, VacationsState> {
                 <h1 className="card-title">My Wish List</h1>
               )}
             </Row>
-            <Row>
-              <Slider {...sliderSetting}>
-                {followUp.map((vacation) => (
-                  <Col className="followed" key={vacation.vacationID}>
-                    <VacCard
-                      vacation={vacation}
-                      vacationSettings={followSetting}
-                    ></VacCard>
-                  </Col>
-                ))}
-              </Slider>
+            <Row> 
+              <Hidden smDown>
+                <Slider {...sliderSetting}>
+                  {followUp.map((vacation) => (
+                    <Col className="followed" key={vacation.vacationID}>
+                      <VacCard
+                        vacation={vacation}
+                        vacationSettings={followSetting}
+                      ></VacCard>
+                    </Col>
+                  ))}
+                </Slider>
+              </Hidden>
+              <Hidden smUp>
+                <AppCarousel 
+                  followUp={followUp}
+                  followSetting={followSetting}
+                ></AppCarousel>
+              </Hidden>
             </Row>
             <Row>
               {!admin && <h1 className="card-title">Explore Our Vacations</h1>}
             </Row>
             <Row className="row-unFollowed">
               {unFollowUp.map((vacation) => (
-                <Col key={vacation.vacationID} sm={4}>
+                <Col
+                  key={vacation.vacationID}
+                  xl={3}
+                  lg={4}
+                  md={6}
+                  sm={6}
+                  xs={12}
+                >
                   <VacCard
                     vacation={vacation}
                     margin={true}
@@ -169,8 +182,6 @@ export class Vacations extends Component<any, VacationsState> {
                 </Col>
               ))}
             </Row>
-
-            <UpdateToken />
           </div>
         )}
       </React.Fragment>

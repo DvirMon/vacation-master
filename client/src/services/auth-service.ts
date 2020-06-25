@@ -1,11 +1,13 @@
-import { ActionType } from "../redux/action-type";
 import { SocketService } from "./socket-service";
 import { HttpService } from "./http-service";
 
-import { environment } from "../environments/environment"
 import { TokensModel } from "../models/tokens.model";
 
+import { environment } from "../environments/environment"
+import history from "../history"
+
 import { store } from "../redux/store";
+import { ActionType } from "../redux/action-type";
 
 export class AuthServices {
 
@@ -36,7 +38,7 @@ export class AuthServices {
   // end of function
 
 
-  public logout = async (history): Promise<void> => {
+  public logout = async (): Promise<void> => {
 
     const tokens = store.getState().auth.tokens;
     const id = tokens.dbToken?.id;
@@ -44,7 +46,6 @@ export class AuthServices {
     if (id) {
       await this.http.deleteRequestAsync(this.tokenUrl + `/${id}`);
     }
-    console.log(1)
     // handle logic in store
     store.dispatch({ type: ActionType.Logout });
 

@@ -1,19 +1,18 @@
 import React, { Component } from "react";
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 // import components
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import Badge from "@material-ui/core/Badge";
+import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@material-ui/core/IconButton";
+
+import Badge from "@material-ui/core/Badge";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import Menu from "@material-ui/core/Menu";
 
 // import models
-import { UserModel } from "../../../models/user-model";
-import { Notification } from "../../../models/vacations-model";
+import { NotificationModel } from "../../../models/notification-model";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -22,22 +21,17 @@ import { Unsubscribe } from "redux";
 
 import "./menu-user.scss";
 
-interface MenuUserProps {
-  userInfo?: UserModel;
-  followUpCounter?: number;
-}
-
 interface MenuUserState {
   followUpCounter?: number;
   notificationCounter?: number;
-  notification: Notification[];
+  notification: NotificationModel[];
   anchorEl: HTMLElement;
 }
 
-export class MenuUser extends Component<MenuUserProps, MenuUserState> {
+export class MenuUser extends Component<any, MenuUserState> {
   private unsubscribeStore: Unsubscribe;
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -49,7 +43,15 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
   }
 
   public componentDidMount = () => {
-    this.unsubscribeStore = store.subscribe(() => {
+    this.unsubscribeStore = this.subscribeToStore();
+  };
+
+  public componentWillUnmount = () => {
+    this.unsubscribeStore();
+  };
+
+  private subscribeToStore = () => {
+    return store.subscribe(() => {
       this.setState({
         followUpCounter: store.getState().vacation.followUp.length,
         notification: store.getState().vacation.notification,
@@ -58,12 +60,7 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
     });
   };
 
-  public componentWillUnmount = () => {
-    this.unsubscribeStore();
-  };
-
   render() {
-    const { userInfo } = this.props;
     const {
       followUpCounter,
       anchorEl,
@@ -73,12 +70,6 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
 
     return (
       <React.Fragment>
-        <Typography variant="h6" className="tim-note">
-          {userInfo ? `${userInfo.firstName} ${userInfo.lastName}` : "Guest"}
-        </Typography>
-        <MenuItem>
-          <Typography className="tim-note">{`Welcome Back!`}</Typography>
-        </MenuItem>
         <IconButton
           color="inherit"
           aria-controls="simple-menu"
@@ -86,7 +77,7 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
           onClick={this.handleClick}
         >
           <Badge color="secondary" badgeContent={notificationCounter}>
-            <NotificationsIcon />
+            <NotificationsIcon fontSize="large" />
           </Badge>
         </IconButton>
         <Menu
@@ -95,19 +86,22 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          {notification.map((msg) => (
-            <MenuItem 
-              key={this.setKey()}
-              className="dropdown-item"
-              onClick={this.handleLinkClick(msg.vacationID)}
-            >
-              {msg.msg}
-            </MenuItem>
-          ))}
+          {notification.map((update: NotificationModel) => {
+            const { text, vacationID } = update;
+            return (
+              <MenuItem
+                key={uuidv4()}
+                className="dropdown-item"
+                onClick={this.handleLinkClick(vacationID)}
+              >
+                {text}
+              </MenuItem>
+            );
+          })}
         </Menu>
         <IconButton color="inherit">
           <Badge badgeContent={followUpCounter} color="secondary">
-            <FavoriteIcon />
+            <FavoriteIcon fontSize="large" />
           </Badge>
         </IconButton>
       </React.Fragment>
@@ -132,9 +126,6 @@ export class MenuUser extends Component<MenuUserProps, MenuUserState> {
     store.dispatch({ type: ActionType.DeleteAllNotification });
   };
 
-  public setKey = () => {
-    return uuidv4()
-  }
 }
 
 export default MenuUser;

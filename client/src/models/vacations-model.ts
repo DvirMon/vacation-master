@@ -71,10 +71,3 @@ export class FollowUpModel {
 
 }
 
-export class Notification {
-  constructor(
-    public vacationID: number,
-    public msg: string,
-  ) { }
-
-}

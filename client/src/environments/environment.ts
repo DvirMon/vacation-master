@@ -1,4 +1,4 @@
-export const environment =  {
-production : false,
-server : "http://localhost:3000"
+export const environment = {
+  production: true,
+  server: "http://localhost:3000"
 }

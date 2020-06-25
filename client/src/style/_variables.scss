@@ -1,0 +1,43 @@
+
+@mixin default {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+@mixin mp-zero {
+  margin: 0;
+  padding: 0;
+}
+
+@mixin auth-form ($width, $color-back, $op) {
+  width: $width;
+  margin: auto;
+  padding: 3%;
+  position: relative;
+  border-radius: 25px;
+  box-sizing: border-box;
+  background-color: rgba($color: $color-back, $alpha: $op);
+}
+
+.MuiCollapse-wrapperInner {
+  height: 150px;
+  overflow: auto;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 10px;
+
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    width: 5px;
+  }
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  height: 5px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+

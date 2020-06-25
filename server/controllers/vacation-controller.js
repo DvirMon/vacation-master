@@ -118,14 +118,17 @@ router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
     // request for update
     const updatedVacation = await vacationsLogic.updateVacation(vacation);
 
+    
     // verify update
     if (updatedVacation === null) {
       response.status(404).json("Item is not in database");
       return;
     }
-
+    
     // change id from string to number
     updatedVacation.vacationID = +vacationID;
+    
+    console.log(updatedVacation)
 
     response.json(updatedVacation);
   } catch (err) {
@@ -162,14 +165,5 @@ router.get("/update/image/:imgName", async (request, response, next) => {
   }
 });
 
-// route for  getting images from the server
-router.get("/uploads/:imgName", async (request, response, next) => {
-  try {
-    const path = process.cwd();
-    response.sendFile(path + "\\uploads\\" + request.params.imgName);
-  } catch (err) {
-    next(err);
-  }
-});
 
 module.exports = router;

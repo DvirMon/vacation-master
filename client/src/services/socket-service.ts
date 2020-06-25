@@ -58,25 +58,25 @@ export class SocketService {
     // admin added vacation
     socket.on("server-add-vacation", (vacation: UserVacationModel) => {
 
-      const msg = `New vacation added! : ${vacation.destination}`
+      const text = `New vacation added! : ${vacation.destination}`
       store.dispatch({ type: ActionType.AddVacation, payload: vacation })
-      store.dispatch({ type: ActionType.UpdateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
+      store.dispatch({ type: ActionType.UpdateNotification, payload: { text, vacationID: vacation.vacationID } })
     })
 
     // admin updated vacation
     socket.on("server-update-vacation", (vacation: UserVacationModel) => {
-      const msg = `Check new Updates! : ${vacation.destination}`
+      const text = `Check new Updates! : ${vacation.destination}`
       store.dispatch({ type: ActionType.UpdatedVacation, payload: vacation })
-      store.dispatch({ type: ActionType.UpdateNotification, payload: { msg: msg, vacationID: vacation.vacationID } })
+      store.dispatch({ type: ActionType.UpdateNotification, payload: { text, vacationID: vacation.vacationID } })
     })
 
     // admin deleted vacation 
     socket.on("server-delete-vacation", (vacation) => {
-      const msg = `${vacation.destination} has been deleted!`
+      const text = `${vacation.destination} has been deleted!`
       store.dispatch({ type: ActionType.DeleteVacation, payload: vacation.vacationID })
-      store.dispatch({ type: ActionType.UpdateNotification, payload: { msg: msg, vacationID: "" } })
+      store.dispatch({ type: ActionType.UpdateNotification, payload: { text, vacationID: "" } })
     })
-
+ 
   }
 
   public chartRealTimeUpdate = (socket) => {

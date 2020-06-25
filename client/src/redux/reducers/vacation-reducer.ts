@@ -22,28 +22,28 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
       newAppState.followUp.push(action.payload)
       deleteLogic(newAppState, "unFollowUp", action.payload.vacationID)
       break
-    case ActionType.DeleteFollowUp:
-      newAppState.unFollowUp.push(action.payload)
-      deleteLogic(newAppState, "followUp", action.payload.vacationID)
-      break
     case ActionType.UpdatedVacation:
-      const item = updateCondition(newAppState, "unFollowUp", action.payload)
-      if (item) {
-        updateLogic(item, action.payload)
+      const vacationToUpdate: UserVacationModel = updateCondition(newAppState, "unFollowUp", action.payload)
+      if (vacationToUpdate) {
+        updateLogic(vacationToUpdate, action.payload)
       } else if (newAppState.followUp.length > 0) {
         updateLogic(updateCondition(newAppState, "followUp", action.payload), action.payload)
       }
+      break
+    case ActionType.UpdateNotification:
+      newAppState.notification.push(action.payload)
+      break
+    case ActionType.UpdateChartPoints:
+      newAppState.dataPoints = action.payload
       break
     case ActionType.DeleteVacation:
       deleteLogic(newAppState, "unFollowUp", action.payload)
       deleteLogic(newAppState, "followUp", action.payload)
       deleteLogic(newAppState, "notification", action.payload)
       break
-    case ActionType.UpdateChartPoints:
-      newAppState.dataPoints = action.payload
-      break
-    case ActionType.UpdateNotification:
-      newAppState.notification.push(action.payload)
+    case ActionType.DeleteFollowUp:
+      newAppState.unFollowUp.push(action.payload)
+      deleteLogic(newAppState, "followUp", action.payload.vacationID)
       break
     case ActionType.DeleteAllNotification:
       newAppState.notification = []
@@ -55,15 +55,14 @@ export const vacationReducer = (oldAppState = new VacationAppState(), action: Ac
   return newAppState
 }
 
-const updateCondition = (newAppState: VacationAppState, prop: string, vacation: UserVacationModel) => {
-  const item = newAppState[prop].find(item => item.vacationID === + vacation.vacationID)
-  return item
+const updateCondition = (newAppState: VacationAppState, prop: string, vacation: UserVacationModel): UserVacationModel => {
+  return newAppState[prop].find(item => item.vacationID === +vacation.vacationID)
 }
 
-const updateLogic = (item, vacation, ) => {
+const updateLogic = (vacationToUpdate, vacation,) => {
   for (const prop in vacation) {
-    if (prop in item) {
-      item[prop] = vacation[prop]
+    if (prop in vacationToUpdate) {
+      vacationToUpdate[prop] = vacation[prop]
     }
   }
 }

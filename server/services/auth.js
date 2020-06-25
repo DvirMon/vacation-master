@@ -40,7 +40,7 @@ const setRefreshToken = (user) => {
         resolve(result);
       }
     );
-  });
+  }); 
 };
 // end of function
 

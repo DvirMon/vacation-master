@@ -6,7 +6,7 @@ connection.connect((err) => {
   if (err) {
     console.log(err.message);
     return;
-  }
+  } 
   console.log("We Are Connected To Vacation MySQL Database");
 });
 
@@ -19,7 +19,7 @@ const executeAsync = (sql, payload) => {
       }
       resolve(result);
     });
-  }); 
+  });  
 };
 
 module.exports = {

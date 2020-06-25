@@ -58,10 +58,9 @@ export class VacationService {
     // handle request
     const formData = this.formService.setFormData(vacation);
     const response = await this.http.putRequestAsync(this.vacationUrl + `/${vacationId}`, formData)
-
     // handle response
     store.dispatch({ type: ActionType.UpdatedVacation, payload: response })
-    this.socketService.handleAdminUpdate(vacation)
+    this.socketService.handleAdminUpdate(response)
     this.formService.handleSuccess("updated vacation!")
   }
 

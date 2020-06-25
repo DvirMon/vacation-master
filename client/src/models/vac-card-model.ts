@@ -1,7 +1,7 @@
 
 export class VacationCardModel {
 
-  public constructor(
+  public constructor( 
     public admin?: boolean,
     public follow?: boolean,
     public adminIcons?: boolean,

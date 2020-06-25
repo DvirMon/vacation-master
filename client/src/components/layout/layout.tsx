@@ -11,7 +11,7 @@ import Insert from "../admin/insert/insert";
 import Charts from "../admin/charts/charts";
 import Update from "../admin/update/update";
 import Logout from "../auth/logout/logout";
-import PageNotFound from "../page-not-found/page-not-found";
+import PageNotFound from "../my-components/page-not-found/page-not-found";
 import history from '../../history';
 
 // import router

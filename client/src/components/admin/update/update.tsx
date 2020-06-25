@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import MyForm from "../../my-components/my-form/my-form";
 import Loader from "../../my-components/loader/loader";
 import UpdateToken from "../../auth/updateToken/updateToken";
-import VacCard from "../../vac-card/vac-card";
+import VacCard from "../../vac-card/vac-card/vac-card";
 
 // import materiel-ui
 import Grid from "@material-ui/core/Grid";

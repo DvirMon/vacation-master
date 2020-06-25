@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 // import my components
-import VacCard from "../../vac-card/vac-card";
+import VacCard from "../../vac-card/vac-card/vac-card";
 import MyForm from "../../my-components/my-form/my-form";
 import UpdateToken from "../../auth/updateToken/updateToken";
 

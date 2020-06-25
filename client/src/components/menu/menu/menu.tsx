@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { NavLink } from "react-router-dom";
 
 // import materiel ui
+import { AppBar, Typography, Hidden, List, ListItem } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -14,6 +15,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { MenuModel } from "../../../models/menu-model";
 import MenuUser from "../menu-user/menu-user";
 import MenuAdmin from "../menu-admin/menu-admin";
+import AppDrawer from "../drawer/drawer";
 
 // import redux
 import { store } from "../../../redux/store";
@@ -27,6 +29,7 @@ interface MenuProps {
 
 interface MenuState {
   menu: MenuModel;
+  drawerOpen: boolean;
 }
 
 export class Menu extends Component<MenuProps, MenuState> {
@@ -35,7 +38,10 @@ export class Menu extends Component<MenuProps, MenuState> {
   constructor(props: MenuProps) {
     super(props);
 
-    this.state = { menu: store.getState().style.menu };
+    this.state = {
+      menu: store.getState().style.menu,
+      drawerOpen: false,
+    };
   }
 
   public componentDidMount = () => {
@@ -49,75 +55,101 @@ export class Menu extends Component<MenuProps, MenuState> {
   }
 
   render() {
-    const { menu } = this.state;
+    const { menu, drawerOpen } = this.state;
+
     return (
-      <nav
-        className={clsx(
-          "menu",
-          "navbar",
-          "navbar-transparent",
-          "navbar-color-on-scroll",
-          "fixed-top",
-          "navbar-expand-lg"
-        )}
-      >
-        {menu.isLoggedIn ? (
-          <Grid container className="justify-content-center">
-            <Grid item xs={6} className="navbar-translate">
-              <h1 className="tim-note">Travel On</h1>
-              <IconButton
-                className="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                aria-expanded="false"
-              >
-                <MenuOutlinedIcon color="inherit" fontSize="large" />
-              </IconButton>
-            </Grid>
-            <Grid item xs={6} className="collapse navbar-collapse">
-              <MenuList className="navbar-nav ml-auto">
-                {!menu.admin && (
-                  <MenuUser
-                    userInfo={menu.user}
-                    followUpCounter={menu.followUpCounter}
-                  />
-                )}
-                {menu.admin && <MenuAdmin />}
-                {menu.logoutButton && (
-                  <MenuItem>
-                    <Button
-                      className="btn btn-danger text-buttons"
-                      variant="contained"
-                    >
-                      <NavLink to="/logout" exact>
-                        Logout
-                      </NavLink>
-                    </Button>
-                  </MenuItem>
-                )}
-              </MenuList>
-            </Grid>
-          </Grid>
-        ) : (
-          menu.register && (
-            <Grid container spacing={3}>
-              <Grid item xs={12} className="btn-login">
-                <Button
-                  className="text-buttons"
-                  variant="contained"
-                  color="primary"
+      <div>
+        <AppBar
+          className={clsx(
+            "menu",
+            "navbar",
+            "navbar-transparent",
+            "navbar-color-on-scroll",
+            "fixed-top",
+            "navbar-expand-lg"
+          )}
+        >
+          {menu.isLoggedIn ? (
+            <div className="toolbar">
+              <List className="nav-list" component="nav" aria-label="user info">
+                <ListItem>
+                  <Typography variant="h2" className="tim-note" noWrap>
+                    Travel On
+                  </Typography>
+                </ListItem>
+                <Hidden smDown>
+                  <ListItem>
+                    <Typography variant="h5" className="tim-note">
+                      Hay
+                      {menu.user
+                        ? ` ${menu.user.firstName} ${menu.user.lastName}!`
+                        : " Guest!"}
+                    </Typography>
+                  </ListItem>
+                </Hidden>
+              </List>
+              <span className="spacer"></span>
+              <Hidden smUp>
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  edge="end"
+                  onClick={this.handleDrawerToggle}
                 >
-                  <NavLink to="/login" exact>
-                    Login
-                  </NavLink>
-                </Button>
+                  <MenuOutlinedIcon fontSize="large" />
+                </IconButton>
+              </Hidden>
+              <span className="spacer"></span>
+              <Hidden smDown>
+                <MenuList className="navbar-nav ml-auto">
+                  {menu.admin ? <MenuAdmin /> : <MenuUser />}
+
+                  {menu.logoutButton && (
+                    <MenuItem>
+                      <Button
+                        className="btn btn-danger text-buttons"
+                        variant="contained"
+                      >
+                        <NavLink to="/logout" exact>
+                          Logout
+                        </NavLink>
+                      </Button>
+                    </MenuItem>
+                  )}
+                </MenuList>
+              </Hidden>
+            </div>
+          ) : (
+            menu.register && (
+              <Grid container spacing={3}>
+                <Grid item xs={12} className="btn-login">
+                  <Button
+                    className="text-buttons"
+                    variant="contained"
+                    color="primary"
+                  >
+                    <NavLink to="/login" exact>
+                      Login
+                    </NavLink>
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          )
-        )}
-      </nav>
+            )
+          )}
+        </AppBar> 
+        <AppDrawer
+          drawerOpen={drawerOpen}
+          admin={menu.admin}
+          handleDrawerToggle={this.handleDrawerToggle}
+        ></AppDrawer>
+      </div>
     );
   }
+
+  public handleDrawerToggle = () => {
+    const drawerOpen = !this.state.drawerOpen;
+    this.setState({ drawerOpen });
+  };
 }
 
 export default Menu;

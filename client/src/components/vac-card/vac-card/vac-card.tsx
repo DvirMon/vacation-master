@@ -15,17 +15,17 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-import CardTopIcons from "./card-top-icons/card-top-icons";
-import FormatDate from "./format-date/format-date";
+import CardTopIcons from "../card-top-icons/card-top-icons";
+import FormatDate from "../format-date/format-date";
 
-import { UserVacationModel } from "../../models/vacations-model";
-import { VacationCardModel } from "../../models/vac-card-model";
+import { UserVacationModel } from "../../../models/vacations-model";
+import { VacationCardModel } from "../../../models/vac-card-model";
 
-import { VacationService } from "../../services/vacations-service";
+import { VacationService } from "../../../services/vacations-service";
 
 
 import "./vac-card.scss";
-import { environment } from "../../environments/environment"
+import { environment } from "../../../environments/environment"
 
 
 interface VacCardProps {

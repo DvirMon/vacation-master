@@ -1,21 +1,22 @@
-.register {
-  height: 100%;
-  padding: 0;
-  margin: 0;
+@import "../../../style/variables";
 
-  .register-form {
-    position: relative;
-    height: 90%;
-    width: 30%;
-    margin: auto;
-    background-color: #fafafa;
-    border-radius: 25px;
-    padding: 3%;
+.register {
+  @include default();
+  
+  @media screen and (min-width: 992px) {
+    .register-form {
+      @include auth-form(30%, #ffffff, 0.9);
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .register-form {
+      @include auth-form(95%, #ffffff, 0.9);
+      height: 80vh;
+    }
   }
 
   .register-button {
     text-transform: none;
   }
-
-
 }
