@@ -20,7 +20,7 @@ export class InterceptorService {
     }, error => {
       return Promise.reject(error);
     });
-  } 
+  }
 
   public errorInterceptor = () => {
     axios.interceptors.response.use((response) => {
@@ -29,13 +29,14 @@ export class InterceptorService {
     }, async (error: AxiosError) => {
       console.log(error)
 
-      
+
       if (error.response?.status === 401 && store.getState().auth.isLoggedIn) {
         const request = error.config
 
         console.log(request.url)
-        if(request.url === this.tokenUrl + "/new") {
-          console.log("please login")
+
+        if (request.url === this.tokenUrl + "/new") {
+          console.log("You have been disconnected, Please login again")
           this.authService.logout()
           return
         }
@@ -45,9 +46,9 @@ export class InterceptorService {
       }
 
       if (error.response?.status === 403) {
-        console.log("refresh")
+        alert("not admin")
+        this.authService.logout()
       }
-      this.authService.logout()
 
       return Promise.reject(error);
     });

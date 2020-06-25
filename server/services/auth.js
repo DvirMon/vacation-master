@@ -14,7 +14,7 @@ const setToken = (user) => {
     jwt.sign(
       { sub: user.uuid, role: user.isAdmin },
       config.jwt.actKey,
-      { expiresIn: "5s" },
+      { expiresIn: "20m" },
       (err, result) => {
         if (err) {
           reject(err);
