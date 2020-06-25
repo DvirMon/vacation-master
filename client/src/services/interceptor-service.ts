@@ -29,6 +29,7 @@ export class InterceptorService {
     }, async (error: AxiosError) => {
       console.log(error)
 
+      
       if (error.response?.status === 401 && store.getState().auth.isLoggedIn) {
         const request = error.config
 
@@ -44,8 +45,9 @@ export class InterceptorService {
       }
 
       if (error.response?.status === 403) {
-
+        console.log("refresh")
       }
+      this.authService.logout()
 
       return Promise.reject(error);
     });

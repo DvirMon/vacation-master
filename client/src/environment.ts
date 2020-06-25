@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  server : "https://localhost:3000"
+  server : "https://react-vacation-app.herokuapp.com"
 }
