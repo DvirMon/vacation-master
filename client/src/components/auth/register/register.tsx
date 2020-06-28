@@ -140,7 +140,7 @@ export class Register extends Component<any, RegisterState> {
                 onClick={this.handleRegister}
                 disabled={this.disabledButton()}
               >
-                Sigh-in
+                Sign-in
               </Button>
             </Grid>
           </Grid>
