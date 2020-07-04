@@ -18,7 +18,7 @@ const setToken = (user) => {
       (err, result) => {
         if (err) {
           reject(err);
-        }
+        } 
         resolve(result);
       }
       );

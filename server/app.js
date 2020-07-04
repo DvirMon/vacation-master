@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 // invoke server
 const server = express();
 const serverListener = server.listen(PORT, () =>
-  console.log(`server running!`)
+  console.log(`server is running!`)
 );
 const socketServer = io(serverListener);
 

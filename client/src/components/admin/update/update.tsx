@@ -7,6 +7,7 @@ import VacCard from "../../vac-card/vac-card/vac-card";
 
 // import materiel-ui
 import Grid from "@material-ui/core/Grid";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // import models
 import { VacationModel } from "../../../models/vacations-model";
@@ -102,14 +103,15 @@ export class Update extends Component<any, UpdateState> {
             </Grid>
             <Hidden smDown>
               <Grid item xs={4}>
-                {vacation && (
+                {vacation ? (
                   <VacCard
                     vacation={vacation}
                     margin={false}
                     preview={settings.img}
                     vacationSettings={settings}
                   />
-                )}
+                ) : <CircularProgress color="inherit" />
+              }
               </Grid>
             </Hidden>
           </Grid>

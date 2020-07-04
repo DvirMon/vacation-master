@@ -11,6 +11,8 @@ import CardActions from "@material-ui/core/CardActions";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -23,10 +25,8 @@ import { VacationCardModel } from "../../../models/vac-card-model";
 
 import { VacationService } from "../../../services/vacations-service";
 
-
 import "./vac-card.scss";
-import { environment } from "../../../environment"
-
+import { environment } from "../../../environment";
 
 interface VacCardProps {
   vacation?: UserVacationModel;
@@ -44,9 +44,7 @@ interface VacCardState {
 }
 
 export class VacCard extends Component<VacCardProps, VacCardState> {
-
-  private vacationService : VacationService = new VacationService()
-  
+  private vacationService: VacationService = new VacationService();
 
   constructor(props: VacCardProps) {
     super(props);
@@ -69,18 +67,33 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       if (this.props.vacationSettings.admin === false) {
         const response = await this.vacationService.getFollowersByVacationAsync(
           this.props.vacation.vacationID
-        ); 
+        );
         if (response.followers) {
           this.setState({ followers: response.followers });
         }
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   render() {
     const { settings, expanded, color, followers } = this.state;
     const { vacation, preview, margin } = this.props;
+
+    const previewImage = (
+      <CardMedia
+        className="media"
+        image={preview}
+        title={`${vacation.destination}`}
+      ></CardMedia>
+    );
+
+    const cardImage = (
+      <CardMedia
+        className="media"
+        image={`${environment.server}/uploads/${vacation.image}.jpg`}
+        title={`${vacation.destination}`}
+      ></CardMedia>
+    );
 
     return (
       <div
@@ -96,12 +109,8 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             "mr-0": margin,
             "root-hover": settings.hover,
           })}
-        >
-          {preview
-            ? this.cardMedia(preview) 
-            : this.cardMedia(
-                `${environment.server}/uploads/${vacation.image}.jpg`
-              )}
+        > 
+          {preview || vacation.image ? (preview ? previewImage : cardImage) : <CircularProgress color="inherit" />}
           <CardHeader
             action={
               <CardTopIcons
@@ -150,17 +159,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     );
   }
 
-  public cardMedia = (imgURL: string) => {
-    const vacation = { ...this.props.vacation };
-
-    return (
-      <CardMedia
-        className="media"
-        image={imgURL}
-        title={`${vacation.destination}`}
-      ></CardMedia>
-    );
-  };
 
   public handleFollowIcon = () => {
     this.props.vacationSettings.follow === true

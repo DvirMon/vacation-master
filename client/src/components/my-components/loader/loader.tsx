@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { Backdrop } from "@material-ui/core";
 import "./loader.scss";
 
 export class Loader extends Component {
   render() {
     return (
-      <div className="loader page">
+      <div className="bg-loader page">
         <div className="circular-progress">
-       
-          <CircularProgress size={150} color="inherit" />
+        <Backdrop open={true}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         </div>
       </div>
     );
