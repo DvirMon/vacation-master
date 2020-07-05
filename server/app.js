@@ -6,7 +6,6 @@ global.config = require("./config");
 // import modules
 const express = require("express");
 const cors = require("cors");
-const fileUpload = require("express-fileupload");
 const io = require("socket.io");
 const path = require("path");
 const PORT = process.env.PORT || 3000;
@@ -32,7 +31,6 @@ const socketService = require("./sockets/main");
 // middleware functions
 server.use(express.json());
 server.use(cors());
-server.use(fileUpload());
 server.use(express.static(socketService.findHtmlFile()));
 server.use("/uploads", express.static("uploads"));
 

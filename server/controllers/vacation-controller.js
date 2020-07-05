@@ -5,11 +5,14 @@ const vacationsLogic = require("../business-logic-layer/vacation-logic");
 const usersLogic = require("../business-logic-layer/users-logic");
 
 const auth = require("../services/auth");
-const imageService = require("../services/image");
+// const imageService = require("../services/image");
+const handleImage = require("../services/upload");
 
 const VacationModel = require("../models/vacation-model");
 
 const key = config.jwt.actKey;
+
+
 
 // get all vacations
 router.get("/", async (request, response, next) => {
@@ -57,84 +60,73 @@ router.get("/:id", async (request, response, next) => {
     next(err);
   }
 });
-// end of function
+// end of function 
+
+const multer = require("multer")
+const upload = multer()
 
 // add vacation (admin)
-router.post("/", auth.authorize(1, key), async (request, response, next) => {
-  const vacation = request.body;
-  const file = request.files;
+router.post(
+  "/",
+  auth.authorize(1, key),
+  handleImage.upload, 
+  async (request, response, next) => {
 
-  // verify file
-  if (!file) {
-    response.status(400).json("no file was sent");
-    return;
+    // verify vacation schema
+    const error = VacationModel.validation(request.body);
+    if (error) {
+      next({ status: 400, error: error });
+      return;
+    }
+
+    try {
+      const addedVacation = await vacationsLogic.addVacation(request.body);
+
+      response.status(201).json(addedVacation);
+    } catch (err) {
+      next(err);
+    }
   }
-
-  // save file locally
-  const fileName = imageService.saveImageLocally(file.image);
-
-  vacation.image = fileName;
-
-  // verify vacation schema
-  const error = VacationModel.validation(vacation);
-  if (error) {
-    next({ status: 400, error: error });
-    return;
-  }
-
-  try {
-    const addedVacation = await vacationsLogic.addVacation(vacation);
-
-    response.status(201).json(addedVacation);
-  } catch (err) {
-    next(err);
-  }
-});
+);
 
 // update vacation (admin only)
-router.put("/:id", auth.authorize(1, key), async (request, response, next) => {
-  try {
-    const vacationID = request.params.id;
-    const vacation = request.body;
-    const file = request.files;
+router.put(
+  "/:id",
+  auth.authorize(1, key),
+  handleImage.upload,
+  async (request, response, next) => {
+    try {
+      const vacationID = request.params.id;
+      const vacation = request.body;
+      // const file = request.files;
 
-    // verify file
-    if (file) {
-      const fileName = imageService.saveImageLocally(file.image);
-      vacation.image = fileName;
-    } else if (vacation.image === undefined) {
-      response.status(400).json("No image was sent!");
+      //verify schema
+      const error = VacationModel.validation(vacation);
+      if (error) {
+        response.status(404).json(error);
+        return;
+      }
+
+      vacation.vacationID = vacationID;
+
+      // request for update
+      const updatedVacation = await vacationsLogic.updateVacation(vacation);
+
+      // verify update
+      if (updatedVacation === null) {
+        response.status(404).json("Item is not in database");
+        return;
+      }
+
+      // change id from string to number
+      updatedVacation.vacationID = +vacationID;
+
+      response.json(updatedVacation);
+    } catch (err) {
+      next(err);
     }
-
-    //verify schema
-    const error = VacationModel.validation(vacation);
-    if (error) {
-      response.status(404).json(error);
-      return;
-    }
-
-    vacation.vacationID = vacationID;
-
-    // request for update
-    const updatedVacation = await vacationsLogic.updateVacation(vacation);
-
-    
-    // verify update
-    if (updatedVacation === null) {
-      response.status(404).json("Item is not in database");
-      return;
-    }
-    
-    // change id from string to number
-    updatedVacation.vacationID = +vacationID;
-    
-    console.log(updatedVacation)
-
-    response.json(updatedVacation);
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 // delete vacation (only admin)
 router.delete(
@@ -154,16 +146,6 @@ router.delete(
     }
   }
 );
-
-router.get("/update/image/:imgName", async (request, response, next) => {
-  try {
-    const imageName = request.params.imgName;
-    const image = await imageService.readImage(imageName);
-    response.sendFile(image);
-  } catch (err) {
-    next(err);
-  }
-});
 
 
 module.exports = router;

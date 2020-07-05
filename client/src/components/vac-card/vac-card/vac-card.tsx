@@ -90,7 +90,7 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
     const cardImage = (
       <CardMedia
         className="media"
-        image={`${environment.server}/uploads/${vacation.image}.jpg`}
+        image={`${environment.imageBucket}/${vacation.image}.jpg`}
         title={`${vacation.destination}`}
       ></CardMedia>
     );

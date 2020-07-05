@@ -27,7 +27,6 @@ interface MyFormState {
 }
 
 export class MyForm extends Component<MyFormProps, MyFormState> {
-
   private fileInput: HTMLInputElement;
 
   constructor(props: MyFormProps) {
@@ -48,7 +47,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     return (
       <div className="my-form">
         <Form
-          action="/upload-image"
+          action="/"
           method="post"
           encType="multipart/form-data"
           target="hidden-iframe"
@@ -108,6 +107,8 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
               <label className="upload-button">
                 <input
                   className="input-file btn btn-primary"
+                  name="image"
+                  multiple={true}
                   type="file"
                   accept="image/*"
                   onChange={this.handleImage}
@@ -170,7 +171,6 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
 
   // function to update vacation values
   public handleChange = (prop: string, input: any) => {
-    
     if (prop === "startDate" || prop === "endDate") {
       this.handleDate(input, prop);
     }
@@ -180,7 +180,7 @@ export class MyForm extends Component<MyFormProps, MyFormState> {
     }
   };
   // end of function
- 
+
   public handleDate = (input, prop) => {
     const date = { ...this.state.date };
     date[prop] = input;
