@@ -3,11 +3,12 @@ import { HttpService } from "./http-service";
 
 import { TokensModel } from "../models/tokens.model";
 
-import { environment } from "../environment"
-import history from "../history"
 
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
+
+import { environment } from "../environment"
+import history from "../history"
 
 export class AuthServices {
 

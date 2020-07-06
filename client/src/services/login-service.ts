@@ -10,13 +10,15 @@ import { environment } from "../environment"
 
 export class LoginServices {
 
-  private userUrl: string = `${environment.server}/api/user`
+  private userUrl: string = environment.server + "/api/user"
   private authService: AuthServices = new AuthServices()
   private http: HttpService = new HttpService()
 
+  
   // request section
-
+  
   public login = async (user : UserModel): Promise<void> => {
+    console.log(environment.server)
     const response = await this.http.postRequestAsync(this.userUrl + "/login", user);
     this.handleSuccessResponse(response);
   }
