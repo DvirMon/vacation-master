@@ -1,6 +1,9 @@
 import { ChartModel } from "../models/charts-model";
 import { UserVacationModel } from "../models/vacations-model";
 
+import { environment } from "../environment"
+
+
 import { store } from "../redux/store";
 import { ActionType } from "../redux/action-type";
 
@@ -15,7 +18,7 @@ export class SocketService {
 
     if (!validSocket || validSocket.disconnected) {
 
-      const socket = io.connect("http://localhost:3000");
+      const socket = io.connect(environment.server);
 
       store.dispatch({ type: ActionType.UpdateSocket, payload: socket });
 

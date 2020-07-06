@@ -95,6 +95,12 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       ></CardMedia>
     );
 
+    const spinner = (
+      <div className="center">
+        <CircularProgress color="inherit" />
+      </div>
+    );
+
     return (
       <div
         className="vac-card"
@@ -109,8 +115,12 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
             "mr-0": margin,
             "root-hover": settings.hover,
           })}
-        > 
-          {preview || vacation.image ? (preview ? previewImage : cardImage) : <CircularProgress color="inherit" />}
+        >
+          {preview || vacation.image
+            ? preview
+              ? previewImage
+              : cardImage
+            : spinner}
           <CardHeader
             action={
               <CardTopIcons
@@ -158,7 +168,6 @@ export class VacCard extends Component<VacCardProps, VacCardState> {
       </div>
     );
   }
-
 
   public handleFollowIcon = () => {
     this.props.vacationSettings.follow === true

@@ -5,7 +5,6 @@ const vacationsLogic = require("../business-logic-layer/vacation-logic");
 const usersLogic = require("../business-logic-layer/users-logic");
 
 const auth = require("../services/auth");
-// const imageService = require("../services/image");
 const handleImage = require("../services/upload");
 
 const VacationModel = require("../models/vacation-model");
@@ -61,9 +60,6 @@ router.get("/:id", async (request, response, next) => {
   }
 });
 // end of function 
-
-const multer = require("multer")
-const upload = multer()
 
 // add vacation (admin)
 router.post(

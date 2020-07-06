@@ -25,7 +25,6 @@ const tokensController = require("./controllers/token-controller");
 
 // import services
 const errorHandler = require("./services/errors");
-const imageService = require("./services/image");
 const socketService = require("./sockets/main");
 
 // middleware functions
@@ -52,8 +51,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// create upload directory
-imageService.createUploadDir();
 
 // invoke function to handle all sockets events
 socketService.handleSockets(socketServer);

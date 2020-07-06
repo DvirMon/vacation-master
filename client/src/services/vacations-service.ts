@@ -44,11 +44,11 @@ export class VacationService {
 
     // handle request
     const formData = this.formService.setFormData(vacation);
-    const response = await this.http.postRequestAsync(this.vacationUrl, formData)
+    const addedVacation = await this.http.postRequestAsync(this.vacationUrl, formData)
 
-    // handle response
-    store.dispatch({ type: ActionType.AddVacation, payload: response })
-    this.socketService.handleAdminInsert(vacation)
+    // handle added vacation
+    store.dispatch({ type: ActionType.AddVacation, payload: addedVacation })
+    this.socketService.handleAdminInsert(addedVacation)
     this.formService.handleSuccess("add new vacation!")
   }
 
@@ -57,10 +57,11 @@ export class VacationService {
 
     // handle request
     const formData = this.formService.setFormData(vacation);
-    const response = await this.http.putRequestAsync(this.vacationUrl + `/${vacationId}`, formData)
-    // handle response
-    store.dispatch({ type: ActionType.UpdatedVacation, payload: response })
-    this.socketService.handleAdminUpdate(response)
+    const updatedVacation = await this.http.putRequestAsync(this.vacationUrl + `/${vacationId}`, formData)
+
+    // handle updated vacation
+    store.dispatch({ type: ActionType.UpdatedVacation, payload: updatedVacation })
+    this.socketService.handleAdminUpdate(updatedVacation)
     this.formService.handleSuccess("updated vacation!")
   }
 

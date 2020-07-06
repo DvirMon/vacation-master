@@ -23,7 +23,7 @@
       margin-left: auto;
       animation: spin-down 0.5s;
     }
- 
+
     .expandOpen {
       transform: rotate(180deg);
       animation: spin-up 0.5s;
@@ -58,5 +58,8 @@
   .MuiCollapse-wrapperInner {
     height: 150px;
     overflow: auto;
+  }
+  .center {
+    text-align: center;
   }
 }
