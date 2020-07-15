@@ -16,7 +16,6 @@ const storage = multerS3({
   acl: "public-read",
   key: (request, file, cb) => {
     const imagePath = uuid();
-    console.log(imagePath)
     const fileName = imagePath + ".jpg";
     request.body.image = imagePath;
     cb(null, fileName);
