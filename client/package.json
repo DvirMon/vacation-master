@@ -20,7 +20,7 @@
     "@types/react-dom": "^16.9.5",
     "@types/react-router-dom": "^5.1.4",
     "apollo-link": "^1.2.13",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.4.1",
     "clsx": "^1.1.0",
     "date-fns": "^2.8.1",
