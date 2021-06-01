@@ -1,12 +1,22 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const jwt_decode = require("jwt-decode");
+
 
 // function to protect password
-const hushPassword = async (password) => {
-  const hushPassword = await bcrypt.hash(password, 10);
-  return hushPassword;
+const setPassword = async (password) => {
+  return await bcrypt.hash(password, 10);
 };
 // end of function
+
+const comparePassword = async (password) => {
+
+}
+
+const decodeToken = (token) => {
+  console.log(token)
+  return jwt_decode(token)
+}
 
 // function to create an access token
 const setToken = (user) => {
@@ -18,14 +28,14 @@ const setToken = (user) => {
       (err, result) => {
         if (err) {
           reject(err);
-        } 
+        }
         resolve(result);
       }
-      );
-    }); 
-  };
+    );
+  });
+};
 // end of function 
- 
+
 // function to create a refresh token
 const setRefreshToken = (user) => {
   return new Promise((resolve, reject) => {
@@ -40,7 +50,7 @@ const setRefreshToken = (user) => {
         resolve(result);
       }
     );
-  }); 
+  });
 };
 // end of function
 
@@ -73,8 +83,9 @@ const authorize = (role, key) => (request, response, next) => {
 // end of function
 
 module.exports = {
-  hushPassword,
+  setPassword,
   setToken,
   setRefreshToken,
   authorize,
+  decodeToken
 };

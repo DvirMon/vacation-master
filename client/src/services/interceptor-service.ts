@@ -39,8 +39,8 @@ export class InterceptorService {
           return
         }
 
-        await this.authService.getAccessToken()
-        return request
+        // await this.authService.getAccessToken()
+        // return request
       }
 
       if (error.response?.status === 403) {

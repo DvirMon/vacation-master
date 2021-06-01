@@ -1,26 +1,32 @@
 const mysql = require("mysql");
 
-const connection = mysql.createConnection(config.mysql);
+const database = process.env.NODE_ENV === "production" ? config.mysql_PROD : config.mysql_PROD;
+ 
+const pool = mysql.createPool(database); 
 
-connection.connect((err) => {
-  if (err) {
-    console.log(err.message);
-    return;
-  } 
-  console.log("We Are Connected To Vacation MySQL Database");
-});
+const handleDisconnect = () => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      throw err;
+    } else {
+      console.log("We are connect to MySQL database");
+    }
+  });
+};
 
 const executeAsync = (sql, payload) => {
   return new Promise((resolve, reject) => {
-    connection.query(sql, payload, (err, result) => {
+    pool.query(sql, payload, (err, result) => {
       if (err) {
         reject(err.message);
         return;
       }
       resolve(result);
     });
-  });  
+  });
 };
+
+handleDisconnect();
 
 module.exports = {
   executeAsync,

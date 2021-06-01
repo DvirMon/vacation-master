@@ -5,9 +5,12 @@ const vacationFormat = `v.vacationID, description, destination, image,
 DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
 DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price`;
 
+const vacations = process.env.NODE_ENV === "production" ? "heroku_cca5cefff42ac85.vacations" : "vacations";
+const followers = process.env.NODE_ENV === "production" ? "heroku_cca5cefff42ac85.followers" : "followers";
+
 // get all vacations
 const getAllVacations = async () => {
-  const sql = `SELECT ${vacationFormat} FROM vacations`;
+  const sql = `SELECT ${vacationFormat} FROM ${vacations} as v`;
   const vacations = await dal.executeAsync(sql);
 
   return vacations;
@@ -16,7 +19,7 @@ const getVacation = async (vacationID) => {
   const payload = [vacationID];
   const sql = `SELECT description, destination, image,
   DATE_FORMAT(startDate, '%Y-%m-%d') as startDate, 
-  DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price FROM vacations as v WHERE vacationID = ?`;
+  DATE_FORMAT(endDate, '%Y-%m-%d') as endDate, price FROM ${vacations} as v WHERE vacationID = ?`;
   const vacation = await dal.executeAsync(sql, payload);
 
   return vacation[0];
@@ -25,10 +28,10 @@ const getVacation = async (vacationID) => {
 const getUnFollowedVacations = async (userID) => {
   const payload = [userID];
   const sql = `SELECT ${vacationFormat}
-  FROM vacations as v 
+  FROM ${vacations} as v 
   WHERE v.vacationID NOT IN (
     SELECT f.vacationID
-    FROM  followers as f 
+    FROM  ${followers} as f 
     WHERE f.userID = ?)`;
 
   const unFollowed = await dal.executeAsync(sql, payload);
@@ -39,7 +42,7 @@ const getUnFollowedVacations = async (userID) => {
 const deleteVacation = async (id) => {
   const payload = [id];
 
-  const sql = `DELETE FROM vacations WHERE vacationID = ?`;
+  const sql = `DELETE FROM ${vacations} WHERE vacationID = ?`;
   await dal.executeAsync(sql, payload);
   return;
 };
@@ -54,7 +57,7 @@ const addVacation = async (vacation) => {
     vacation.endDate,
     vacation.price,
   ];
-  const sql = `INSERT INTO vacations(description, destination, image, startDate, endDate, price) 
+  const sql = `INSERT INTO ${vacations}(description, destination, image, startDate, endDate, price) 
               VALUES(?, ?, ?, ?, ?,?)`;
   const info = await dal.executeAsync(sql, payload);
   vacation.vacationID = info.insertId;
@@ -72,7 +75,7 @@ const updateVacation = async (vacation) => {
     vacation.price,
     vacation.vacationID,
   ];
-  const sql = `UPDATE vacations SET 
+  const sql = `UPDATE ${vacations} SET 
   description = ?, 
   destination = ?, 
   image = ?, 

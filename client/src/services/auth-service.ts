@@ -42,7 +42,7 @@ export class AuthServices {
   public logout = async (): Promise<void> => {
 
     if (store.getState().auth.isLoggedIn === false) {
-      history.push("/login");
+      history.push("/");
     }
     else {
  
@@ -59,7 +59,7 @@ export class AuthServices {
       store.getState().auth.socket.disconnect();
 
       // redirect to login page
-      history.push("/login");
+      history.push("/");
     }
   }
 

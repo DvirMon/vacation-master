@@ -61,6 +61,9 @@ router.get("/:id", async (request, response, next) => {
 });
 // end of function 
 
+const multer = require("multer")
+const upload = multer()
+
 // add vacation (admin)
 router.post(
   "/",
@@ -94,7 +97,6 @@ router.put(
     try {
       const vacationID = request.params.id;
       const vacation = request.body;
-      // const file = request.files;
 
       //verify schema
       const error = VacationModel.validation(vacation);
@@ -127,14 +129,14 @@ router.put(
 // delete vacation (only admin)
 router.delete(
   "/:id/:fileName",
-  auth.authorize(1, key),
+  auth.authorize(1, key), 
   async (request, response) => {
     try {
       const id = request.params.id;
       const fileName = request.params.fileName;
 
+      await handleImage.deleteImage(fileName)
       await vacationsLogic.deleteVacation(id);
-      imageService.deleteImageLocally(fileName);
 
       response.sendStatus(204);
     } catch (err) {

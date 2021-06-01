@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 import withWidth from "@material-ui/core/withWidth";
 
-import Avatar  from "@material-ui/core/Avatar";
+import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -16,12 +16,12 @@ import Visibility from "@material-ui/icons/Visibility";
 import IconButton from "@material-ui/core/IconButton";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
-
 // import bootstrap components
 import Image from "react-bootstrap/Image";
 
 // import my components
 import MyInput from "../../my-components/my-input/my-input";
+import LoginGoogle from "../google/google";
 
 // import models
 import { LoginModel } from "../../../models/user-model";
@@ -42,7 +42,6 @@ interface LoginState {
 }
 
 export class Login extends Component<any, LoginState> {
-  
   private loginService: LoginServices = new LoginServices();
   private validationService: ValidationService = new ValidationService();
   private styleService: StyleService = new StyleService();
@@ -75,7 +74,7 @@ export class Login extends Component<any, LoginState> {
 
     // handle request
     try {
-      await this.loginService.login(user, );
+      await this.loginService.login(user);
     } catch (err) {
       this.handleErrorResponse(err);
     }
@@ -114,7 +113,7 @@ export class Login extends Component<any, LoginState> {
                     alt="Logo"
                     roundedCircle
                   />
-                </Grid> 
+                </Grid>
               </Hidden>
               <Hidden smUp>
                 <Grid item xs={1} md={4}>
@@ -173,8 +172,8 @@ export class Login extends Component<any, LoginState> {
               <Grid className="text-center" item xs={12}>
                 <Button
                   type="button"
-                  className="text-buttons"
-                  variant="outlined"
+                  className="text-buttons auth"
+                  variant="contained"
                   color="primary"
                   onClick={this.handleLogIn}
                 >
@@ -182,10 +181,13 @@ export class Login extends Component<any, LoginState> {
                 </Button>
               </Grid>
               <Grid className="text-center" item xs={12}>
+                <LoginGoogle></LoginGoogle>
+              </Grid>
+              <Grid className="text-center" item xs={12}>
                 <Button
                   type="button"
-                  className="text-buttons"
-                  variant="outlined"
+                  className="text-buttons auth"
+                  variant="contained" 
                   color="secondary"
                 >
                   <NavLink to="/register" exact>

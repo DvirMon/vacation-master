@@ -37,17 +37,21 @@
     a {
       color: inherit;
     }
+
+    button.auth {
+      width: 30vh;
+    }
   }
 }
 
 @media screen and (min-width: 992px) {
   .auth-form {
     @include auth-form(75%, #ffffff, 0.9);
-    height: 85%;
+    height: 80vh;
   }
   
   .text-center {
-    height: 10vh;
+    height: 8vh;
     padding: 5%;
   }
 }
@@ -55,7 +59,7 @@
 @media screen and (max-width: 820px) {
   .auth-form {
     @include auth-form(95%, #ffffff, 0.9);
-    height: 500px;
+    height: 70vh;
   }
   .text-center {
     height: 8vh;

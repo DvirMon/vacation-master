@@ -62,7 +62,7 @@ export class Layout extends Component<any, LayoutState> {
           </nav>
           <main>
             <Switch>
-              <Route path="/login" component={Login} exact></Route>
+              <Route path="/" component={Login} exact></Route>
               <Route path="/register" component={Register} exact></Route>
               <Route
                 path="/user/:id"
@@ -94,7 +94,7 @@ export class Layout extends Component<any, LayoutState> {
                 component={Update}
                 exact
               ></Route>
-              <Redirect from="/" to="/login" exact></Redirect>
+              <Redirect from="/" to="/" exact></Redirect>
               <Route component={PageNotFound} exact />
             </Switch>
           </main>

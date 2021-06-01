@@ -1,25 +1,22 @@
 import React, { Component } from "react";
 
-// import components
+// COMPONENTS
 import Hidden from "@material-ui/core/Hidden";
-
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-
 import VacCard from "../vac-card/vac-card/vac-card";
-
 import Loader from "../my-components/loader/loader";
 import AppCarousel from "../my-components/carousel/carousel";
 
 import Slider from "react-slick";
 
-// import services
+// SERVICES
 import { AuthServices } from "../../services/auth-service";
 import { VacationService } from "../../services/vacations-service";
 import { LoginServices } from "../../services/login-service";
 import { StyleService } from "../../services/style-service";
 
-// import models
+// MODELS
 import { UserVacationModel } from "../../models/vacations-model";
 import { UserModel } from "../../models/user-model";
 import { TokensModel } from "../../models/tokens.model";
@@ -31,7 +28,7 @@ import {
   followSetting,
 } from "../../models/vac-card-model";
 
-// import redux
+// REDUX
 import { Unsubscribe } from "redux";
 import { store } from "../../redux/store";
 
@@ -139,28 +136,30 @@ export class Vacations extends Component<any, VacationsState> {
                 <h1 className="card-title">My Wish List</h1>
               )}
             </Row>
-            <Row>
-              <Hidden smDown>
-                <Slider {...sliderSetting}>
-                  {followUp.map((vacation) => (
-                    <Col className="followed" key={vacation.vacationID}>
-                      <VacCard
-                        vacation={vacation}
-                        vacationSettings={followSetting}
-                      ></VacCard>
-                    </Col>
-                  ))}
-                </Slider>
-              </Hidden>
-              {!admin && (
-                <Hidden mdUp>
-                  <AppCarousel
-                    followUp={followUp}
-                    followSetting={followSetting}
-                  ></AppCarousel>
+            {followUp.length > 0 && (
+              <Row>
+                <Hidden smDown>
+                  <Slider {...sliderSetting}>
+                    {followUp.map((vacation) => (
+                      <Col className="followed" key={vacation.vacationID}>
+                        <VacCard
+                          vacation={vacation}
+                          vacationSettings={followSetting}
+                        ></VacCard>
+                      </Col>
+                    ))}
+                  </Slider>
                 </Hidden>
-              )}
-            </Row>
+                {!admin && (
+                  <Hidden mdUp>
+                    <AppCarousel
+                      followUp={followUp}
+                      followSetting={followSetting}
+                    ></AppCarousel>
+                  </Hidden>
+                )}
+              </Row>
+            )}
             <Row>
               {!admin && <h1 className="card-title">Explore Our Vacations</h1>}
             </Row>
@@ -169,7 +168,7 @@ export class Vacations extends Component<any, VacationsState> {
                 <Col
                   key={vacation.vacationID}
                   xl={4}
-                  lg={4} 
+                  lg={4}
                   md={6}
                   sm={6}
                   xs={12}

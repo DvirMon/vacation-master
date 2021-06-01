@@ -3,28 +3,38 @@ import { AuthServices } from "./auth-service";
 import { ActionType } from "../redux/action-type";
 import { HttpService } from "./http-service";
 
-import { UserModel} from "../models/user-model"
+import { UserModel } from "../models/user-model"
 
 import history from "../history"
 import { environment } from "../environment"
+import { GoogleLoginResponse } from "react-google-login";
 
 export class LoginServices {
 
-  private userUrl: string = environment.server + "/api/user"
+  private url: string = environment.server + "/api/auth"
   private authService: AuthServices = new AuthServices()
   private http: HttpService = new HttpService()
 
-  
-  // request section
-  
-  public login = async (user : UserModel): Promise<void> => {
-    console.log(environment.server)
-    const response = await this.http.postRequestAsync(this.userUrl + "/login", user);
+
+  // HTTP SECTION
+
+
+  // POST request - hhtp://localhost:3000/api/user/login
+  public login = async (user: UserModel): Promise<void> => {
+    const response = await this.http.postRequestAsync(this.url + "/login", user);
     this.handleSuccessResponse(response);
   }
- 
-  public register = async (user : UserModel): Promise<void> => {
-    const response = await this.http.postRequestAsync(this.userUrl, user);
+
+  // POST request - hhtp://localhost:3000/api/user/login
+  public loginGoogle = async (user: GoogleLoginResponse): Promise<void> => {
+
+    const response = await this.http.postRequestAsync(this.url + "/login-google", user.profileObj);
+    this.handleSuccessResponse(response);
+  }
+
+  // POST request - hhtp://localhost:3000/api/user
+  public register = async (user: UserModel): Promise<void> => {
+    const response = await this.http.postRequestAsync(this.url, user);
     this.handleSuccessResponse(response);
   }
 
@@ -51,7 +61,8 @@ export class LoginServices {
   // end of function
 
   // function to handle rout according to role
-  public handleRouting = (user : UserModel): void => {
+  public handleRouting = (user: UserModel): void => {
+
     user.isAdmin === 1 ?
       history.push(`/admin`)
       : history.push(`/user/${user.uuid}`);
@@ -59,7 +70,7 @@ export class LoginServices {
   // end of function
 
 
-  // prevent admin to navigate to users route
+  // prevent admin to navigate to users route 
   public verifyAdminPath = (): void => {
     if (history.location.pathname === "/admin") {
       return

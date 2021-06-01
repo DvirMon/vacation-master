@@ -130,7 +130,7 @@ export class Menu extends Component<MenuProps, MenuState> {
                     variant="contained"
                     color="primary"
                   >
-                    <NavLink to="/login" exact>
+                    <NavLink to="/" exact>
                       Login
                     </NavLink>
                   </Button>

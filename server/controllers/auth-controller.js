@@ -9,14 +9,15 @@ const followUpLogic = require("../business-logic-layer/followup-logic");
 // import auth
 const UserModel = require("../models/user-model");
 const bcrypt = require("bcryptjs");
-const auth = require("../services/auth");
+const authService = require("../services/auth");
+const { IdentityStore } = require("aws-sdk");
 
 const key = config.jwt.actKey;
 
 // get user followup vacations
-router.get( 
+router.get(
   "/followup",
-  auth.authorize(0, key),
+  authService.authorize(0, key),
   async (request, response, next) => {
     try {
       const userName = request.user.sub;
@@ -43,31 +44,31 @@ router.get(
 // add new user (register)
 router.post("/", async (request, response, next) => {
   try {
-     
+
     // valid user format
     const error = UserModel.validateRegistration(request.body);
     if (error) {
       next({ status: 400, error: error });
       return;
     }
-    
+
     // valid userName in db
     const dbUser = await usersLogic.getUserDetails(request.body);
     if (dbUser) {
-      next({ status: 409, message : "username is already taken"});
+      next({ status: 409, message: "username is already taken" });
       return;
     }
     // hush password
-    request.body.password = await bcrypt.hash(request.body.password, 10);
- 
+    request.body.password = await authService.setPassword(request.body.password)
+
     // add new user to db
     await usersLogic.addUser(request.body);
 
     // return user from db
     const user = await usersLogic.getUserDetails(request.body);
-    const jwt = await auth.setToken(user);
+    const jwt = await authService.setToken(user);
 
-    response.status(201).json({user, jwt});
+    response.status(201).json({ user, jwt });
   } catch (err) {
     next(err);
   }
@@ -78,6 +79,7 @@ router.post("/", async (request, response, next) => {
 // user login
 router.post("/login", async (request, response, next) => {
   try {
+
     // valid user schema
     const error = UserModel.validateLogin(request.body);
     if (error) {
@@ -88,7 +90,7 @@ router.post("/login", async (request, response, next) => {
     // valid username against database
     const user = await usersLogic.getUserDetails(request.body);
     if (!user) {
-      next({ status: 409 , message : "username or password are incorrect"});
+      next({ status: 409, message: "username or password are incorrect" });
       return;
     }
 
@@ -100,18 +102,49 @@ router.post("/login", async (request, response, next) => {
     );
 
     if (!validPassword) {
-      next({ status: 409 , message : "username or password are incorrect"});
+      next({ status: 409, message: "username or password are incorrect" });
       return;
     }
 
-    const jwt = await auth.setToken(user);
- 
+    const jwt = await authService.setToken(user);
+
     // return user info
     response.json({ user, jwt });
 
-  } catch (err) { 
+  } catch (err) {
+    console.log(err)
     next(err);
   }
 });
+
+// user login with google
+router.post("/login-google", async (request, response, next) => {
+  try {
+
+    let user
+
+    const userProfile = request.body
+
+    // is googleUser exist
+
+    user = await usersLogic.getGoogleUser(userProfile)
+
+    if (!user) {
+      // create googleUser  
+      user = await usersLogic.create(userProfile)
+
+    }
+
+    const jwt = await authService.setToken(user);
+
+    response.json({ user, jwt });
+
+  } catch (err) {
+    console.log(err)
+    next(err);
+  }
+});
+
+
 
 module.exports = router;

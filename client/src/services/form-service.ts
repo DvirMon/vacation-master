@@ -1,6 +1,5 @@
 import history from '../history';
 
-
 export class FormService {
 
   // set FormData object for post and put request
@@ -25,8 +24,8 @@ export class FormService {
   public handleSuccess = (successMsg? : string): void => {
     alert(successMsg);
     history.push("/admin");
-
   };
+
   // end of function
 
   public handleError = (err: string): void => {
